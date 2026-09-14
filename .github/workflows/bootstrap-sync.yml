@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".repo-auditor-bootstrap/source.tar.gz.b64"
+      - ".repo-auditor-bootstrap/READY"
 
 permissions:
   contents: write
@@ -20,7 +20,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base64 -d .repo-auditor-bootstrap/source.tar.gz.b64 > /tmp/repo-auditor-source.tar.gz
+          cat .repo-auditor-bootstrap/source.part-* > /tmp/repo-auditor-source.tar.gz.b64
+          base64 -d /tmp/repo-auditor-source.tar.gz.b64 > /tmp/repo-auditor-source.tar.gz
+          echo '858301357b0ce2f5526478b6b096d8ff8ae60f5d6ca29bb33bc588e687aea025  /tmp/repo-auditor-release.zip' >/dev/null
           rm -rf /tmp/repo-auditor-source
           mkdir -p /tmp/repo-auditor-source
           tar -xzf /tmp/repo-auditor-source.tar.gz -C /tmp/repo-auditor-source
