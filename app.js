@@ -1,176 +1,210 @@
 (() => {
-  const DATA_URL = "./portfolio/registry.json";
-  const REPO = "https://github.com/CochraneK/";
-  const BAND = {
-    "P0-NOW":"P0 · NOW","P1-NEXT":"P1 · NEXT","P2-PLANNED":"P2 · PLANNED",
-    "P3-LATER":"P3 · LATER","P4-LOW":"P4 · LOW","STOP":"DON'T TOUCH"
+  const DATA_URL="./portfolio/registry.json";
+  const REPO_BASE="https://github.com/CochraneK/";
+  const BANDS={
+    "P0-NOW":{label:"P0",name:"Now",color:"#6e77ff"},
+    "P1-NEXT":{label:"P1",name:"Next",color:"#61c997"},
+    "P2-PLANNED":{label:"P2",name:"Planned",color:"#d8a34d"},
+    "P3-LATER":{label:"P3",name:"Later",color:"#7b8798"},
+    "P4-LOW":{label:"P4",name:"Low",color:"#5f6874"},
+    "STOP":{label:"—",name:"Don't touch",color:"#4c545e"}
   };
-  const BAND_DESC = {
-    "P0-NOW":"现在 / 下周","P1-NEXT":"本月推进","P2-PLANNED":"已有计划",
-    "P3-LATER":"后续再做","P4-LOW":"低优先保留","STOP":"当前不用做"
+  const WORKSTREAMS={
+    "Research":{color:"#8c7cf0",repos:["AI-Ques","ARIS-GCA-Bees","neuropharm","psy-exp","VA_emotion"]},
+    "Work tools":{color:"#48a9a6",repos:["FLP-Webui","RVC_factor","Voice-compare","Voicemod_Portrait"]},
+    "Products":{color:"#5f90db",repos:["ai-uni","anydoor","cris","persona-test","scientist-calendar","we-read","NewsMail","yihot"]},
+    "Creative":{color:"#c77b58",repos:["changan","gray-walker","Ji-Sui-Le","red-map","survival-game-generator","Animal-Age"]},
+    "Skills":{color:"#b69b4a",repos:["dsh-gate-game-plugin","emperor-skill","fake_type","mao-skill","ming","pudding-skill","repo-auditor"]},
+    "Legacy":{color:"#77808d",repos:["NaoDao_code","Submit-forms-automatically","wechat-article-analysis"]}
   };
-  const ORDER = ["P0-NOW","P1-NEXT","P2-PLANNED","P3-LATER","P4-LOW","STOP"];
-  const CATEGORY_META = {
-    "研究": {icon:"◌", color:"research"},
-    "工作工具": {icon:"⌁", color:"work"},
-    "AI / 产品": {icon:"◇", color:"product"},
-    "创作 / 游戏": {icon:"✦", color:"creative"},
-    "Skills / 工具": {icon:"⌘", color:"skills"},
-    "Legacy": {icon:"○", color:"legacy"}
-  };
-  const CATEGORY_MAP = {
-    "AI-Ques":"研究","ARIS-GCA-Bees":"研究","neuropharm":"研究","psy-exp":"研究","VA_emotion":"研究",
-    "FLP-Webui":"工作工具","RVC_factor":"工作工具","Voice-compare":"工作工具","Voicemod_Portrait":"工作工具",
-    "ai-uni":"AI / 产品","anydoor":"AI / 产品","cris":"AI / 产品","persona-test":"AI / 产品","scientist-calendar":"AI / 产品","we-read":"AI / 产品","NewsMail":"AI / 产品","yihot":"AI / 产品",
-    "changan":"创作 / 游戏","gray-walker":"创作 / 游戏","Ji-Sui-Le":"创作 / 游戏","red-map":"创作 / 游戏","survival-game-generator":"创作 / 游戏","Animal-Age":"创作 / 游戏",
-    "dsh-gate-game-plugin":"Skills / 工具","emperor-skill":"Skills / 工具","fake_type":"Skills / 工具","mao-skill":"Skills / 工具","ming":"Skills / 工具","pudding-skill":"Skills / 工具","repo-auditor":"Skills / 工具",
-    "NaoDao_code":"Legacy","Submit-forms-automatically":"Legacy","wechat-article-analysis":"Legacy"
+  const VIEWS={
+    focus:{title:"Focus",desc:"现在最值得投入时间的仓库。"},
+    all:{title:"All repositories",desc:"全部 Public 仓库，按你的当前管理判断组织。"},
+    later:{title:"Later",desc:"确定还会做，但现在不应该占据注意力。"},
+    stopped:{title:"Don't touch",desc:"当前不需要继续投入；这不等于删除或归档。"}
   };
 
-  const $ = id => document.getElementById(id);
-  let state = null;
-  let view = "cards";
+  const $=id=>document.getElementById(id);
+  let data=null,currentView="focus",statusFilter="all",selectedWorkstream="all";
 
-  function esc(v=""){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-  function category(r){return CATEGORY_MAP[r.name] || "Skills / 工具"}
-  function repoUrl(r,suffix=""){return REPO + encodeURIComponent(r.name) + suffix}
-  function byScore(a,b){return b.priority_score-a.priority_score || a.name.localeCompare(b.name)}
-  function byRecent(a,b){return String(b.last_commit_date||"").localeCompare(String(a.last_commit_date||"")) || byScore(a,b)}
-  function date(v){return new Date(v+"T00:00:00Z")}
-  function ageDays(v){if(!v||!state?.snapshot_date)return null;return Math.max(0,Math.round((date(state.snapshot_date)-date(v))/86400000))}
-  function ageText(v){const d=ageDays(v);if(d===null)return "无日期";if(d===0)return "今天";if(d===1)return "1 天前";if(d<30)return d+" 天前";if(d<365)return Math.round(d/30)+" 个月前";return (d/365).toFixed(1)+" 年前"}
-  function tagClass(r){return r.priority_band==="STOP"?"stop":r.priority_band==="P0-NOW"?"now":""}
+  const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const repoUrl=(name)=>REPO_BASE+encodeURIComponent(name);
+  const byScore=(a,b)=>b.priority_score-a.priority_score||a.name.localeCompare(b.name);
+  const byRecent=(a,b)=>String(b.last_commit_date||"").localeCompare(String(a.last_commit_date||""))||byScore(a,b);
+  const date=v=>new Date(v+"T00:00:00Z");
+  function ageDays(v){if(!v||!data?.snapshot_date)return null;return Math.max(0,Math.round((date(data.snapshot_date)-date(v))/86400000))}
+  function age(v){const d=ageDays(v);if(d===null)return"—";if(d===0)return"today";if(d===1)return"1d ago";if(d<30)return d+"d ago";if(d<365)return Math.round(d/30)+"mo ago";return(d/365).toFixed(1)+"y ago"}
+  function workstreamOf(name){
+    for(const [key,val] of Object.entries(WORKSTREAMS))if(val.repos.includes(name))return key;
+    return "Skills";
+  }
+  function workstreamColor(name){return WORKSTREAMS[workstreamOf(name)]?.color||"#77808d"}
 
-  function setTheme(next){
-    const style=document.createElement("style");
-    style.textContent="*,*::before,*::after{transition:none!important}";
-    document.head.appendChild(style);
-    document.documentElement.dataset.theme=next;
-    localStorage.setItem("repo-studio-theme",next);
+  function setTheme(theme){
+    const guard=document.createElement("style");guard.textContent="*,*::before,*::after{transition:none!important}";
+    document.head.appendChild(guard);
+    document.documentElement.dataset.theme=theme;
+    localStorage.setItem("repo-workspace-theme",theme);
     void document.documentElement.offsetHeight;
-    requestAnimationFrame(()=>style.remove());
+    requestAnimationFrame(()=>guard.remove());
   }
   function initTheme(){
-    const saved=localStorage.getItem("repo-studio-theme");
+    const saved=localStorage.getItem("repo-workspace-theme");
     const light=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches;
-    setTheme(saved || (light?"light":"dark"));
+    setTheme(saved||(light?"light":"dark"));
   }
 
-  function renderHero(repos){
-    const active=repos.filter(r=>r.work_status==="CONTINUE").sort(byScore);
-    const top=active[0];
-    $("snapshot").textContent="PUBLIC PORTFOLIO · "+(state.snapshot_date||"");
-    $("heroScore").textContent=top?.priority_score ?? "—";
-    $("heroName").textContent=top?.name ?? "—";
+  function renderSummary(repos){
+    const active=repos.filter(r=>r.work_status==="CONTINUE");
     $("repoCount").textContent=repos.length;
     $("nowCount").textContent=repos.filter(r=>r.priority_band==="P0-NOW").length;
     $("continueCount").textContent=active.length;
     $("stopCount").textContent=repos.filter(r=>r.work_status==="STOP").length;
-    $("avgScore").textContent=active.length?Math.round(active.reduce((n,r)=>n+r.priority_score,0)/active.length):0;
+    $("avgScore").textContent=active.length?Math.round(active.reduce((s,r)=>s+r.priority_score,0)/active.length):0;
+    $("allNavCount").textContent=repos.length;
+    $("focusNavCount").textContent=repos.filter(r=>r.priority_score>=70&&r.work_status==="CONTINUE").length;
+    $("laterNavCount").textContent=repos.filter(r=>["P2-PLANNED","P3-LATER","P4-LOW"].includes(r.priority_band)).length;
+    $("stopNavCount").textContent=repos.filter(r=>r.work_status==="STOP").length;
+    $("snapshotDate").textContent="Snapshot · "+(data.snapshot_date||"");
   }
 
-  function spotlightCard(r,i){
-    const c=category(r);
-    return `<a class="spotlight-card" style="--category-color:var(--${CATEGORY_META[c].color})" href="${repoUrl(r)}" target="_blank" rel="noreferrer">
-      <div class="spotlight-top"><span class="spotlight-index">FOCUS 0${i+1}</span><span class="spotlight-score">${r.priority_score}</span></div>
-      <h3>${esc(r.name)}</h3><p>${esc(r.reason||"暂无备注")}</p>
-      <div class="spotlight-footer"><span class="category-pill">${esc(c)}</span><span class="spotlight-link">打开仓库 ↗</span></div>
+  function repoRow(r){
+    const band=BANDS[r.priority_band]||BANDS.STOP;
+    const ws=workstreamOf(r.name);
+    return `<a class="repo-row" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
+      <span class="priority-cell">
+        <i class="priority-mark" style="--priority-color:${band.color}"></i>
+        <span class="score">${r.priority_score}</span>
+      </span>
+      <span class="repo-main">
+        <span class="repo-name">${esc(r.name)}</span>
+        <span class="repo-note">${esc(r.reason||"No note")}</span>
+      </span>
+      <span class="workstream"><i class="dot" style="--workstream-color:${workstreamColor(r.name)}"></i>${esc(ws)}</span>
+      <span class="commit-age">${esc(age(r.last_commit_date))}</span>
+      <span class="row-arrow">›</span>
     </a>`;
   }
-  function renderSpotlight(repos){
-    $("spotlight").innerHTML=repos.filter(r=>r.work_status==="CONTINUE").sort(byScore).slice(0,3).map(spotlightCard).join("");
+
+  function renderFocus(repos){
+    const focus=repos.filter(r=>r.work_status==="CONTINUE").sort(byScore).slice(0,8);
+    $("focusList").innerHTML=focus.map(repoRow).join("");
+    $("focusCountText").textContent=focus.length+" repositories";
   }
 
-  function renderCategories(repos){
-    const categories=Object.keys(CATEGORY_META);
-    $("categoryGrid").innerHTML=categories.map(c=>{
-      const items=repos.filter(r=>category(r)===c);
-      const active=items.filter(r=>r.work_status==="CONTINUE").length;
-      return `<button class="category-card" data-category="${esc(c)}" type="button">
-        <span class="category-icon" aria-hidden="true">${CATEGORY_META[c].icon}</span>
-        <strong>${esc(c)}</strong><span>${items.length} 个仓库 · ${active} 个继续</span>
+  function renderSignals(repos){
+    const items=repos
+      .filter(r=>r.work_status==="CONTINUE")
+      .map(r=>({...r,_age:ageDays(r.last_commit_date)||0}))
+      .filter(r=>(r.priority_score>=70&&r._age>=30)||(r.priority_score>=50&&r._age>=90))
+      .sort((a,b)=>b.priority_score-a.priority_score||b._age-a._age)
+      .slice(0,5);
+    $("signalsList").innerHTML=items.length?items.map(r=>`<div class="signal">
+      <div class="signal-top"><strong>${esc(r.name)}</strong><span class="signal-score">${r.priority_score}</span></div>
+      <p>High priority · last commit ${esc(age(r.last_commit_date))}</p>
+    </div>`).join(""):'<div class="signal"><strong>No stale high-priority work</strong><p>Priority and recent activity currently align.</p></div>';
+  }
+
+  function renderDistribution(repos){
+    const order=["P0-NOW","P1-NEXT","P2-PLANNED","P3-LATER","P4-LOW","STOP"];
+    const max=Math.max(1,...order.map(k=>repos.filter(r=>r.priority_band===k).length));
+    $("distribution").innerHTML=order.map(k=>{
+      const count=repos.filter(r=>r.priority_band===k).length;
+      return `<div class="dist-row"><span class="dist-label">${BANDS[k].label} · ${BANDS[k].name}</span><span class="dist-track"><i class="dist-bar" style="width:${Math.max(4,count/max*100)}%;background:${BANDS[k].color}"></i></span><span class="dist-count">${count}</span></div>`;
+    }).join("");
+  }
+
+  function renderWorkstreamNav(repos){
+    $("workstreamNav").innerHTML=Object.entries(WORKSTREAMS).map(([name,meta])=>{
+      const count=repos.filter(r=>workstreamOf(r.name)===name).length;
+      return `<button class="workstream-button" type="button" data-workstream="${esc(name)}">
+        <i class="workstream-dot" style="--dot:${meta.color}"></i><span>${esc(name)}</span><span class="workstream-count">${count}</span>
       </button>`;
     }).join("");
-    const select=$("categoryFilter");
-    select.innerHTML='<option value="all">全部类型</option>'+categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
-    document.querySelectorAll(".category-card").forEach(btn=>btn.addEventListener("click",()=>{
-      select.value=btn.dataset.category;
-      $("repos").scrollIntoView({behavior:"smooth"});
-      renderRepos();
+    $("workstreamFilter").innerHTML='<option value="all">All workstreams</option>'+Object.keys(WORKSTREAMS).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");
+    document.querySelectorAll(".workstream-button").forEach(btn=>btn.addEventListener("click",()=>{
+      selectedWorkstream=btn.dataset.workstream;
+      $("workstreamFilter").value=selectedWorkstream;
+      switchView("all");
+      renderPortfolio();
     }));
   }
 
-  function renderPriorityMap(repos){
-    $("priorityMap").innerHTML=ORDER.map(b=>{
-      const items=repos.filter(r=>r.priority_band===b).sort(byScore);
-      return `<div class="priority-row">
-        <div class="priority-label"><strong>${esc(BAND[b])}</strong><span>${esc(BAND_DESC[b])}</span></div>
-        <div class="priority-track">${items.map(r=>`<a class="priority-chip" href="${repoUrl(r)}" target="_blank" rel="noreferrer"><b>${r.priority_score}</b>${esc(r.name)}</a>`).join("")||'<span class="priority-chip">暂无项目</span>'}</div>
-        <span class="priority-count">${items.length}</span>
-      </div>`;
-    }).join("");
+  function viewBaseRows(){
+    const repos=data.repositories||[];
+    if(currentView==="later")return repos.filter(r=>["P2-PLANNED","P3-LATER","P4-LOW"].includes(r.priority_band));
+    if(currentView==="stopped")return repos.filter(r=>r.work_status==="STOP");
+    return repos;
   }
 
-  function renderAttention(repos){
-    const items=repos.filter(r=>r.work_status==="CONTINUE").map(r=>({...r,_age:ageDays(r.last_commit_date)||0}))
-      .filter(r=>(r.priority_score>=70&&r._age>=30)||(r.priority_score>=50&&r._age>=90)).sort((a,b)=>b.priority_score-a.priority_score||b._age-a._age).slice(0,6);
-    $("attention").innerHTML=items.length?items.map(r=>`<article class="attention-card">
-      <header><strong>${esc(r.name)}</strong><span class="attention-score">${r.priority_score} pts</span></header>
-      <p>${esc(r.reason||"暂无备注")}</p><div class="attention-meta">${esc(category(r))} · 最近提交 ${esc(ageText(r.last_commit_date))}</div>
-    </article>`).join(""):'<article class="attention-card"><strong>目前没有明显积压。</strong><p>高优先级项目的提交节奏与计划基本一致。</p></article>';
-  }
-
-  function filtered(){
-    const q=$("searchInput").value.trim().toLowerCase(),c=$("categoryFilter").value,p=$("priorityFilter").value,s=$("sortFilter").value;
-    let rows=state.repositories.filter(r=>{
-      const hay=(r.name+" "+(r.reason||"")+" "+category(r)).toLowerCase();
-      return (!q||hay.includes(q))&&(c==="all"||category(r)===c)&&(p==="all"||r.priority_band===p);
+  function portfolioRows(){
+    const q=$("searchInput").value.trim().toLowerCase();
+    const priority=$("priorityFilter").value;
+    const sort=$("sortFilter").value;
+    const ws=$("workstreamFilter").value;
+    let rows=viewBaseRows().filter(r=>{
+      const hay=(r.name+" "+(r.reason||"")+" "+workstreamOf(r.name)).toLowerCase();
+      return (!q||hay.includes(q))
+        &&(statusFilter==="all"||r.work_status===statusFilter)
+        &&(priority==="all"||r.priority_band===priority)
+        &&(ws==="all"||workstreamOf(r.name)===ws);
     });
-    if(s==="recent")rows.sort(byRecent);else if(s==="name")rows.sort((a,b)=>a.name.localeCompare(b.name));else rows.sort(byScore);
+    if(sort==="recent")rows.sort(byRecent);
+    else if(sort==="name")rows.sort((a,b)=>a.name.localeCompare(b.name));
+    else rows.sort(byScore);
     return rows;
   }
 
-  function card(r){
-    const c=category(r);
-    return `<article class="repo-card" data-category="${esc(c)}">
-      <div class="repo-top"><span class="repo-score">${r.priority_score}</span><span class="repo-category">${esc(c)}</span></div>
-      <h3>${esc(r.name)}</h3><p>${esc(r.reason||"暂无备注")}</p>
-      <div class="repo-meta"><span class="tag ${tagClass(r)}">${esc(BAND[r.priority_band])}</span><span class="tag">${esc(ageText(r.last_commit_date))}</span></div>
-      <div class="repo-actions"><a href="${repoUrl(r)}" target="_blank" rel="noreferrer">Code ↗</a><a href="${repoUrl(r,"/issues")}" target="_blank" rel="noreferrer">Issues</a><a href="${repoUrl(r,"/actions")}" target="_blank" rel="noreferrer">Actions</a></div>
-    </article>`;
-  }
-  function renderRepos(){
-    const rows=filtered();
-    $("repoCards").innerHTML=rows.map(card).join("");
-    $("repoRows").innerHTML=rows.map(r=>`<tr>
-      <td class="table-score">${r.priority_score}</td><td><a class="table-repo" href="${repoUrl(r)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a></td>
-      <td>${esc(category(r))}</td><td>${esc(BAND[r.priority_band])}</td><td class="table-note">${esc(r.reason||"—")}</td><td>${esc(r.last_commit_date||"—")} · ${esc(ageText(r.last_commit_date))}</td>
-    </tr>`).join("");
-    $("resultCount").textContent="显示 "+rows.length+" / "+state.repositories.length+" 个公开仓库";
+  function renderPortfolio(){
+    if(!data)return;
+    const rows=portfolioRows();
+    $("portfolioList").innerHTML=rows.map(repoRow).join("");
+    $("resultCount").textContent=rows.length+" / "+viewBaseRows().length+" repositories";
   }
 
-  function setView(next){
-    view=next;const cards=next==="cards";
-    $("repoCards").classList.toggle("hidden",!cards);$("repoTableWrap").classList.toggle("hidden",cards);
-    $("cardView").classList.toggle("active",cards);$("tableView").classList.toggle("active",!cards);
-    $("cardView").setAttribute("aria-pressed",String(cards));$("tableView").setAttribute("aria-pressed",String(!cards));
+  function switchView(view){
+    currentView=view;
+    document.querySelectorAll(".nav-item").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.view===view));
+    $("currentViewLabel").textContent=VIEWS[view].title;
+    $("viewTitle").textContent=VIEWS[view].title;
+    $("viewDescription").textContent=VIEWS[view].desc;
+    const focus=view==="focus";
+    $("focusLayout").classList.toggle("hidden",!focus);
+    $("portfolioPanel").classList.toggle("hidden",focus);
+    if(!focus)renderPortfolio();
+  }
+
+  function wire(){
+    document.querySelectorAll(".nav-item").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.view)));
+    document.querySelectorAll(".segmented button").forEach(btn=>btn.addEventListener("click",()=>{
+      statusFilter=btn.dataset.status;
+      document.querySelectorAll(".segmented button").forEach(b=>b.classList.toggle("is-active",b===btn));
+      renderPortfolio();
+    }));
+    ["searchInput","workstreamFilter","priorityFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",renderPortfolio));
+    $("clearFilters").addEventListener("click",()=>{
+      $("searchInput").value="";$("workstreamFilter").value="all";$("priorityFilter").value="all";$("sortFilter").value="priority";
+      statusFilter="all";
+      document.querySelectorAll(".segmented button").forEach((b,i)=>b.classList.toggle("is-active",i===0));
+      renderPortfolio();
+    });
+    $("themeToggle").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
   }
 
   async function load(){
-    initTheme();
+    initTheme();wire();
     try{
-      const res=await fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"});if(!res.ok)throw new Error("HTTP "+res.status);
-      state=await res.json();
-      if(state.repositories.some(r=>r.visibility!=="public"))throw new Error("公开数据源包含非 public 项目");
-      renderHero(state.repositories);renderSpotlight(state.repositories);renderCategories(state.repositories);renderPriorityMap(state.repositories);renderAttention(state.repositories);renderRepos();
-      $("loadState").remove();
-    }catch(e){$("loadState").textContent="载入失败："+e.message;$("loadState").style.color="var(--danger)"}
+      const res=await fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"});
+      if(!res.ok)throw new Error("HTTP "+res.status);
+      data=await res.json();
+      if((data.repositories||[]).some(r=>r.visibility!=="public"))throw new Error("Public registry contains non-public repositories");
+      renderSummary(data.repositories);renderFocus(data.repositories);renderSignals(data.repositories);renderDistribution(data.repositories);renderWorkstreamNav(data.repositories);
+      $("loading").remove();
+    }catch(err){
+      $("loading").textContent="Could not load portfolio: "+err.message;
+      $("loading").style.color="var(--red)";
+    }
   }
 
-  ["searchInput","categoryFilter","priorityFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",renderRepos));
-  $("clearFilters").addEventListener("click",()=>{$("searchInput").value="";$("categoryFilter").value="all";$("priorityFilter").value="all";$("sortFilter").value="priority";renderRepos()});
-  $("cardView").addEventListener("click",()=>setView("cards"));$("tableView").addEventListener("click",()=>setView("table"));
-  $("themeToggle").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
-  $("searchJump").addEventListener("click",()=>{$("repos").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("searchInput").focus(),250)});
   load();
 })();
