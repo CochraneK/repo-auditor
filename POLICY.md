@@ -1,56 +1,59 @@
 # GitHub 总控规则
 
-## 1. Visibility
+## Public / Private 分层
 
-只记录 GitHub 当前真实状态：
+### Public layer
 
-- `public`
-- `private`
+本公开仓库只允许保存：
 
-总控不会自动修改仓库可见性。
+- Public 仓库名称；
+- Public 仓库的工作状态；
+- Public 仓库的优先级；
+- 适合公开的管理备注。
 
-## 2. Work status
+禁止把 Private 仓库名称、备注或其他 Private 总控元数据写入：
 
-只有两个状态：
+- `portfolio/registry.json`
+- `PORTFOLIO.md`
+- `docs/` GitHub Pages 资源
+
+### Private layer
+
+Private 项目必须在公开仓库之外管理。当前通过授权的 GitHub 连接按需读取；未来建议迁移到独立 private 管理仓库。
+
+## Work status
 
 - `CONTINUE` — 未来还会继续投入
 - `STOP` — 当前不用继续做
 
-`STOP` 不等于 Archive，也不等于 Delete。以后想恢复，只需改回 `CONTINUE` 并重新评分。
+`STOP` 不等于 Archive，也不等于 Delete。
 
-## 3. Priority score
+## Priority score
 
-优先级为 0–100 分，衡量的是：
+优先级为 0–100，衡量“现在该不该花时间”，参考：
 
-> **现在该不该把时间花在这个仓库上。**
-
-不是代码质量、项目成熟度或长期价值评分。
-
-评分参考四个因素：
-
-- **当前紧迫性**：这几天 / 下周 / 本月是否有明确窗口；
-- **战略或工作价值**：是否是主打项目、研究主线或工作刚需；
-- **下一步明确度**：是否清楚下一步要做什么；
-- **近期时间窗口**：是否存在测试、上线、月底节点等具体时点。
+- 当前紧迫性
+- 战略或工作价值
+- 下一步明确度
+- 近期时间窗口
 
 ### 分档
 
-- `90–100` — P0 NOW：当前或下周明确要做
-- `70–89` — P1 NEXT：本月应推进
-- `50–69` — P2 PLANNED：已计划，但不是当前主线
-- `20–49` — P3 LATER：后续再做
-- `1–19` — P4 LOW：极低优先级保留
+- `90–100` — P0 NOW
+- `70–89` — P1 NEXT
+- `50–69` — P2 PLANNED
+- `20–49` — P3 LATER
+- `1–19` — P4 LOW
 - `0` — STOP
 
-## 4. 一致性规则
+## 自动校验
 
+公开 registry 必须满足：
+
+- 每个项目 `visibility = public`；
 - `STOP` 必须为 0 分；
 - `CONTINUE` 必须大于 0 分；
-- 分数变化不触发任何仓库操作；
-- 删除、改 visibility 等高影响动作必须单独执行，不能由总控分数自动触发。
+- 分数与 priority band 一致；
+- 不出现重复仓库。
 
-## 5. 当前语义
-
-“成熟、现在不需要动”的项目可以是 `STOP`；这不表示项目失败，只表示**当前没有待办**。
-
-“以后还要改，但暂时不做”的项目保持 `CONTINUE`，用较低分数表达时间优先级。
+任何删除、改 visibility、归档等高影响操作都必须单独执行。

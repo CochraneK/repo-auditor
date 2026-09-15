@@ -10,7 +10,7 @@
     "STOP": "STOP"
   };
 
-  const $ = (id) => document.getElementById(id);
+  const $ = id => document.getElementById(id);
   let data = null;
 
   function esc(value = "") {
@@ -22,11 +22,6 @@
       .replaceAll("'", "&#039;");
   }
 
-  function formatDate(value) {
-    if (!value) return "—";
-    return value;
-  }
-
   function setTheme(theme) {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("repo-auditor-theme", theme);
@@ -35,12 +30,14 @@
   function initTheme() {
     const saved = localStorage.getItem("repo-auditor-theme");
     if (saved) return setTheme(saved);
-    const dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setTheme(dark ? "dark" : "light");
+    setTheme(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   }
 
-  function scoreSort(a, b) {
-    return (b.priority_score - a.priority_score) || a.name.localeCompare(b.name);
+  const scoreSort = (a,b) => (b.priority_score - a.priority_score) || a.name.localeCompare(b.name);
+
+  function assertPublicOnly(repos) {
+    const leaked = repos.filter(r => r.visibility !== "public");
+    if (leaked.length) throw new Error("Public registry contains non-public repository records.");
   }
 
   function renderSummary(repos) {
@@ -48,21 +45,19 @@
     $("nowCount").textContent = repos.filter(r => r.priority_band === "P0-NOW").length;
     $("continueCount").textContent = repos.filter(r => r.work_status === "CONTINUE").length;
     $("stopCount").textContent = repos.filter(r => r.work_status === "STOP").length;
-    $("publicCount").textContent = repos.filter(r => r.visibility === "public").length;
-    $("privateCount").textContent = repos.filter(r => r.visibility === "private").length;
     $("snapshot").textContent = `Snapshot · ${data.snapshot_date || "—"}`;
   }
 
   function renderFocus(repos) {
-    const focus = repos.filter(r => r.work_status === "CONTINUE").sort(scoreSort).slice(0, 8);
-    $("focusGrid").innerHTML = focus.map((r, i) => `
+    const focus = repos.filter(r => r.work_status === "CONTINUE").sort(scoreSort).slice(0,8);
+    $("focusGrid").innerHTML = focus.map((r,i) => `
       <a class="focus-card" href="${REPO_BASE}${encodeURIComponent(r.name)}" target="_blank" rel="noreferrer">
-        <span class="focus-rank">#${i + 1}</span>
+        <span class="focus-rank">#${i+1}</span>
         <div class="focus-score">${r.priority_score}</div>
         <div class="focus-name">${esc(r.name)}</div>
         <p class="focus-reason">${esc(r.reason || "暂无备注")}</p>
         <div class="badges">
-          <span class="badge ${r.visibility}">${esc(r.visibility)}</span>
+          <span class="badge public">public</span>
           <span class="badge">${esc(BAND_LABELS[r.priority_band] || r.priority_band)}</span>
         </div>
       </a>
@@ -70,10 +65,9 @@
   }
 
   function laneHtml(title, key, repos) {
-    const items = repos.filter(r => {
-      if (key === "LATER") return ["P2-PLANNED", "P3-LATER", "P4-LOW"].includes(r.priority_band);
-      return r.priority_band === key;
-    }).sort(scoreSort);
+    const items = repos.filter(r => key === "LATER"
+      ? ["P2-PLANNED","P3-LATER","P4-LOW"].includes(r.priority_band)
+      : r.priority_band === key).sort(scoreSort);
 
     return `
       <article class="lane">
@@ -83,7 +77,7 @@
             <span class="lane-score">${r.priority_score}</span>
             <span>
               <span class="lane-name">${esc(r.name)}</span>
-              <span class="lane-sub">${esc(r.visibility)} · ${esc(BAND_LABELS[r.priority_band] || r.priority_band)}</span>
+              <span class="lane-sub">public · ${esc(BAND_LABELS[r.priority_band] || r.priority_band)}</span>
             </span>
           </a>
         `).join("") : '<p class="muted">暂无项目</p>'}
@@ -93,10 +87,10 @@
 
   function renderLanes(repos) {
     $("lanes").innerHTML = [
-      laneHtml("🔥 NOW", "P0-NOW", repos),
-      laneHtml("⏭ NEXT", "P1-NEXT", repos),
-      laneHtml("🗓 LATER", "LATER", repos),
-      laneHtml("✓ DON’T TOUCH", "STOP", repos)
+      laneHtml("🔥 NOW","P0-NOW",repos),
+      laneHtml("⏭ NEXT","P1-NEXT",repos),
+      laneHtml("🗓 LATER","LATER",repos),
+      laneHtml("✓ DON’T TOUCH","STOP",repos)
     ].join("");
   }
 
@@ -104,14 +98,12 @@
     const repos = data.repositories || [];
     const q = $("searchInput").value.trim().toLowerCase();
     const status = $("statusFilter").value;
-    const visibility = $("visibilityFilter").value;
     const priority = $("priorityFilter").value;
 
     const filtered = repos.filter(r => {
       const haystack = `${r.name} ${r.reason || ""}`.toLowerCase();
       if (q && !haystack.includes(q)) return false;
       if (status !== "all" && r.work_status !== status) return false;
-      if (visibility !== "all" && r.visibility !== visibility) return false;
       if (priority !== "all" && r.priority_band !== priority) return false;
       return true;
     }).sort(scoreSort);
@@ -120,23 +112,22 @@
       <tr>
         <td class="score-cell">${r.priority_score}</td>
         <td><a class="repo-link" href="${REPO_BASE}${encodeURIComponent(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a></td>
-        <td><span class="badge ${r.visibility}">${esc(r.visibility)}</span></td>
         <td><span class="status ${r.work_status === "STOP" ? "stop" : "continue"}">${esc(r.work_status)}</span><div class="lane-sub">${esc(BAND_LABELS[r.priority_band] || r.priority_band)}</div></td>
         <td class="reason">${esc(r.reason || "—")}</td>
-        <td>${esc(formatDate(r.last_commit_date))}</td>
+        <td>${esc(r.last_commit_date || "—")}</td>
       </tr>
     `).join("");
-
-    $("resultCount").textContent = `显示 ${filtered.length} / ${repos.length} 个项目`;
+    $("resultCount").textContent = `显示 ${filtered.length} / ${repos.length} 个公开项目`;
   }
 
   async function load() {
     initTheme();
     try {
-      const response = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
+      const response = await fetch(`${DATA_URL}?t=${Date.now()}`, {cache:"no-store"});
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       data = await response.json();
       const repos = data.repositories || [];
+      assertPublicOnly(repos);
       renderSummary(repos);
       renderFocus(repos);
       renderLanes(repos);
@@ -146,17 +137,16 @@
     } catch (error) {
       $("loading").classList.add("hidden");
       $("error").classList.remove("hidden");
-      $("error").innerHTML = `工作台暂时无法读取总控数据。<br><small>${esc(error.message)}</small>`;
+      $("error").innerHTML = `工作台暂时无法读取公开总控数据。<br><small>${esc(error.message)}</small>`;
     }
   }
 
-  ["searchInput", "statusFilter", "visibilityFilter", "priorityFilter"].forEach(id => {
+  ["searchInput","statusFilter","priorityFilter"].forEach(id => {
     $(id).addEventListener(id === "searchInput" ? "input" : "change", renderTable);
   });
 
   $("themeToggle").addEventListener("click", () => {
-    const current = document.documentElement.dataset.theme || "light";
-    setTheme(current === "dark" ? "light" : "dark");
+    setTheme((document.documentElement.dataset.theme || "light") === "dark" ? "light" : "dark");
   });
 
   load();

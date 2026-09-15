@@ -1,11 +1,17 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "owner": "CochraneK",
   "snapshot_date": "2026-09-15",
+  "scope": "public-workbench",
+  "privacy": {
+    "public_repositories_only": true,
+    "private_repository_names_included": false,
+    "private_repository_notes_included": false,
+    "private_workspace": "managed separately from this public repository"
+  },
   "model": {
     "visibility_values": [
-      "public",
-      "private"
+      "public"
     ],
     "work_status_values": [
       "CONTINUE",
@@ -28,24 +34,6 @@
     "no_automatic_repository_actions": true
   },
   "repositories": [
-    {
-      "name": "academia-uni",
-      "visibility": "private",
-      "work_status": "CONTINUE",
-      "priority_score": 32,
-      "priority_band": "P3-LATER",
-      "reason": "保留继续；目前不打算写小说，低优先级等待重新进入创作期。",
-      "last_commit_date": "2026-09-13"
-    },
-    {
-      "name": "AI-persona",
-      "visibility": "private",
-      "work_status": "CONTINUE",
-      "priority_score": 65,
-      "priority_band": "P2-PLANNED",
-      "reason": "计划系统建设，但这几天暂不投入；战略价值高于时间紧迫度。",
-      "last_commit_date": "2026-09-13"
-    },
     {
       "name": "AI-Ques",
       "visibility": "public",
@@ -101,15 +89,6 @@
       "last_commit_date": "2026-09-13"
     },
     {
-      "name": "charity-intelligence",
-      "visibility": "private",
-      "work_status": "CONTINUE",
-      "priority_score": 80,
-      "priority_band": "P1-NEXT",
-      "reason": "希望作为主打项目；当前暂放，但战略优先级很高。",
-      "last_commit_date": "2026-09-13"
-    },
-    {
       "name": "cris",
       "visibility": "public",
       "work_status": "STOP",
@@ -117,42 +96,6 @@
       "priority_band": "STOP",
       "reason": "当前已经比较成熟，先不动。",
       "last_commit_date": "2026-09-14"
-    },
-    {
-      "name": "CunyiKang_Web",
-      "visibility": "private",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "个人网站已较成熟，当前无明确开发任务。",
-      "last_commit_date": "2026-03-04"
-    },
-    {
-      "name": "DingLab",
-      "visibility": "private",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "已完善，当前不再投入。",
-      "last_commit_date": "2024-03-11"
-    },
-    {
-      "name": "DingWeb",
-      "visibility": "private",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "已完善，当前不再投入。",
-      "last_commit_date": "2023-05-09"
-    },
-    {
-      "name": "dongassi",
-      "visibility": "private",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "已完善，当前不再投入。",
-      "last_commit_date": "2026-01-14"
     },
     {
       "name": "dsh-gate-game-plugin",
@@ -250,17 +193,8 @@
       "work_status": "CONTINUE",
       "priority_score": 30,
       "priority_band": "P3-LATER",
-      "reason": "暂留；未来考虑与 yihot 一并整合进 charity-intelligence。",
+      "reason": "暂留；未来考虑与 yihot 一并整合到统一公益情报主系统。",
       "last_commit_date": "2026-04-12"
-    },
-    {
-      "name": "novel-white-corridor",
-      "visibility": "private",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "作品已发布，当前不再投入修改。",
-      "last_commit_date": "2026-08-31"
     },
     {
       "name": "persona-test",
@@ -394,7 +328,7 @@
       "work_status": "CONTINUE",
       "priority_score": 30,
       "priority_band": "P3-LATER",
-      "reason": "暂留；未来考虑与 NewsMail 一并整合进 charity-intelligence。",
+      "reason": "暂留；未来考虑与 NewsMail 一并整合到统一公益情报主系统。",
       "last_commit_date": "2026-09-15"
     }
   ]

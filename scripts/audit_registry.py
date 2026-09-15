@@ -7,7 +7,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "portfolio" / "registry.json"
 
-VISIBILITY = {"public", "private"}
 STATUS = {"CONTINUE", "STOP"}
 BANDS = {"P0-NOW", "P1-NEXT", "P2-PLANNED", "P3-LATER", "P4-LOW", "STOP"}
 REQUIRED = {
@@ -33,6 +32,9 @@ def main():
     repos = data.get("repositories", [])
     errors = []
 
+    if data.get("scope") != "public-workbench":
+        errors.append("registry scope must be public-workbench")
+
     names = [r.get("name") for r in repos]
     dupes = sorted(n for n, c in Counter(names).items() if c > 1)
     if dupes:
@@ -49,8 +51,8 @@ def main():
         score = repo["priority_score"]
         band = repo["priority_band"]
 
-        if repo["visibility"] not in VISIBILITY:
-            errors.append(f"{name}: invalid visibility {repo['visibility']}")
+        if repo["visibility"] != "public":
+            errors.append(f"{name}: PUBLIC registry must not contain non-public repositories")
         if status not in STATUS:
             errors.append(f"{name}: invalid work_status {status}")
         if not isinstance(score, int) or not 0 <= score <= 100:
@@ -72,27 +74,15 @@ def main():
             print(f"ERROR: {err}", file=sys.stderr)
         return 1
 
-    v = Counter(r["visibility"] for r in repos)
     s = Counter(r["work_status"] for r in repos)
     b = Counter(r["priority_band"] for r in repos)
-
-    print(f"Portfolio OK: {len(repos)} repositories")
-    print(f"Visibility: public={v['public']} private={v['private']}")
+    print(f"Public portfolio OK: {len(repos)} repositories")
     print(f"Work status: CONTINUE={s['CONTINUE']} STOP={s['STOP']}")
     print(
         "Priority: "
         f"P0={b['P0-NOW']} P1={b['P1-NEXT']} P2={b['P2-PLANNED']} "
         f"P3={b['P3-LATER']} P4={b['P4-LOW']} STOP={b['STOP']}"
     )
-
-    print("Top priorities:")
-    active = sorted(
-        (r for r in repos if r["work_status"] == "CONTINUE"),
-        key=lambda r: (-r["priority_score"], r["name"].lower()),
-    )
-    for repo in active[:10]:
-        print(f"  {repo['priority_score']:3}  {repo['name']}")
-
     return 0
 
 if __name__ == "__main__":
