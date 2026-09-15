@@ -4,258 +4,187 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#0b1020">
-  <meta name="description" content="CochraneK Public GitHub Repository Control Center">
-  <title>Repository Control Center · CochraneK</title>
+  <meta name="theme-color" content="#0b0d12">
+  <meta name="description" content="CochraneK public repository workspace">
+  <title>Repo Studio · CochraneK</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark">CK</div>
-        <div>
-          <strong>Repo Control</strong>
-          <span>Public Workspace</span>
-        </div>
-      </div>
+  <a class="skip-link" href="#main">跳到主要内容</a>
 
-      <nav class="nav">
-        <a href="#overview" class="nav-item active" data-section="overview"><span>⌂</span>总览</a>
-        <a href="#focus" class="nav-item" data-section="focus"><span>◎</span>当前主线</a>
-        <a href="#attention" class="nav-item" data-section="attention"><span>!</span>需要关注</a>
-        <a href="#board" class="nav-item" data-section="board"><span>▦</span>优先级看板</a>
-        <a href="#repositories" class="nav-item" data-section="repositories"><span>◫</span>全部仓库</a>
-      </nav>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Repo Studio 首页">
+      <span class="brand-mark">CK</span>
+      <span class="brand-copy"><strong>Repo Studio</strong><small>public workspace</small></span>
+    </a>
 
-      <div class="sidebar-spacer"></div>
+    <nav class="top-nav" aria-label="页面导航">
+      <a href="#focus">主线</a>
+      <a href="#map">优先级</a>
+      <a href="#repos">全部仓库</a>
+    </nav>
 
-      <div class="privacy-note">
-        <div class="privacy-icon">◉</div>
-        <div>
-          <strong>Public only</strong>
-          <p>Private 仓库不会加载到这个页面。</p>
-        </div>
-      </div>
-
-      <div class="sidebar-links">
-        <a href="https://github.com/CochraneK" target="_blank" rel="noreferrer">GitHub Profile ↗</a>
-        <a href="https://github.com/CochraneK/repo-auditor" target="_blank" rel="noreferrer">Control Repo ↗</a>
-      </div>
-    </aside>
-
-    <div class="main-shell">
-      <header class="topbar">
-        <button id="sidebarToggle" class="icon-button mobile-only" aria-label="打开导航">☰</button>
-        <div class="topbar-title">
-          <span class="status-dot"></span>
-          <span>Public Repository Control Center</span>
-        </div>
-        <div class="topbar-actions">
-          <button id="commandButton" class="command-button" title="搜索项目">
-            <span>⌕</span><span>搜索项目</span><kbd>/</kbd>
-          </button>
-          <button id="themeToggle" class="icon-button" type="button" aria-label="切换主题">◐</button>
-          <a class="icon-button" href="https://github.com/CochraneK/repo-auditor/edit/main/portfolio/registry.json" target="_blank" rel="noreferrer" title="编辑公开总控">✎</a>
-        </div>
-      </header>
-
-      <main>
-        <section id="loading" class="loading-card">
-          <span class="spinner"></span>
-          <span>正在读取公开项目总控…</span>
-        </section>
-        <section id="error" class="error-card hidden"></section>
-
-        <div id="app" class="hidden">
-          <section id="overview" class="page-section hero-section">
-            <div class="hero">
-              <div class="hero-copy">
-                <div class="hero-kicker">
-                  <span class="live-pill">LIVE</span>
-                  <span id="snapshotText">Portfolio snapshot</span>
-                </div>
-                <h1>把 33 个公开仓库，<br><span>变成一张可行动的地图。</span></h1>
-                <p>不评价项目“好不好”，只回答三个问题：现在要不要做、优先级多高、下一步该看哪里。</p>
-                <div class="hero-actions">
-                  <a href="#focus" class="button primary">查看当前主线 ↓</a>
-                  <a href="#repositories" class="button secondary">浏览全部仓库</a>
-                </div>
-              </div>
-              <div class="hero-focus" id="heroFocus"></div>
-            </div>
-
-            <div class="metrics-grid">
-              <article class="metric-card">
-                <span class="metric-label">PUBLIC REPOS</span>
-                <strong id="totalCount">0</strong>
-                <small>公开仓库总数</small>
-              </article>
-              <article class="metric-card highlight">
-                <span class="metric-label">P0 · NOW</span>
-                <strong id="nowCount">0</strong>
-                <small>当前 / 下周明确要做</small>
-              </article>
-              <article class="metric-card">
-                <span class="metric-label">CONTINUE</span>
-                <strong id="continueCount">0</strong>
-                <small>未来仍会继续投入</small>
-              </article>
-              <article class="metric-card">
-                <span class="metric-label">DON'T TOUCH</span>
-                <strong id="stopCount">0</strong>
-                <small>当前不需要投入</small>
-              </article>
-              <article class="metric-card">
-                <span class="metric-label">AVG PRIORITY</span>
-                <strong id="avgScore">0</strong>
-                <small>CONTINUE 项目平均分</small>
-              </article>
-            </div>
-
-            <div class="overview-grid">
-              <article class="panel">
-                <div class="panel-head">
-                  <div>
-                    <span class="section-kicker">PRIORITY DISTRIBUTION</span>
-                    <h2>优先级分布</h2>
-                  </div>
-                </div>
-                <div id="priorityDistribution" class="distribution"></div>
-              </article>
-              <article class="panel">
-                <div class="panel-head">
-                  <div>
-                    <span class="section-kicker">RECENT ACTIVITY</span>
-                    <h2>最近提交</h2>
-                  </div>
-                </div>
-                <div id="recentActivity" class="recent-list"></div>
-              </article>
-            </div>
-          </section>
-
-          <section id="focus" class="page-section">
-            <div class="section-header">
-              <div>
-                <span class="section-kicker">FOCUS QUEUE</span>
-                <h2>当前主线</h2>
-                <p>只看优先级最高的项目，避免同时被几十个仓库拉扯。</p>
-              </div>
-              <span class="section-note">Top 8 by current priority</span>
-            </div>
-            <div id="focusGrid" class="focus-grid"></div>
-          </section>
-
-          <section id="attention" class="page-section">
-            <div class="section-header">
-              <div>
-                <span class="section-kicker">ATTENTION</span>
-                <h2>需要关注</h2>
-                <p>根据优先级和最近提交时间自动挑出可能“计划很重要，但代码停住了”的项目。</p>
-              </div>
-            </div>
-            <div id="attentionGrid" class="attention-grid"></div>
-          </section>
-
-          <section id="board" class="page-section">
-            <div class="section-header">
-              <div>
-                <span class="section-kicker">PRIORITY BOARD</span>
-                <h2>优先级看板</h2>
-                <p>从 NOW 到 DON'T TOUCH，把所有公开项目放进同一张地图。</p>
-              </div>
-            </div>
-            <div id="priorityBoard" class="priority-board"></div>
-          </section>
-
-          <section id="repositories" class="page-section">
-            <div class="section-header repository-header">
-              <div>
-                <span class="section-kicker">ALL PUBLIC REPOSITORIES</span>
-                <h2>全部公开仓库</h2>
-                <p>搜索、筛选、排序，并从每个仓库卡片直接进入 GitHub / Issues / Actions。</p>
-              </div>
-              <div class="view-switcher" aria-label="切换视图">
-                <button id="cardViewButton" class="view-button active" type="button">▦ 卡片</button>
-                <button id="tableViewButton" class="view-button" type="button">☷ 表格</button>
-              </div>
-            </div>
-
-            <div class="filter-bar">
-              <label class="search-box">
-                <span>⌕</span>
-                <input id="searchInput" type="search" placeholder="搜索仓库名或备注…" autocomplete="off">
-                <kbd>/</kbd>
-              </label>
-              <select id="statusFilter" aria-label="状态筛选">
-                <option value="all">全部状态</option>
-                <option value="CONTINUE">CONTINUE</option>
-                <option value="STOP">DON'T TOUCH</option>
-              </select>
-              <select id="priorityFilter" aria-label="优先级筛选">
-                <option value="all">全部优先级</option>
-                <option value="P0-NOW">P0 · NOW</option>
-                <option value="P1-NEXT">P1 · NEXT</option>
-                <option value="P2-PLANNED">P2 · PLANNED</option>
-                <option value="P3-LATER">P3 · LATER</option>
-                <option value="P4-LOW">P4 · LOW</option>
-                <option value="STOP">DON'T TOUCH</option>
-              </select>
-              <select id="sortFilter" aria-label="排序方式">
-                <option value="priority">按优先级</option>
-                <option value="recent">按最近提交</option>
-                <option value="name">按名称</option>
-              </select>
-            </div>
-
-            <div class="repo-meta-row">
-              <span id="resultCount">显示 0 个项目</span>
-              <button id="clearFilters" class="text-button" type="button">清除筛选</button>
-            </div>
-
-            <div id="repoCards" class="repo-grid"></div>
-
-            <div id="tableWrap" class="table-wrap hidden">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Score</th>
-                    <th>Repository</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Current note</th>
-                    <th>Last commit</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="repoRows"></tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-      </main>
-
-      <footer>
-        <span>repo-auditor · public-only workspace</span>
-        <span>•</span>
-        <span>Data: portfolio/registry.json</span>
-        <span>•</span>
-        <span>STOP is advisory only</span>
-      </footer>
+    <div class="header-actions">
+      <button id="searchJump" class="quiet-button" type="button" aria-label="跳到仓库搜索">⌕ <span>搜索</span></button>
+      <button id="themeToggle" class="icon-button" type="button" aria-label="切换浅色或深色主题">◐</button>
+      <a class="icon-button" href="https://github.com/CochraneK/repo-auditor" target="_blank" rel="noreferrer" aria-label="打开 GitHub 总控仓库">↗</a>
     </div>
-  </div>
+  </header>
 
-  <div id="commandPalette" class="command-overlay hidden" role="dialog" aria-modal="true" aria-label="搜索仓库">
-    <div class="command-panel">
-      <div class="command-search">
-        <span>⌕</span>
-        <input id="commandInput" type="search" placeholder="输入仓库名或备注…" autocomplete="off">
-        <kbd>Esc</kbd>
+  <main id="main">
+    <section id="top" class="hero section-shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span><span id="snapshot">PUBLIC PORTFOLIO</span></p>
+        <h1>把仓库收拢成<br><span>一张行动地图。</span></h1>
+        <p class="hero-lead">不按 Star、代码量或“项目看起来多厉害”排序。这里只回答：<strong>现在该不该花时间。</strong></p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#focus">看现在做什么</a>
+          <a class="secondary-button" href="#repos">浏览 33 个仓库</a>
+        </div>
       </div>
-      <div id="commandResults" class="command-results"></div>
-    </div>
-  </div>
+
+      <div class="hero-visual" aria-label="当前公开项目状态">
+        <div class="radar">
+          <div class="radar-ring ring-a"></div>
+          <div class="radar-ring ring-b"></div>
+          <div class="radar-ring ring-c"></div>
+          <div class="radar-core">
+            <small>CURRENT #1</small>
+            <strong id="heroScore">—</strong>
+            <span id="heroName">载入中</span>
+          </div>
+          <span class="radar-node node-1"></span>
+          <span class="radar-node node-2"></span>
+          <span class="radar-node node-3"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-strip section-shell" aria-label="公开仓库统计">
+      <div><strong id="repoCount">—</strong><span>公开仓库</span></div>
+      <div><strong id="nowCount">—</strong><span>现在 / 下周</span></div>
+      <div><strong id="continueCount">—</strong><span>继续投入</span></div>
+      <div><strong id="stopCount">—</strong><span>当前不碰</span></div>
+      <div><strong id="avgScore">—</strong><span>平均优先级</span></div>
+    </section>
+
+    <section id="focus" class="section-shell content-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SPOTLIGHT</p>
+          <h2>当前主线</h2>
+          <p>前三名放大看。其他项目先退到背景里。</p>
+        </div>
+        <span class="section-side-note">按 priority score 自动排序</span>
+      </div>
+      <div id="spotlight" class="spotlight-grid"></div>
+    </section>
+
+    <section class="section-shell content-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">WORKSTREAMS</p>
+          <h2>项目类型</h2>
+          <p>不是所有仓库都在竞争同一种注意力。</p>
+        </div>
+      </div>
+      <div id="categoryGrid" class="category-grid"></div>
+    </section>
+
+    <section id="map" class="section-shell content-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">PRIORITY MAP</p>
+          <h2>优先级轨道</h2>
+          <p>从 NOW 到 DON'T TOUCH，看清项目堆积在哪一层。</p>
+        </div>
+      </div>
+      <div id="priorityMap" class="priority-map"></div>
+    </section>
+
+    <section class="section-shell content-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SIGNALS</p>
+          <h2>需要关注</h2>
+          <p>高分但较久没有提交的项目，会自动浮到这里。</p>
+        </div>
+      </div>
+      <div id="attention" class="attention-list"></div>
+    </section>
+
+    <section id="repos" class="section-shell content-section repos-section">
+      <div class="section-heading repos-heading">
+        <div>
+          <p class="eyebrow">ALL PUBLIC REPOSITORIES</p>
+          <h2>全部仓库</h2>
+          <p>默认卡片视图；需要扫描数据时再切表格。</p>
+        </div>
+        <div class="view-toggle" aria-label="仓库视图">
+          <button id="cardView" type="button" class="active" aria-pressed="true">卡片</button>
+          <button id="tableView" type="button" aria-pressed="false">表格</button>
+        </div>
+      </div>
+
+      <div class="filters">
+        <label class="search-field">
+          <span aria-hidden="true">⌕</span>
+          <span class="sr-only">搜索仓库</span>
+          <input id="searchInput" type="search" placeholder="搜索仓库名或备注…" autocomplete="off">
+        </label>
+        <select id="categoryFilter" aria-label="按项目类型筛选">
+          <option value="all">全部类型</option>
+        </select>
+        <select id="priorityFilter" aria-label="按优先级筛选">
+          <option value="all">全部优先级</option>
+          <option value="P0-NOW">P0 · NOW</option>
+          <option value="P1-NEXT">P1 · NEXT</option>
+          <option value="P2-PLANNED">P2 · PLANNED</option>
+          <option value="P3-LATER">P3 · LATER</option>
+          <option value="P4-LOW">P4 · LOW</option>
+          <option value="STOP">DON'T TOUCH</option>
+        </select>
+        <select id="sortFilter" aria-label="仓库排序">
+          <option value="priority">按优先级</option>
+          <option value="recent">按最近提交</option>
+          <option value="name">按名称</option>
+        </select>
+      </div>
+
+      <div class="result-line">
+        <span id="resultCount" role="status" aria-live="polite"></span>
+        <button id="clearFilters" type="button">清除筛选</button>
+      </div>
+
+      <div id="repoCards" class="repo-grid"></div>
+
+      <div id="repoTableWrap" class="table-wrap hidden">
+        <table>
+          <thead>
+            <tr>
+              <th>分数</th>
+              <th>仓库</th>
+              <th>类型</th>
+              <th>优先级</th>
+              <th>当前判断</th>
+              <th>最近提交</th>
+            </tr>
+          </thead>
+          <tbody id="repoRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="section-shell site-footer">
+    <span>Public-only workspace</span>
+    <span>·</span>
+    <span>数据来自 portfolio/registry.json</span>
+    <span>·</span>
+    <span>STOP 不执行 Archive / Delete</span>
+  </footer>
+
+  <div id="loadState" class="load-state" role="status">正在载入公开仓库…</div>
 
   <script src="./app.js" defer></script>
 </body>
