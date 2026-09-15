@@ -8,6 +8,42 @@
 
 不使用 CORE / ACTIVE / PARKED / ARCHIVED 这类复杂生命周期。
 
+## Workbench
+
+GitHub Pages 工作台源码已经放在 `docs/`：
+
+- `docs/index.html` — 工作台页面
+- `docs/styles.css` — 响应式界面
+- `docs/app.js` — 从 registry 读取并渲染项目
+- `docs/.nojekyll` — 直接按静态站点发布
+
+启用 Pages 后，默认地址应为：
+
+`https://cochranek.github.io/repo-auditor/`
+
+工作台包含：
+
+- 当前执行队列（Top 8）
+- NOW / NEXT / LATER / DON'T TOUCH 四个分区
+- Public / Private、CONTINUE / STOP 统计
+- 搜索
+- 状态、可见性、优先级筛选
+- 明暗主题
+- 一键进入具体仓库
+- 一键打开 `portfolio/registry.json` 编辑页
+
+页面每次打开都会读取 `main/portfolio/registry.json` 的最新数据，因此调整总控分数后不需要重新生成页面。
+
+### 一次性启用 GitHub Pages
+
+当前连接器不能修改仓库的 Pages 设置。需要在 GitHub 仓库页面做一次：
+
+`Settings → Pages → Deploy from a branch → main → /docs → Save`
+
+之后无需再手动发布。
+
+> 注意：`repo-auditor` 当前是 public，因此 Pages 工作台也应当视为公开展示面。当前 registry 本身已经位于公开仓库中，并包含 private 仓库的名称和管理备注；如果未来不希望这些信息公开，应先调整总控数据的公开范围或仓库可见性。
+
 ## Work status
 
 - `CONTINUE`：未来还要继续投入
