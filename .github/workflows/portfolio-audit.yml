@@ -1,0 +1,31 @@
+name: Portfolio Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "portfolio/**"
+      - "PORTFOLIO.md"
+      - "POLICY.md"
+      - "scripts/audit_registry.py"
+      - ".github/workflows/portfolio-audit.yml"
+  pull_request:
+    paths:
+      - "portfolio/**"
+      - "PORTFOLIO.md"
+      - "POLICY.md"
+      - "scripts/audit_registry.py"
+      - ".github/workflows/portfolio-audit.yml"
+  schedule:
+    - cron: "17 1 1 * *"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate portfolio registry
+        run: python scripts/audit_registry.py
