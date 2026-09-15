@@ -40,8 +40,8 @@
       "work_status": "CONTINUE",
       "priority_score": 96,
       "priority_band": "P0-NOW",
-      "reason": "这几天要处理；当前结构较乱，需要决定大改、重构或重来。",
-      "last_commit_date": "2026-09-14"
+      "reason": "2026-09-15 审计：继续保持 P0；先冻结功能扩张，修正“baseline”效度边界、收紧研究问题、拆分 Future Me、补版本化/测试，并修复 Future Me 渲染与本地数据隐私问题。",
+      "last_commit_date": "2026-09-15"
     },
     {
       "name": "ai-uni",
