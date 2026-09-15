@@ -1,65 +1,55 @@
-# Portfolio Governance Policy
+# 极简总控规则
 
-本仓库是 `CochraneK` GitHub 项目组合的总控中心。目标不是“保持所有仓库都活跃”，而是让每个仓库都有清晰的生命周期、用途和下一步。
+## 总控只保留两个维度
 
-## Lifecycle
+### 1. Visibility
 
-| State | Definition | Expected behavior |
-|---|---|---|
-| `CORE` | 长期核心资产 | 持续维护；必须有明确目标、下一步和负责人 |
-| `ACTIVE` | 当前明确推进 | 有近期交付目标；定期复盘 |
-| `INCUBATING` | 原型 / 实验 / 探索 | 必须有验证问题；验证后转 ACTIVE、PARKED 或 ARCHIVED |
-| `PARKED` | 暂停但保留 | 不要求持续提交；保留原因应清楚 |
-| `ARCHIVED` | 已结束 | registry 状态与 GitHub archived 状态应最终一致 |
-| `UNCLASSIFIED` | 迁移期临时状态 | 只用于尚未人工判断的既有仓库，不应长期保留 |
+只记录 GitHub 当前真实状态：
 
-## WIP limits
+- `public`
+- `private`
 
-- `CORE` 硬上限：**7**。
-- `CORE + ACTIVE` 建议上限：**12**。
-- 新建仓库默认不得直接进入 `CORE`；通常从 `INCUBATING` 开始。
-- 若达到 WIP 上限，启动新项目之前应先降级、暂停或结束一个已有项目。
+总控不自动修改可见性。
 
-## Review rules
+### 2. Work status
 
-提交活跃度只是“提醒信号”，不是成熟度判断：
+只有两个最终状态：
 
-- 0–30 天：近期活跃，优先判断是否真的值得持续投入。
-- 31–90 天：检查是否仍有明确下一步。
-- 91–180 天：默认进入暂停/继续评审。
-- 181–365 天：优先判断是否应 PARKED。
-- >365 天：进入归档评审队列。
+- `CONTINUE` — 还要继续做
+- `STOP` — 不用做了
 
-**任何规则都不得自动删除或自动归档仓库。** 归档必须是人工决定。
+`TBD` 只是在第一次整理 41 个既有仓库时使用的临时值，最终应清零。
 
-## Minimum metadata
+## STOP 的含义
 
-每个稳定状态项目最终应补齐：
+`STOP` **不等于 GitHub Archive**。
 
-- `category`
-- `lifecycle`
-- `next_action`
-- 清晰 README（用途、运行方式或项目说明）
-- 若为公开项目：避免提交密钥、真实个人数据、研究敏感数据
+它只表示：
 
-## Monthly review
+> 从项目管理角度，我不准备再给这个项目投入开发时间。
 
-每月一次：
+因此设置为 `STOP` 后：
 
-1. 先处理 `archive-review`。
-2. 清理 `UNCLASSIFIED`。
-3. 检查 `CORE + ACTIVE` 是否超过 WIP 上限。
-4. 检查 CORE 是否仍然值得占用核心槽位。
-5. 更新 `portfolio/registry.json` 和 `PORTFOLIO.md`。
+- 仓库依然存在；
+- Public / Private 不变；
+- 代码和历史不变；
+- 不执行 GitHub Archive；
+- 不执行 Delete；
+- 未来如果想恢复，只需把总控状态改回 `CONTINUE`。
 
-## Safety principle
+## 判断原则
 
-总控中心默认采取“无损管理”：
+判断时主要看：
 
-- 不自动删除仓库；
-- 不自动改 visibility；
-- 不自动 archive；
-- 不自动重命名；
-- 不自动修改其他仓库代码。
+- 项目目的是否仍然成立；
+- 是否还有明确想做的下一步；
+- 是否与其他项目重复；
+- 是否只是一次性实验 / Demo；
+- 是否已经完成它原本的任务；
+- 未来是否真的愿意继续投入时间。
 
-高影响操作必须单独确认。
+“多久没提交代码”只能作为参考，不能单独决定 STOP。
+
+## 安全规则
+
+本仓库只做**提示与登记**，默认不对其他仓库执行高影响操作。
