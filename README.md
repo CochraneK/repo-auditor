@@ -1,69 +1,37 @@
-# repo-auditor · GitHub Portfolio Control Center
+# repo-auditor · GitHub 总控中心
 
-`repo-auditor` 是 CochraneK GitHub 项目组合的总控中心，用来解决三个问题：
+这个仓库现在只回答两个问题：
 
-1. **我现在到底在维护什么？**
-2. **哪些项目是真正核心，哪些只是实验或暂存？**
-3. **什么时候应该暂停、归档，而不是继续让仓库无限增长？**
+1. **它是 Public 还是 Private？**
+2. **这个项目还要继续做，还是不用做了？**
 
-当前已登记 **41 个仓库**。本仓库不自动删除、归档或修改其他项目。
+不再使用 CORE / ACTIVE / INCUBATING / PARKED / ARCHIVED 这套生命周期。
 
-## Start here
+## 唯一的行动状态
 
-- [`PORTFOLIO.md`](PORTFOLIO.md) — 当前项目组合总览与评审队列
-- [`POLICY.md`](POLICY.md) — 生命周期、WIP 上限和归档规则
-- [`portfolio/registry.json`](portfolio/registry.json) — 41 个仓库的机器可读登记表
-- [`scripts/audit_registry.py`](scripts/audit_registry.py) — 登记表校验器
+- `CONTINUE`：还要继续做
+- `STOP`：不用做了
 
-## Lifecycle
+迁移期间允许临时出现 `TBD`，表示“还没判断”。目标是最终清零。
 
-```text
-UNCLASSIFIED
-     │
-     ├──> CORE
-     ├──> ACTIVE
-     ├──> INCUBATING
-     ├──> PARKED
-     └──> ARCHIVED
-```
+> **STOP 只是总控层的提示。**
+> 它不会触发 GitHub Archive、Delete、改 Private/Public、改名或修改项目代码。
 
-`UNCLASSIFIED` 只用于第一次整理已有仓库。稳定运行后，目标是把它清零。
+## 入口
 
-### CORE
-真正长期投入的核心资产。硬上限 **7 个**。
+- [`PORTFOLIO.md`](PORTFOLIO.md) — 人工查看的总控面板
+- [`portfolio/registry.json`](portfolio/registry.json) — 机器可读项目清单
+- [`POLICY.md`](POLICY.md) — 极简规则
+- [`scripts/audit_registry.py`](scripts/audit_registry.py) — 自动校验
 
-### ACTIVE
-当前明确推进、有近期交付目标的项目。
+## 使用原则
 
-### INCUBATING
-原型、实验、探索项目。必须有验证问题，不应永久停留。
+以后看一个项目，只做一个判断：
 
-### PARKED
-暂时不推进，但有保留价值。
+> **我还要不要继续投入时间做它？**
 
-### ARCHIVED
-项目已结束；最终应与 GitHub 仓库的 archived 状态一致。
+如果要：`CONTINUE`
 
-## Automation
+如果不要：`STOP`
 
-`Portfolio Audit` GitHub Action 会在 registry / policy / audit script 变更时运行，并支持手动运行。它会：
-
-- 检查 41 个仓库记录是否重名；
-- 检查 lifecycle / activity band / required fields；
-- 检查 `CORE <= 7`；
-- 输出各生命周期和活跃度统计；
-- 列出 archive-review 候选。
-
-它**不会**自动操作其他仓库。
-
-## Operating rule
-
-新增项目之前先问：
-
-> 这是 CORE、ACTIVE，还是只是 INCUBATING？
-
-如果 `CORE + ACTIVE` 已经很多，优先结束一个旧项目，而不是继续增加 WIP。
-
----
-
-Snapshot initialized: **2026-09-15**
+Public / Private 只是仓库可见性，不影响这个判断。
