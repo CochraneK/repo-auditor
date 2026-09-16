@@ -16,6 +16,7 @@ BANDS = {"P0-NOW", "P1-NEXT", "P2-PLANNED", "P3-LATER", "P4-LOW", "STOP"}
 GATES = {"pass", "fail", "unknown", "in-progress"}
 PUBLICATION_RECOMMENDATIONS = {"public-ok", "review-before-public", "keep-private", "split-public-private"}
 VISIBILITIES = {"public", "private"}
+REMEDIATION_CLASSES = {"auto-fix", "owner-choice", "external-blocked", "accepted-risk"}
 QUALITY_DIMENSIONS = (
     "purpose_scope",
     "correctness",
@@ -172,7 +173,7 @@ def validate(path: Path) -> list[str]:
         seen: set[str] = set()
         for index, finding in enumerate(findings):
             prefix = f"{path.name}: finding {index}"
-            for key in ("id", "severity", "title", "status", "evidence", "recommendation"):
+            for key in ("id", "severity", "title", "status", "evidence", "recommendation", "remediation_class"):
                 if key not in finding:
                     errors.append(f"{prefix} missing {key}")
             if "id" not in finding:
@@ -185,6 +186,8 @@ def validate(path: Path) -> list[str]:
                 errors.append(f"{prefix}: invalid severity {finding.get('severity')}")
             if finding.get("status") not in STATUSES:
                 errors.append(f"{prefix}: invalid status {finding.get('status')}")
+            if finding.get("remediation_class") not in REMEDIATION_CLASSES:
+                errors.append(f"{prefix}: invalid remediation_class {finding.get('remediation_class')}")
             evidence = finding.get("evidence")
             if not isinstance(evidence, list) or not evidence:
                 errors.append(f"{prefix}: evidence must be a non-empty list")
