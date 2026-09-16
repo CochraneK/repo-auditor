@@ -9,6 +9,22 @@
 
 **repo-auditor 的“Portfolio + Structured Audit”双层结构已经收口成可用产品，并新增结构化 Publication / IP gate：每次审计都要明确 Public、Private、review-before-public 或 split-public-private。当前唯一开放的高优先项仍是 LICENSE。**
 
+## 多维质量画像
+
+> 质量维度独立于 Portfolio priority；不计算单一总分。
+
+| 维度 | 分数 |
+|---|---:|
+| Purpose & scope | **5/5** |
+| Correctness | **4/5** |
+| Security & privacy | **4/5** |
+| Supply chain | **4/5** |
+| Reproducibility | **4/5** |
+| Release engineering | **3/5** |
+| Documentation & onboarding | **5/5** |
+| Maintainability | **4/5** |
+| Community surface | **3/5** |
+
 ## 2026-09-16 remediation recheck
 
 本次整改后：
