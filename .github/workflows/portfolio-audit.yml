@@ -9,18 +9,9 @@ on:
       - "PORTFOLIO.md"
       - "POLICY.md"
       - "AUDIT_RUBRIC.md"
-      - "scripts/audit_registry.py"
-      - "scripts/build_public_pages.py"
-      - "scripts/audit_reports.py"
-      - "scripts/collect_repo_evidence.py"
-      - "scripts/audit_freshness.py"
-      - "scripts/publication_gate.py"
-      - "scripts/remediation_queue.py"
+      - "scripts/**"
       - "tests/**"
       - "docs/**"
-      - "index.html"
-      - "app.js"
-      - "styles.css"
       - ".github/workflows/portfolio-audit.yml"
   pull_request:
     paths:
@@ -29,17 +20,9 @@ on:
       - "PORTFOLIO.md"
       - "POLICY.md"
       - "AUDIT_RUBRIC.md"
-      - "scripts/audit_registry.py"
-      - "scripts/audit_reports.py"
-      - "scripts/collect_repo_evidence.py"
-      - "scripts/audit_freshness.py"
-      - "scripts/publication_gate.py"
-      - "scripts/remediation_queue.py"
+      - "scripts/**"
       - "tests/**"
       - "docs/**"
-      - "index.html"
-      - "app.js"
-      - "styles.css"
       - ".github/workflows/portfolio-audit.yml"
   schedule:
     - cron: "17 1 1 * *"
@@ -53,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Validate Python audit tooling
-        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py scripts/publication_gate.py scripts/remediation_queue.py scripts/build_public_pages.py
+        run: python -m py_compile scripts/*.py
       - name: Run audit tooling fixture tests
         run: python -m unittest discover -s tests -v
       - name: Validate portfolio registry
@@ -61,7 +44,7 @@ jobs:
       - name: Rebuild public Pages data bundle
         run: python scripts/build_public_pages.py
       - name: Ensure committed Pages bundle is current
-        run: git diff --exit-code -- docs/data
+        run: git diff --exit-code -- docs/data/registry.json docs/data/manifest.json docs/data/audits
       - name: Validate structured audit reports
         run: python scripts/audit_reports.py
       - name: Report GO remediation queue
@@ -71,6 +54,31 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/audit_freshness.py
       - name: Validate Pages JavaScript syntax
+        run: node --check docs/app.js
+      - name: Validate account-wide scanner import
+        run: python scripts/scan_portfolio.py --help
+
+  private-portfolio-scan:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Explain credential boundary
+        if: ${{ secrets.PORTFOLIO_AUDIT_TOKEN == '' }}
         run: |
-          node --check docs/app.js
-          node --check app.js
+          echo 'PORTFOLIO_AUDIT_TOKEN is not configured.'
+          echo 'The default GITHUB_TOKEN cannot enumerate other private repositories.'
+          echo 'Keeping the last privacy-safe aggregate snapshot; no private details are published.'
+      - name: Scan all owned repositories including private
+        if: ${{ secrets.PORTFOLIO_AUDIT_TOKEN != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PORTFOLIO_AUDIT_TOKEN }}
+        run: python scripts/scan_portfolio.py --allow-private
+      - name: Upload private scan evidence
+        if: ${{ secrets.PORTFOLIO_AUDIT_TOKEN != '' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: private-portfolio-audit
+          path: private-evidence/portfolio-scan.json
+          retention-days: 7
+          if-no-files-found: error
