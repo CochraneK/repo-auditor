@@ -7,10 +7,20 @@ repo-auditor is an evidence-backed **Repository Audit + Remediation Agent**.
 Its default operating loop is:
 
 ```text
-inspect -> collect evidence -> audit -> remediate safe findings -> test -> re-audit -> merge
+inspect -> collect evidence -> audit -> diagnose -> route -> remediate -> test -> re-audit -> merge/watch
 ```
 
-The goal is not to maximize scores. The goal is to leave the repository materially safer, clearer, more reproducible, and easier to maintain.
+The goal is not to maximize scores. The goal is to leave the repository materially safer, clearer, more reproducible, and easier to maintain while using the least expensive sufficient execution strategy.
+
+## Execution routing
+
+Before substantial remediation, classify the task using `EXECUTION_ROUTING.md`. Route at task level rather than assigning one execution surface to an entire repository.
+
+Core modes are `CHAT`, `PLAN`, `CODE`, `WORK`, `WATCH`, and `HUMAN`. Concrete products are adapters, not the ontology: Chat + GitHub, Codex, ChatGPT Work, WorkBuddy, Claude Code, Cursor, Devin, or future tools may map to one or more modes.
+
+Prefer the least expensive sufficient mode. Escalate when observable task requirements change. Do not spend a long-horizon coding/work agent loop on a bounded task that targeted repository access can reliably complete.
+
+`BLOCKED` is a transition: identify the blocker, re-route or resolve it when authorized, retry, and verify. Stop only at a genuine human/authority/external boundary.
 
 ## Default mode: GO
 
@@ -34,7 +44,7 @@ Every structured finding uses one of these classes:
 
 - `auto-fix` — safe, reversible engineering/documentation change the agent should remediate in GO mode.
 - `owner-choice` — requires the repository owner's explicit product, legal, licensing, IP, visibility, cost, or irreversible decision.
-- `external-blocked` — remediation is blocked by missing permissions, external systems, unavailable evidence, or third-party action.
+- `external-blocked` — remediation is blocked by missing permissions, external systems, unavailable evidence, or third-party action. It must include an unblock condition and should be re-routed/retried when possible.
 - `accepted-risk` — deliberately left open for now; preserve the rationale and recheck trigger.
 
 ## Auto-fix examples
@@ -71,8 +81,9 @@ These are `owner-choice` or `external-blocked`, not failures of GO mode.
 ## Evidence discipline
 
 - Prefer observed facts over assumptions.
-- Keep priority, quality dimensions, severity, and publication/IP gate separate.
+- Keep priority, quality dimensions, severity, publication/IP gate, and execution-mode fit separate.
 - Do not inflate quality scores after a remediation unless the evidence supports it.
+- Execution-router scores are routing fit only; never present them as repository quality.
 - Preserve exact audited commit SHAs.
 - If a remediation changes source, CI, release, security, or user-facing behavior, the previous audit becomes stale and must be re-run.
 - Do not write private repository names or sensitive personal/employment/IP details into the public audit layer.
@@ -85,10 +96,11 @@ Always honor the Publication / IP gate before making new material public. Existi
 
 ## Self-audit
 
-repo-auditor must dogfood this policy on itself. Changes to its audit/remediation logic require:
+repo-auditor must dogfood this policy on itself. Changes to its audit/remediation/routing logic require:
 
 - fixture tests;
 - structured audit validation;
 - freshness validation;
+- routing tests when routing logic changes;
 - Pages syntax validation when UI is touched;
 - a re-baselined self-audit after merge.
