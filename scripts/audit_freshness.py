@@ -38,7 +38,7 @@ AUDITS = ROOT / "audits"
 API = "https://api.github.com"
 
 
-def request_json(path: str) -> Any:
+def _request(path: str, token: str | None) -> Any:
     request = urllib.request.Request(
         API + path,
         headers={
@@ -47,13 +47,31 @@ def request_json(path: str) -> Any:
             "User-Agent": "repo-auditor-freshness-check",
         },
     )
-    token = os.environ.get("GITHUB_TOKEN")
     if token:
         request.add_header("Authorization", f"Bearer {token}")
+    with urllib.request.urlopen(request, timeout=30) as response:
+        return json.load(response)
+
+
+def request_json(path: str) -> Any:
+    token = os.environ.get("GITHUB_TOKEN")
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            return json.load(response)
+        return _request(path, token)
     except urllib.error.HTTPError as exc:
+        # A repository-scoped Actions token may not be valid cross-repository.
+        # Retry anonymously so public audits remain verifiable without
+        # broadening the token's private-repository permissions.
+        if token and exc.code in {403, 404}:
+            try:
+                return _request(path, None)
+            except urllib.error.HTTPError as public_exc:
+                detail = public_exc.read().decode(
+                    "utf-8",
+                    errors="replace",
+                )
+                raise RuntimeError(
+                    f"GitHub API {public_exc.code}: {detail}"
+                ) from public_exc
         detail = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"GitHub API {exc.code}: {detail}") from exc
 

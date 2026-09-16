@@ -5,7 +5,7 @@
 **Evidence-backed Repository Audit + Remediation Agent · 审、改、再审。**
 
 <p>
-  <img alt="Public only" src="https://img.shields.io/badge/scope-public%20repositories-2F80ED">
+  <img alt="Private control plane" src="https://img.shields.io/badge/control%20plane-private--ready-6C63FF">
   <img alt="GitHub Pages" src="https://img.shields.io/badge/UI-GitHub%20Pages-222222">
   <img alt="Priority system" src="https://img.shields.io/badge/planning-NOW%20%C2%B7%20NEXT%20%C2%B7%20LATER-6C63FF">
   <img alt="Private safe" src="https://img.shields.io/badge/private%20repos-not%20published-27AE60">
@@ -27,7 +27,7 @@
 - 哪些只是值得保留，但暂时不值得继续投入；
 - 如何把这些状态放在一个公开、可浏览、不会泄露私有项目的工作台里。
 
-`repo-auditor` 的公开层只管理和展示 **Public repositories**，并把仓库组织成一个轻量的执行与优先级界面。
+`repo-auditor` 现在按 **Private control plane + Public Pages snapshot** 设计：控制仓库可以设为 Private、审计授权范围内的 private repositories；对外页面仍只发布 Public repositories，并且浏览器不需要读取 private GitHub raw content。
 
 ## Public Workbench
 
@@ -50,10 +50,13 @@ GitHub Pages 源码位于 `docs/`，线上入口：
 | **Multi-dimensional quality** | 9 个独立工程质量维度各自 0–5 分；不合并成单一质量总分，也不与 Priority 混淆 |
 | **GO remediation** | 对安全、可逆的 `auto-fix` finding 自动 branch → 修复 → 测试 → re-audit → PR；只在 owner-choice / external-blocked 时停 |
 
-数据源：
+控制层数据源：
 
-- `portfolio/registry.json` — **Public-only**
+- `portfolio/registry.json` — **Public-only source of truth**
 - `PORTFOLIO.md` — **Public-only**
+- authenticated private evidence — 仅在显式 `--allow-private` 时采集，禁止写入 Pages 路径
+
+Pages 运行时数据来自 `docs/data/` 的**构建快照**，而不是 `raw.githubusercontent.com`。因此控制仓库转 Private 后，公开 Pages 仍可工作，同时不会获得读取 private repository 内容的能力。
 
 ## Repository Audit Layer
 
@@ -120,11 +123,19 @@ python scripts/remediation_queue.py
 Private 仓库：
 
 - 不出现在 GitHub Pages；
-- 不出现在当前 `registry.json`；
+- 不出现在当前 public `registry.json`；
 - 不出现在 `PORTFOLIO.md`；
+- 不进入 `docs/data/`；
 - 公开页面不会显示 Private 数量、名称或备注。
 
-当前 Private 项目由已授权的 GitHub 连接按需读取和汇总。若未来需要持久的 Private Web 工作台，应使用单独的 private 管理仓库，再复用同一套静态工作台结构。
+显式私有证据采集：
+
+```bash
+GITHUB_TOKEN=... python scripts/collect_repo_evidence.py owner/private-repo \\
+  --allow-private --out private-evidence/private-repo.json
+```
+
+`--allow-private` 默认关闭；private evidence 禁止输出到 `docs/` 或 `portfolio/`。
 
 ## Work Status
 
@@ -149,7 +160,16 @@ Private 仓库：
 | **1–19** | P4 · 极低优先级保留 |
 | **0** | STOP · 当前不用做 |
 
-## 启用 GitHub Pages
+## Private 控制仓库 + Public GitHub Pages
+
+个人账户需要 **GitHub Pro** 才能从 Private repository 发布 Pages。Pages 本身仍是公开网站，因此 `docs/data/` 必须保持 public-only。
+
+发布前先构建并校验公开 bundle：
+
+```bash
+python scripts/build_public_pages.py
+python scripts/audit_registry.py
+```
 
 首次启用一次即可：
 

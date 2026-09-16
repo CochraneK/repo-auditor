@@ -1,8 +1,8 @@
 (() => {
-  const DATA_URL = "https://raw.githubusercontent.com/CochraneK/repo-auditor/main/portfolio/registry.json";
+  const DATA_URL = "./data/registry.json";
   const REPO_BASE = "https://github.com/CochraneK/";
-  const AUDIT_RAW_BASE = "https://raw.githubusercontent.com/CochraneK/repo-auditor/main/";
-  const AUDIT_REPORT_BASE = "https://github.com/CochraneK/repo-auditor/blob/main/";
+  const AUDIT_RAW_BASE = "./data/";
+  const AUDIT_REPORT_BASE = "./data/";
   const GITHUB_API_BASE = "https://api.github.com/repos/CochraneK/";
   const BAND_LABELS = {
     "P0-NOW": "P0 · NOW",
@@ -93,7 +93,7 @@
   }
 
   function auditReportUrl(repo) {
-    return repo.latest_audit ? AUDIT_REPORT_BASE + repo.latest_audit : "";
+    return repo.latest_audit ? AUDIT_REPORT_BASE + repo.latest_audit.replace(/\.md$/i, ".json") : "";
   }
 
   function qualityChip(repo) {

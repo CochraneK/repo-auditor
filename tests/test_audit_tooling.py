@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import audit_freshness as af
+import build_public_pages as bpp
 import audit_reports as ar
 import collect_repo_evidence as cre
 import publication_gate as pg
@@ -35,8 +36,39 @@ class CollectorTests(unittest.TestCase):
 
     def test_collect_refuses_private_repository(self):
         with mock.patch.object(cre, "request_json", return_value={"private": True}):
-            with self.assertRaisesRegex(RuntimeError, "refuses private repositories"):
+            with self.assertRaisesRegex(RuntimeError, "unless --allow-private"):
                 cre.collect("CochraneK/private-example")
+
+    def test_collect_can_explicitly_read_private_repository(self):
+        sha = "a" * 40
+
+        def fake_request(path):
+            if path == "/repos/CochraneK/private-example":
+                return {
+                    "private": True,
+                    "default_branch": "main",
+                    "description": "private demo",
+                    "homepage": None,
+                    "topics": [],
+                    "license": None,
+                    "has_issues": True,
+                    "has_discussions": False,
+                }
+            if path == "/repos/CochraneK/private-example/branches/main":
+                return {"commit": {"sha": sha}}
+            if path == f"/repos/CochraneK/private-example/git/trees/{sha}?recursive=1":
+                return {"tree": [{"path": "README.md", "type": "blob"}]}
+            if path.startswith("/repos/CochraneK/private-example/actions/runs?"):
+                return {"workflow_runs": []}
+            raise AssertionError(path)
+
+        with mock.patch.object(cre, "request_json", side_effect=fake_request):
+            result = cre.collect(
+                "CochraneK/private-example",
+                allow_private=True,
+            )
+        self.assertFalse(result["public"])
+        self.assertEqual(result["visibility"], "private")
 
     def test_collect_deduplicates_head_workflow_runs(self):
         sha = "a" * 40
@@ -79,6 +111,98 @@ class CollectorTests(unittest.TestCase):
         with mock.patch.object(cre.urllib.request, "urlopen", side_effect=error):
             with self.assertRaisesRegex(RuntimeError, "GitHub API 403"):
                 cre.request_json("/demo")
+
+
+class PublicPagesBundleTests(unittest.TestCase):
+    def _audit(self, repository: str, visibility: str = "public"):
+        return {
+            "repository": repository,
+            "publication_gate": {
+                "current_visibility": visibility,
+            },
+        }
+
+    def test_build_public_bundle_copies_only_public_records(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry.json"
+            audits = root / "audits"
+            out = root / "docs" / "data"
+            audits.mkdir()
+            registry.write_text(
+                json.dumps({
+                    "scope": "public-workbench",
+                    "repositories": [{
+                        "name": "example",
+                        "visibility": "public",
+                        "latest_audit": "audits/example-2026-09-16.md",
+                    }],
+                }),
+                encoding="utf-8",
+            )
+            (audits / "example-2026-09-16.json").write_text(
+                json.dumps(self._audit("CochraneK/example")),
+                encoding="utf-8",
+            )
+            manifest = bpp.build(registry, audits, out)
+            bundled = json.loads(
+                (out / "registry.json").read_text(encoding="utf-8")
+            )
+        self.assertEqual(manifest["repository_count"], 1)
+        self.assertEqual(bundled["repositories"][0]["name"], "example")
+        self.assertFalse(manifest["private_repository_metadata_included"])
+
+    def test_build_public_bundle_refuses_private_record(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry.json"
+            audits = root / "audits"
+            audits.mkdir()
+            registry.write_text(
+                json.dumps({
+                    "repositories": [{
+                        "name": "secret",
+                        "visibility": "private",
+                    }],
+                }),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(
+                bpp.PublicBundleError,
+                "refuses non-public",
+            ):
+                bpp.build(registry, audits, root / "out")
+
+    def test_build_public_bundle_refuses_private_audit_sidecar(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry.json"
+            audits = root / "audits"
+            audits.mkdir()
+            registry.write_text(
+                json.dumps({
+                    "repositories": [{
+                        "name": "example",
+                        "visibility": "public",
+                        "latest_audit": "audits/example-2026-09-16.md",
+                    }],
+                }),
+                encoding="utf-8",
+            )
+            (audits / "example-2026-09-16.json").write_text(
+                json.dumps(
+                    self._audit(
+                        "CochraneK/example",
+                        visibility="private",
+                    )
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(
+                bpp.PublicBundleError,
+                "non-public audit sidecar",
+            ):
+                bpp.build(registry, audits, root / "out")
 
 
 class QualityDimensionTests(unittest.TestCase):
@@ -338,6 +462,34 @@ class FreshnessTests(unittest.TestCase):
 
         self.assertEqual(result[0]["state"], "unverifiable")
         self.assertIn("403", result[0]["error"])
+
+    def test_authenticated_404_retries_anonymous_public_api(self):
+        error = urllib.error.HTTPError(
+            "https://api.github.com/demo",
+            404,
+            "Not Found",
+            hdrs=None,
+            fp=io.BytesIO(b'{"message":"Not Found"}'),
+        )
+        with mock.patch.dict(
+            af.os.environ,
+            {"GITHUB_TOKEN": "scoped-token"},
+        ), mock.patch.object(
+            af,
+            "_request",
+            side_effect=[error, {"ok": True}],
+        ) as request:
+            result = af.request_json("/demo")
+
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(
+            request.call_args_list[0].args,
+            ("/demo", "scoped-token"),
+        )
+        self.assertEqual(
+            request.call_args_list[1].args,
+            ("/demo", None),
+        )
 
     def test_empty_compare_is_fail_closed_when_sha_moved(self):
         with tempfile.TemporaryDirectory() as tmp:
