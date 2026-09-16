@@ -2,7 +2,7 @@
   "schema_version": 1,
   "repository": "CochraneK/repo-auditor",
   "audit_date": "2026-09-17",
-  "audited_commit": "871d701e68b8a8535a791c9c3eae19e4c59a9b5e",
+  "audited_commit": "fb2f8a16799e33cfc7737c0e6cd23c7ce6b09337",
   "markdown": "audits/repo-auditor-2026-09-17.md",
   "decision": {
     "work_status": "CONTINUE",
@@ -25,7 +25,7 @@
     "Current public inventory and public-safe Todo publication are generated through the same validated Pages bundle.",
     "Structured audits enforce nine independent evidence-backed quality dimensions and keep publication/IP gating separate from quality scoring.",
     "A dedicated SECURITY.md now treats private-evidence leakage and publication-boundary bypasses as security issues.",
-    "The current pre-audit baseline passed Portfolio Audit CI after the final security-policy and Todo-state changes."
+    "The audited main baseline passed Portfolio Audit CI and the resulting GitHub Pages deployment completed successfully."
   ],
   "findings": [
     {
