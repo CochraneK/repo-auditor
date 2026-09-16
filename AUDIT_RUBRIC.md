@@ -3,6 +3,7 @@
 repo-auditor deliberately separates **portfolio priority** from **repository quality**.
 
 - **Priority score (0–100)** answers: “Should I spend time on this now?”
+- **Quality dimensions (0–5 each)** answer: “How mature is the repository across distinct engineering dimensions?”
 - **Audit findings** answer: “What is strong, risky, missing, or unverified?”
 
 A repository can be high priority and low quality, or low priority and excellent.
@@ -33,7 +34,29 @@ Do not write private-repository names or private metadata into this public audit
 | **P2** | Important maintainability, reproducibility, release, UX, or documentation debt |
 | **P3** | Polish / nice-to-have |
 
-Severity is not a numeric quality score.
+Severity is not a numeric quality score. Severity expresses issue urgency; dimension scores express maturity.
+
+## Multi-dimensional quality scoring
+
+Every structured audit must include `quality_dimensions`. Scores are **0–5 per dimension** and are never collapsed into a single repository-quality total.
+
+| Score | Meaning |
+|---:|---|
+| **0** | Verified absent / critically deficient |
+| **1** | Very weak; major gaps dominate |
+| **2** | Weak; meaningful capability exists but is unreliable or incomplete |
+| **3** | Adequate; usable baseline with known debt |
+| **4** | Strong; well engineered with limited gaps |
+| **5** | Excellent; unusually mature and evidence-backed |
+| **null** | Unverified or genuinely not applicable — explain why in evidence |
+
+Rules:
+
+- Every score needs evidence; do not score from vibes.
+- Do not treat `null` as zero.
+- Do not calculate or display a weighted total or average as “the quality score.”
+- Priority and quality remain orthogonal: a 5/5 mature repository can be low priority, and an immature 2/5 repository can be urgent.
+- IP provenance/publication remains a **gate**, not a quality score: having patent-sensitive work is not “better” or “worse” repository quality.
 
 ## Core dimensions
 
@@ -46,7 +69,7 @@ Severity is not a numeric quality score.
 7. **Documentation & onboarding** — Can a new user reach a safe first success without tribal knowledge?
 8. **Maintainability** — Are architecture, tests, workflows, and docs aligned rather than drifting?
 9. **Community surface** — Security reporting, contribution guidance, issues/templates, citation, and repository metadata.
-10. **IP provenance & publication** — Is Public/Private a deliberate decision given prior disclosure, possible patent value, background IP, employer/client/PI requests, confidential inputs, and ownership uncertainty?
+10. **IP provenance & publication (gate, not scored)** — Is Public/Private a deliberate decision given prior disclosure, possible patent value, background IP, employer/client/PI requests, confidential inputs, and ownership uncertainty?
 
 ## Publication / IP disclosure gate
 
