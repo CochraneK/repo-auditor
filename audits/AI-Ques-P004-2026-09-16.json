@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/AI-Ques",
+  "audit_date": "2026-09-16",
+  "audited_commit": "38955a5e8fe43ec0dbf0d6e132ce0be0cee16eae",
+  "markdown": "audits/AI-Ques-P004-2026-09-16.md",
+  "scope": "p004/ + direct supporting CI/shared-profile/Pages boundaries",
+  "decision": {
+    "work_status": "CONTINUE",
+    "priority_score": 96,
+    "priority_band": "P0-NOW",
+    "note": "Priority is inherited from the AI-Ques portfolio entry and is not a repository-quality score."
+  },
+  "quality_gates": {
+    "p00_quality_gate": "pass",
+    "github_pages_deploy": "pass",
+    "p004_js_syntax": "pass",
+    "p004_runtime_behavior": "unknown",
+    "real_openai_compatible_browser_call": "unknown",
+    "real_nvwa_backend_distillation": "unknown"
+  },
+  "strengths": [
+    "P004 is explicitly marked prototype_only and separates public character chat from research-side inference in its documented architecture.",
+    "Observed user/model rendering paths use textContent; observed innerHTML uses are fixed templates rather than user/model free text.",
+    "BYOK API keys are scoped to sessionStorage and the UI discloses browser-side key exposure risk.",
+    "The NVWA fallback is explicitly labelled a Character Skill draft rather than pretending to be a completed research distillation.",
+    "VIA 24 and Interpersonal Circumplex theory boundaries are documented without falsely claiming strict MECE for VIA.",
+    "P00 Quality Gate and GitHub Pages deployment both passed on the audited repository HEAD."
+  ],
+  "quality_dimensions": {
+    "purpose_scope": {
+      "score": 4,
+      "evidence": [
+        "p004/README.md, p004/module-manifest.json and p004/NVWA_CONTRACT.md clearly separate character chat, optional distillation, memory, Observer and prototype/non-diagnostic boundaries.",
+        "The intended production/admin boundary is documented, although the public static implementation does not yet enforce it."
+      ]
+    },
+    "correctness": {
+      "score": 2,
+      "evidence": [
+        "The audited HEAD passed JS syntax and repository structure checks.",
+        "P004 has no runtime/browser behavior test covering creator flow, API branches, storage lifecycle, Observer import, safety override or chat rendering.",
+        "The immediate-risk override is implemented primarily as fixed keyword matching rather than a validated safety classifier."
+      ]
+    },
+    "security_privacy": {
+      "score": 2,
+      "evidence": [
+        "BYOK keys stay in current-tab sessionStorage and the UI discloses the browser-side key risk.",
+        "Characters, transcripts, relationship memory and Observer/safety evidence persist in localStorage/IndexedDB without a unified clear/retention control.",
+        "P005 narrative/chat data is imported into P004 Observer without an explicit opt-in gate.",
+        "The static admin view is enabled by ?admin=1 and therefore is a demo affordance, not authorization."
+      ]
+    },
+    "supply_chain": {
+      "score": 2,
+      "evidence": [
+        "The runtime is dependency-light and does not load third-party JS packages from CDNs.",
+        "All five observed GitHub Action references use mutable version tags rather than immutable commit SHAs.",
+        "P004 identifies the NVWA protocol as xmg2024/nvwa-skill@main, which can drift over time."
+      ]
+    },
+    "reproducibility": {
+      "score": 3,
+      "evidence": [
+        "P004 is a static application with module-manifest metadata and no package dependency installation step, making basic local reproduction straightforward.",
+        "Exact behavior can still vary with user-supplied OpenAI-compatible endpoints, browser CORS/private-network behavior, and the mutable NVWA @main reference."
+      ]
+    },
+    "release_engineering": {
+      "score": 2,
+      "evidence": [
+        "GitHub Pages deployment and the P00 Quality Gate passed on the audited HEAD.",
+        "The repository has no LICENSE or changelog/release provenance surface, and main branch protection is verified disabled."
+      ]
+    },
+    "documentation_onboarding": {
+      "score": 4,
+      "evidence": [
+        "P004 README documents BYOK, NVWA limitations, local Skill Vault, long-term memory intent, Observer and safety boundaries.",
+        "The UI contains API test diagnostics and prototype/admin caveats.",
+        "Persistent transcript/Observer retention and cross-P005 secondary use are not yet presented as explicit user choices before processing."
+      ]
+    },
+    "maintainability": {
+      "score": 2,
+      "evidence": [
+        "p004/app.js is approximately 50 KB and combines Character Studio, persistence, IndexedDB, memory, Observer, safety, admin rendering and API orchestration.",
+        "P004 regression coverage is dominated by static regex/structure invariants rather than executable behavior tests."
+      ]
+    },
+    "community_surface": {
+      "score": 1,
+      "evidence": [
+        "The repository has README and a live homepage, but GitHub description is null and topics are empty.",
+        "LICENSE, SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, CITATION.cff and CHANGELOG.md were not present at the audited HEAD."
+      ]
+    }
+  },
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "public-ok",
+    "reasons": [
+      "AI-Ques is already public and this audit found no committed API keys, real user transcripts or private-repository metadata in the reviewed P004 surface.",
+      "P004 is explicitly marked as a prototype; public-ok here only means no new recorded publication blocker, not patentability, ownership or legal clearance."
+    ]
+  },
+  "findings": [
+    {
+      "id": "AQ4-P1-001",
+      "severity": "P1",
+      "title": "Cross-module P005 evidence import lacks explicit opt-in",
+      "status": "open",
+      "evidence": [
+        "p004/app.js importP005() reads bjtu.p005.state.v1 and converts P005 profile/open responses and user chat into P004 Observer evidence.",
+        "backgroundObserve() invokes importP005() without a consent-state check.",
+        "The page discloses BACKGROUND OBSERVER but does not expose an explicit allow/deny control for this secondary use."
+      ],
+      "recommendation": "Default P005 import to off, add explicit opt-in/withdrawal, and only import after consent.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "AQ4-P1-002",
+      "severity": "P1",
+      "title": "Persistent P004 data lacks a unified clear/retention control",
+      "status": "open",
+      "evidence": [
+        "P004 persists characters, threads, memory and Observer data in localStorage and distilled skills in IndexedDB.",
+        "The API settings modal can clear the BYOK key, but no clear-all control for P004 transcripts/memory/observer/skills was found."
+      ],
+      "recommendation": "Add a visible clear-P004-local-data control covering localStorage and IndexedDB, with explicit scope and confirmation; consider retention/session-only options.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "AQ4-P1-003",
+      "severity": "P1",
+      "title": "Static ?admin=1 research view is not an authorization boundary",
+      "status": "open",
+      "evidence": [
+        "p004/app.js enables adminMode when the URL query parameter admin=1 is present.",
+        "p004/index.html labels clinical/status signals admin only while also acknowledging that production requires server-side RBAC."
+      ],
+      "recommendation": "Treat the Pages surface as research-preview/demo only; real admin-only access requires authenticated backend RBAC and server-side field filtering.",
+      "remediation_class": "external-blocked"
+    },
+    {
+      "id": "AQ4-P1-004",
+      "severity": "P1",
+      "title": "Safety override is a keyword heuristic, not a production safety agent",
+      "status": "open",
+      "evidence": [
+        "p004/app.js defines a fixed SAFETY_TERMS list and urgentSafety() checks whether any term is contained in user text.",
+        "This mechanism cannot reliably cover euphemisms, English/multilingual expressions, negation/context or broader risk semantics."
+      ],
+      "recommendation": "Keep the client keyword path as a fallback, but describe it as best-effort; production should use a dedicated safety classifier/policy layer with evaluated coverage.",
+      "remediation_class": "external-blocked"
+    },
+    {
+      "id": "AQ4-P1-005",
+      "severity": "P1",
+      "title": "P004 core behavior is not exercised by automated runtime tests",
+      "status": "open",
+      "evidence": [
+        ".github/workflows/quality-gate.yml checks p004/app.js and p004/api-client.js syntax.",
+        "tests/structure.mjs asserts many P004 strings and structural invariants but does not execute the creator/chat/storage/API behavior.",
+        "No dedicated P004 runtime/browser smoke test was found."
+      ],
+      "recommendation": "Add P004 behavior tests for creator flow, API success/failure, storage lifecycle, consent/import, safety override and rendering; split pure logic where needed for zero-dependency Node tests.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "AQ4-P1-006",
+      "severity": "P1",
+      "title": "Mutable GitHub Action and NVWA references weaken supply-chain reproducibility",
+      "status": "open",
+      "evidence": [
+        "Observed workflows use actions/checkout@v6, actions/configure-pages@v5, actions/upload-pages-artifact@v4 and actions/deploy-pages@v4.",
+        "repo-auditor's immutable-ref rule classifies these tag references as unpinned.",
+        "P004 uses protocolVersion xmg2024/nvwa-skill@main."
+      ],
+      "recommendation": "Pin reviewed GitHub Actions to full commit SHAs with version comments and pin NVWA protocol to a concrete commit/release.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "AQ4-P2-001",
+      "severity": "P2",
+      "title": "P004 runtime is concentrated in one large application file",
+      "status": "open",
+      "evidence": [
+        "p004/app.js is approximately 50 KB and contains Character Studio, persistence, IndexedDB, NVWA orchestration, memory, Observer, safety, admin rendering and API settings."
+      ],
+      "recommendation": "Incrementally split pure logic and module responsibilities before adding further character-world features.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "AQ4-P2-002",
+      "severity": "P2",
+      "title": "Local fallback memory is closer to truncated transcript storage than summarized retrieval memory",
+      "status": "open",
+      "evidence": [
+        "Without a memory backend, maybeRemember() stores a whitespace-normalized user input truncated to roughly 190 characters as a durable memory item.",
+        "No embedding/salience/relevance retrieval is used in the static BYOK fallback."
+      ],
+      "recommendation": "Label current local memory as prototype memory blocks and later add summary/salience/retrieval before making stronger long-term-memory claims.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "AQ4-P2-003",
+      "severity": "P2",
+      "title": "Public repository has no explicit software license",
+      "status": "open",
+      "evidence": [
+        "The audited repository root does not contain LICENSE and GitHub metadata reports license=null."
+      ],
+      "recommendation": "Owner should choose and add an appropriate license; repo-auditor must not choose licensing terms automatically.",
+      "remediation_class": "owner-choice"
+    },
+    {
+      "id": "AQ4-P2-004",
+      "severity": "P2",
+      "title": "Main branch quality gate is not enforced by branch protection",
+      "status": "open",
+      "evidence": [
+        "GitHub branch metadata for main reports protected=false and required status checks enforcement off."
+      ],
+      "recommendation": "When moving beyond rapid prototype mode, enable a ruleset/branch protection and require the P00 Quality Gate before merge.",
+      "remediation_class": "owner-choice"
+    }
+  ],
+  "limitations": [
+    "The repo-auditor network collector could not run directly inside the execution container because outbound DNS is disabled; equivalent collector fields were gathered through the authorized GitHub connector and the structured report is validated by repo-auditor CI.",
+    "No real OpenAI-compatible, FreeLLMAPI or NVWA backend request was executed as part of this audit.",
+    "No browser-level accessibility or cross-browser test was run.",
+    "No claim is made that P004's heuristic personality/clinical inference is psychometrically validated.",
+    "Owner-supplied patent, employer/client/PI request, background-IP and ownership questions were not collected in this P004-focused pass."
+  ],
+  "recheck_triggers": [
+    "Any change to P004 Observer import or cross-module P005 data reuse.",
+    "Any change to BYOK secret handling or arbitrary endpoint support.",
+    "Introduction of a real backend/admin authentication layer.",
+    "Changes to safety classification or crisis-response behavior.",
+    "Changes to NVWA protocol pinning or distillation execution.",
+    "Major refactor of p004/app.js or addition of runtime/browser tests.",
+    "First formal research data collection or production deployment."
+  ]
+}
