@@ -126,5 +126,14 @@
       "LG-P1-002",
       "LG-P1-003"
     ]
+  },
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "split-public-private",
+    "reasons": [
+      "The existing Long Gate repository is already public, so changing visibility later would not erase prior disclosure.",
+      "Future genuinely new technical mechanisms may warrant patent/ownership review before they are merged into the public tree.",
+      "Keep the existing public/background code stable while developing patent-sensitive or organization-specific extensions privately until reviewed."
+    ]
   }
 }
