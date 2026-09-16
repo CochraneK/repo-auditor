@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Remove records that are no longer live-public from the public source registry."""
 from __future__ import annotations
-import argparse,json
+import argparse,json,os
 from pathlib import Path
 from audit_registry import live_visibility
 ROOT=Path(__file__).resolve().parents[1]
@@ -15,7 +15,9 @@ def sanitize(data,resolver):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--registry',type=Path,default=ROOT/'portfolio'/'registry.json');a=p.parse_args()
-    data=json.loads(a.registry.read_text(encoding='utf-8')); clean,removed=sanitize(data,lambda o,n:live_visibility(o,n,'__ENV__'))
+    token=os.environ.get('GITHUB_TOKEN')
+    if not token: raise SystemExit('GITHUB_TOKEN is required for live registry sanitization')
+    data=json.loads(a.registry.read_text(encoding='utf-8')); clean,removed=sanitize(data,lambda o,n:live_visibility(o,n,token))
     if removed:a.registry.write_text(json.dumps(clean,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(f'Sanitized public registry: removed {len(removed)} non-public/stale record(s)')
     return 0
