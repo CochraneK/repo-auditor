@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/repo-auditor",
+  "audit_date": "2026-09-16",
+  "audited_commit": "cdfc87e99bb31ed636df9505596e70e4a62a9f9a",
+  "markdown": "audits/repo-auditor-2026-09-16.md",
+  "decision": {
+    "work_status": "CONTINUE",
+    "priority_score": 65,
+    "priority_band": "P2-PLANNED",
+    "note": "Infrastructure is useful and should improve, but it should not displace higher-priority product/research work."
+  },
+  "quality_gates": {
+    "portfolio_audit": "unknown",
+    "pages": "in-progress"
+  },
+  "strengths": [
+    "Public/private portfolio boundary is explicit and registry validation enforces public-only records.",
+    "Priority score is documented as an attention-allocation score rather than a quality score.",
+    "Structured audit sidecars, a rubric, a validator, and a public evidence collector now exist.",
+    "The first structured external audit records an exact commit and separates facts, findings, limitations, and recheck triggers.",
+    "The failed high-permission one-shot bootstrap workflow has been retired."
+  ],
+  "findings": [
+    {
+      "id": "RA-P1-001",
+      "severity": "P1",
+      "title": "The repository has no explicit LICENSE",
+      "status": "open",
+      "evidence": [
+        "No LICENSE file was present in the repository root at the audited commit."
+      ],
+      "recommendation": "Choose and add an explicit license before encouraging third-party reuse. This is an owner/legal choice and should not be inferred automatically."
+    },
+    {
+      "id": "RA-P1-002",
+      "severity": "P1",
+      "title": "Audit results are not surfaced in the GitHub Pages workbench",
+      "status": "open",
+      "evidence": [
+        "The dashboard is driven by portfolio/registry.json and focuses on priority/work status.",
+        "Structured audit reports now exist under audits/, but the Pages UI does not expose latest audit status, audited SHA, or open P1/P0 counts."
+      ],
+      "recommendation": "Add a compact audit-status layer to the workbench without conflating audit severity with portfolio priority."
+    },
+    {
+      "id": "RA-P1-003",
+      "severity": "P1",
+      "title": "No audit staleness detection exists yet",
+      "status": "open",
+      "evidence": [
+        "Structured audits store audited_commit, but CI currently validates shape only.",
+        "There is no check that compares an audited commit to the repository's current default-branch head."
+      ],
+      "recommendation": "Add an optional public staleness check that marks audits stale when the head SHA moves, with configurable re-audit triggers."
+    },
+    {
+      "id": "RA-P2-001",
+      "severity": "P2",
+      "title": "Static workbench sources are duplicated at repository root and under docs/",
+      "status": "open",
+      "evidence": [
+        "index.html, app.js, and styles.css exist at the root.",
+        "docs/index.html, docs/app.js, and docs/styles.css also exist and README documents docs/ as the Pages source."
+      ],
+      "recommendation": "Make docs/ the single canonical Pages source or generate one copy from the other to prevent UI drift."
+    },
+    {
+      "id": "RA-P2-002",
+      "severity": "P2",
+      "title": "Evidence collector has no dedicated automated tests",
+      "status": "open",
+      "evidence": [
+        "scripts/collect_repo_evidence.py is syntax-checked by CI.",
+        "There are no fixtures/unit tests for GitHub API parsing, action-ref pin detection, or private-repository refusal."
+      ],
+      "recommendation": "Add deterministic fixture-based tests with mocked API responses before expanding the collector."
+    },
+    {
+      "id": "RA-P2-003",
+      "severity": "P2",
+      "title": "Legacy bootstrap source archive remains in the repository",
+      "status": "open",
+      "evidence": [
+        ".repo-auditor-bootstrap/source.part-* files remain after the bootstrap workflow was retired.",
+        "The earlier bootstrap run failed with invalid base64 before publication."
+      ],
+      "recommendation": "After confirming no recovery value is needed, remove the legacy archive in a separate cleanup commit."
+    }
+  ],
+  "limitations": [
+    "The self-audit does not infer or choose a software license on behalf of the repository owner.",
+    "GitHub Pages visual rendering was not browser-tested in this self-audit.",
+    "Branch protection and repository administration settings were not evaluated.",
+    "The evidence collector was reviewed statically but not exercised against a large cross-language corpus."
+  ],
+  "recheck_triggers": [
+    "A LICENSE is added.",
+    "Audit results become visible in the Pages workbench.",
+    "Staleness detection is added.",
+    "The root/docs static source duplication is removed.",
+    "The evidence collector gains automated fixture tests or language-specific adapters."
+  ]
+}

@@ -248,8 +248,9 @@
       "work_status": "CONTINUE",
       "priority_score": 65,
       "priority_band": "P2-PLANNED",
-      "reason": "GitHub 总控基础设施；继续维护但不应抢占产品主线。",
-      "last_commit_date": "2026-09-15"
+      "reason": "2026-09-16 自审：总控 + 结构化审计框架已成型；下一阶段补 LICENSE 决策、审计结果 UI、staleness detection、静态页面去重和 collector 测试，不应抢占产品主线。",
+      "last_commit_date": "2026-09-15",
+      "latest_audit": "audits/repo-auditor-2026-09-16.md"
     },
     {
       "name": "RVC_factor",
