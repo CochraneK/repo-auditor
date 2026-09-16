@@ -2,7 +2,7 @@
   "schema_version": 1,
   "repository": "CochraneK/long-gate",
   "audit_date": "2026-09-16",
-  "audited_commit": "1b3e9c54d451978b6f1f4da6e7fc8d8d22273d78",
+  "audited_commit": "b0eeb3b440efe8c69480028667d06952957dd661",
   "markdown": "audits/long-gate-2026-09-16.md",
   "decision": {
     "work_status": "CONTINUE",
@@ -21,7 +21,9 @@
   "observed_tests": 58,
   "strengths": [
     "Raw/network capability separation is expressed in architecture, compose contracts, tests, and security invariants.",
-    "All six observed quality gates passed on the audited commit.",
+    "All six observed quality gates passed on the remediated audited commit.",
+    "Every observed third-party GitHub Action is pinned to an immutable reviewed commit SHA with a human-readable version comment.",
+    "The security-boundary workflow now directly runs policy, pipeline, agent, deployment-contract, egress, and Model Vault boundary tests.",
     "Model Vault catalog pins upstream model revisions and SHA-256 values.",
     "Release-readiness builds distributions and smoke-installs the wheel in a clean environment.",
     "README, Chinese README, threat model, security policy, contributing guide, citation, changelog, roadmap, and safe demo are present.",
@@ -43,23 +45,24 @@
       "id": "LG-P1-002",
       "severity": "P1",
       "title": "Most GitHub Actions use mutable tag references",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "Observed workflows use actions/checkout@v4, actions/setup-python@v5, github/codeql-action/*@v3, actions/upload-artifact@v4, aquasecurity/trivy-action@v0.36.0, and anchore/sbom-action@v0.17.2.",
-        "The Model Vault already uses stronger immutable upstream revision pins plus SHA-256 verification, creating an inconsistent supply-chain standard."
+        "All observed third-party GitHub Actions in .github/workflows are pinned to full immutable commit SHAs.",
+        "Version comments are retained beside pins for reviewability.",
+        "The remediated main commit passed all six quality gates."
       ],
-      "recommendation": "Pin third-party GitHub Actions to reviewed immutable commit SHAs and keep human-readable version comments."
+      "recommendation": "Keep Dependabot or equivalent update review active and only advance pins after CI review."
     },
     {
       "id": "LG-P1-003",
       "severity": "P1",
       "title": "The security-boundary workflow does not explicitly run deployment capability-contract tests",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        ".github/workflows/security.yml explicitly runs tests/test_policy.py and tests/test_pipeline.py.",
-        "tests/test_deployment_contract.py verifies model-setup/private/network mount separation but currently relies on the general test workflow."
+        ".github/workflows/security.yml now explicitly runs tests/test_policy.py, tests/test_pipeline.py, tests/test_agent_boundary.py, tests/test_deployment_contract.py, tests/test_egress.py, and tests/test_model_vault.py.",
+        "The expanded security-boundary gate passed on audited commit b0eeb3b440efe8c69480028667d06952957dd661."
       ],
-      "recommendation": "Add deployment-contract and Model Vault boundary tests to the security-boundary workflow so the badge matches the full capability-boundary claim."
+      "recommendation": "Keep capability-boundary tests inside the named security-boundary gate whenever deployment or model setup architecture changes."
     },
     {
       "id": "LG-P2-001",
@@ -107,5 +110,21 @@
     "Release workflow changes or a first public package release.",
     "Changes to hardened compose capability boundaries.",
     "A major rewrite of privacy audit thresholds or semantic-release policy."
-  ]
+  ],
+  "remediation_recheck": {
+    "date": "2026-09-16",
+    "head_commit": "b0eeb3b440efe8c69480028667d06952957dd661",
+    "quality_gates": {
+      "test": "pass",
+      "security_boundary": "pass",
+      "benchmark_smoke": "pass",
+      "release_readiness": "pass",
+      "security_audit": "pass",
+      "codeql": "pass"
+    },
+    "resolved_findings": [
+      "LG-P1-002",
+      "LG-P1-003"
+    ]
+  }
 }
