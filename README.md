@@ -66,6 +66,6 @@ Priority 只表示“现在是否值得投入时间”：P0 NOW、P1 NEXT、P2 P
 
 ## Pages
 
-urlPortfolio Command Centerhttps://cochranek.github.io/repo-auditor/
+Portfolio Command Center: https://cochranek.github.io/repo-auditor/
 
 源码在 `docs/`。Public Pages 是展示层，不是 private control plane；任何新功能都必须保持这个边界。
