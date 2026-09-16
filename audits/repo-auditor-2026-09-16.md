@@ -2,7 +2,7 @@
 
 > 审计日期：2026-09-16  
 > 审计对象：`CochraneK/repo-auditor`  
-> 审计基线：`main` @ `4429a9a416e5f46c4587fb90cbda1f1ec5c4899e`  
+> 审计基线：`main` @ `69affc0de2c31f767f26cee17de3bfd19a0fbd47`  
 > Portfolio 决策：**CONTINUE · 65 · P2-PLANNED**
 
 ## 一句话结论
@@ -37,6 +37,7 @@
 - **RA-P2-002 · FIXED** — collector / freshness fixture tests 已进入 CI
 - **RA-P2-003 · FIXED** — 退役且不完整的 bootstrap archive 已删除
 - **Publication / IP gate · PASS** — schema、validator、deterministic helper、fixture tests 与 CI 均已接入；不会把个人合同或单位敏感信息写入 public audit layer
+- **Multi-dimensional quality · PASS** — 9 个质量维度各自 0–5 分，允许 unverified=`null`，不计算单一质量总分；schema、validator、tests 与 Pages 展示均已接入
 - **仍开放：RA-P1-001 · LICENSE**
 
 ### 为什么有 `Current*`
