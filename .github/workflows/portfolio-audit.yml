@@ -41,10 +41,12 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Validate portfolio registry
         run: python scripts/audit_registry.py
-      - name: Rebuild public Pages data bundle
+      - name: Rebuild privacy-safe Pages data bundle
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/build_public_pages.py
-      - name: Ensure committed Pages bundle is current
-        run: git diff --exit-code -- docs/data/registry.json docs/data/manifest.json docs/data/audits
+      - name: Show generated Pages drift
+        run: git diff -- docs/data/registry.json docs/data/manifest.json docs/data/audits
       - name: Validate structured audit reports
         run: python scripts/audit_reports.py
       - name: Report GO remediation queue
@@ -58,8 +60,32 @@ jobs:
       - name: Validate account-wide scanner import
         run: python scripts/scan_portfolio.py --help
 
+  sync-public-pages:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: audit
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Rebuild sanitized public bundle from live visibility
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/build_public_pages.py
+      - name: Commit sanitized bundle when visibility changed
+        run: |
+          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits; then
+            echo 'Public bundle already sanitized.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/data/registry.json docs/data/manifest.json docs/data/audits
+          git commit -m 'chore: sync privacy-safe Pages bundle [skip ci]'
+          git push
+
   private-portfolio-scan:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
