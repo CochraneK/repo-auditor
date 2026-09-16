@@ -61,7 +61,7 @@ jobs:
         run: python scripts/scan_portfolio.py --help
 
   sync-public-pages:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: audit
     permissions:
       contents: write
@@ -85,20 +85,22 @@ jobs:
           git push
 
   private-portfolio-scan:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
+    env:
+      PORTFOLIO_AUDIT_TOKEN: ${{ secrets.PORTFOLIO_AUDIT_TOKEN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Explain credential boundary
-        if: ${{ secrets.PORTFOLIO_AUDIT_TOKEN == '' }}
+        if: env.PORTFOLIO_AUDIT_TOKEN == ''
         run: |
           echo 'PORTFOLIO_AUDIT_TOKEN is not configured.'
           echo 'The default GITHUB_TOKEN cannot enumerate other private repositories.'
           echo 'Keeping the last privacy-safe aggregate snapshot; no private details are published.'
       - name: Scan all owned repositories including private
-        if: ${{ secrets.PORTFOLIO_AUDIT_TOKEN != '' }}
+        if: env.PORTFOLIO_AUDIT_TOKEN != ''
         env:
-          GITHUB_TOKEN: ${{ secrets.PORTFOLIO_AUDIT_TOKEN }}
+          GITHUB_TOKEN: ${{ env.PORTFOLIO_AUDIT_TOKEN }}
         run: |
           python scripts/scan_portfolio.py --allow-private
           echo 'Private evidence remains only on this ephemeral runner and is never uploaded or committed.'
