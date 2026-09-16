@@ -47,6 +47,7 @@ GitHub Pages 源码位于 `docs/`，线上入口：
 | **明暗主题** | 适配不同浏览环境 |
 | **Repository jump** | 一键进入对应公开仓库 |
 | **Publication / IP gate** | 审计时明确给出 Public / Private / split 的发布建议，提醒专利披露、Background IP、单位/客户请求与权属不确定性 |
+| **Multi-dimensional quality** | 9 个独立工程质量维度各自 0–5 分；不合并成单一质量总分，也不与 Priority 混淆 |
 
 数据源：
 
