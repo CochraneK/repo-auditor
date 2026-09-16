@@ -4,7 +4,9 @@
 
 ### Public layer
 
-本公开仓库只允许保存：
+`repo-auditor` 控制仓库可以是 Private；**GitHub Pages 公开层仍只能保存和发布 Public 仓库信息**。公开运行时只读取 `docs/data/` 的构建快照，不读取 private GitHub raw content。
+
+Public Pages bundle 只允许保存：
 
 - Public 仓库名称；
 - Public 仓库的工作状态；
@@ -19,7 +21,7 @@
 
 ### Private layer
 
-Private 项目必须在公开仓库之外管理。当前通过授权的 GitHub 连接按需读取；未来建议迁移到独立 private 管理仓库。
+当控制仓库为 Private 时，可以在授权边界内审计 Private repository；但 private evidence 不得进入 `docs/`、`portfolio/registry.json` 或其他 Pages payload。`collect_repo_evidence.py --allow-private` 需要显式认证，并禁止把 private evidence 写入 `docs/` 或 `portfolio/`。
 
 ## Work status
 
@@ -72,7 +74,7 @@ Every new structured audit should record the exact audited commit and separate:
 
 Priority score is never a project quality score.
 
-The public evidence collector must refuse private repositories.
+The evidence collector refuses private repositories by default. Authenticated private collection requires explicit `--allow-private`; public Pages export still refuses every non-public record.
 
 
 ## GO remediation mode
