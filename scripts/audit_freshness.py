@@ -3,10 +3,21 @@
 
 By default stale audits are reported as warnings and do not fail CI. Use --strict
 when a caller explicitly wants staleness to be blocking.
+
+A sidecar may opt into a narrow "current-equivalent" state with:
+
+    "freshness": {
+      "ignore_paths": ["audits/**", "portfolio/registry.json"]
+    }
+
+This is intentionally explicit per audit. A moved HEAD is only treated as
+current-equivalent when every changed file since the audited commit matches one
+of those paths. Code, CI, UI, or other unlisted changes still make the audit stale.
 """
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import os
 import sys
@@ -66,12 +77,52 @@ def default_head(repository: str) -> str:
     return commits[0]["sha"]
 
 
+def changed_files(repository: str, base: str, head: str) -> list[str]:
+    repo = urllib.parse.quote(repository, safe="/")
+    payload = request_json(f"/repos/{repo}/compare/{base}...{head}")
+    files = payload.get("files", []) if isinstance(payload, dict) else []
+    return [
+        str(item["filename"])
+        for item in files
+        if isinstance(item, dict) and isinstance(item.get("filename"), str)
+    ]
+
+
+def path_is_ignored(path: str, patterns: list[str]) -> bool:
+    return any(fnmatch.fnmatchcase(path, pattern) for pattern in patterns)
+
+
+def ignore_patterns(data: dict[str, Any]) -> list[str]:
+    freshness = data.get("freshness")
+    if not isinstance(freshness, dict):
+        return []
+    value = freshness.get("ignore_paths", [])
+    if not isinstance(value, list):
+        return []
+    return [str(item) for item in value if isinstance(item, str) and item.strip()]
+
+
 def check(audits_dir: Path = AUDITS) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     for path, data in load_latest_sidecars(audits_dir):
         repository = str(data["repository"])
         audited = str(data["audited_commit"])
         head = default_head(repository)
+        patterns = ignore_patterns(data)
+        files: list[str] = []
+
+        if audited == head:
+            state = "current"
+        elif patterns:
+            files = changed_files(repository, audited, head)
+            state = (
+                "current-equivalent"
+                if files and all(path_is_ignored(filename, patterns) for filename in files)
+                else "stale"
+            )
+        else:
+            state = "stale"
+
         results.append(
             {
                 "repository": repository,
@@ -79,7 +130,9 @@ def check(audits_dir: Path = AUDITS) -> list[dict[str, Any]]:
                 "audit_date": data.get("audit_date"),
                 "audited_commit": audited,
                 "head_commit": head,
-                "state": "current" if audited == head else "stale",
+                "state": state,
+                "ignored_paths": patterns,
+                "changed_files": files,
             }
         )
     return results
@@ -102,6 +155,7 @@ def main() -> int:
         args.out.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
 
     stale = 0
+    equivalent = 0
     for item in results:
         label = item["state"].upper()
         print(f"{label}: {item['repository']} audited={item['audited_commit']} head={item['head_commit']}")
@@ -111,8 +165,15 @@ def main() -> int:
                 f"::warning file=audits/{item['sidecar']}::Audit is stale for {item['repository']}; "
                 f"audited {item['audited_commit'][:12]}, head {item['head_commit'][:12]}"
             )
+        elif item["state"] == "current-equivalent":
+            equivalent += 1
+            print(
+                f"::notice file=audits/{item['sidecar']}::Audit remains current-equivalent; "
+                "all post-audit changes match explicit freshness.ignore_paths."
+            )
 
-    print(f"Audit freshness: {len(results) - stale} current, {stale} stale")
+    current = len(results) - stale - equivalent
+    print(f"Audit freshness: {current} current, {equivalent} current-equivalent, {stale} stale")
     return 1 if args.strict and stale else 0
 
 

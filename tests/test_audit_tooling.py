@@ -123,6 +123,70 @@ class FreshnessTests(unittest.TestCase):
 
         self.assertEqual([item["state"] for item in result], ["current", "stale"])
 
+    def test_metadata_only_changes_can_be_current_equivalent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "self.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/repo-auditor",
+                    "audit_date": "2026-09-16",
+                    "audited_commit": "a" * 40,
+                    "freshness": {"ignore_paths": ["audits/**", "portfolio/registry.json"]},
+                }),
+                encoding="utf-8",
+            )
+            with mock.patch.object(af, "default_head", return_value="b" * 40), mock.patch.object(
+                af, "changed_files", return_value=[
+                    "audits/repo-auditor-2026-09-16.json",
+                    "audits/repo-auditor-2026-09-16.md",
+                    "portfolio/registry.json",
+                ]
+            ):
+                result = af.check(root)
+
+        self.assertEqual(result[0]["state"], "current-equivalent")
+
+    def test_nonignored_change_makes_metadata_aware_audit_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "self.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/repo-auditor",
+                    "audit_date": "2026-09-16",
+                    "audited_commit": "a" * 40,
+                    "freshness": {"ignore_paths": ["audits/**", "portfolio/registry.json"]},
+                }),
+                encoding="utf-8",
+            )
+            with mock.patch.object(af, "default_head", return_value="b" * 40), mock.patch.object(
+                af, "changed_files", return_value=[
+                    "audits/repo-auditor-2026-09-16.json",
+                    "docs/app.js",
+                ]
+            ):
+                result = af.check(root)
+
+        self.assertEqual(result[0]["state"], "stale")
+
+    def test_empty_compare_is_fail_closed_when_sha_moved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "self.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/repo-auditor",
+                    "audit_date": "2026-09-16",
+                    "audited_commit": "a" * 40,
+                    "freshness": {"ignore_paths": ["audits/**"]},
+                }),
+                encoding="utf-8",
+            )
+            with mock.patch.object(af, "default_head", return_value="b" * 40), mock.patch.object(
+                af, "changed_files", return_value=[]
+            ):
+                result = af.check(root)
+
+        self.assertEqual(result[0]["state"], "stale")
+
 
 if __name__ == "__main__":
     unittest.main()

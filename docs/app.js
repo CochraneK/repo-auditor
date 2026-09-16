@@ -89,17 +89,59 @@
     if (!repo.latest_audit) return "";
     const audit = repo._audit;
     if (!audit) return '<span class="badge audit unknown">Audit · loading</span>';
-    const label = audit.state === "current" ? "Current" : audit.state === "stale" ? "Stale" : "Unknown";
+    const displayState = audit.state === "current-equivalent" ? "current" : audit.state;
+    const label =
+      audit.state === "current" ? "Current" :
+      audit.state === "current-equivalent" ? "Current*" :
+      audit.state === "stale" ? "Stale" : "Unknown";
     const title = audit.error
       ? audit.error
-      : `Audit ${audit.auditDate || "—"} · audited ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)}`;
-    return `<span class="badge audit ${esc(audit.state)}" title="${esc(title)}">Audit · ${label} · ${audit.openP0} P0 · ${audit.openP1} P1</span>`;
+      : audit.state === "current-equivalent"
+        ? `Audit ${audit.auditDate || "—"} · baseline ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)} · only explicitly ignored audit/portfolio metadata changed`
+        : `Audit ${audit.auditDate || "—"} · audited ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)}`;
+    return `<span class="badge audit ${esc(displayState)}" title="${esc(title)}">Audit · ${label} · ${audit.openP0} P0 · ${audit.openP1} P1</span>`;
   }
 
   function auditQuickLink(repo) {
     return repo.latest_audit
       ? `<a class="quick-link" href="${auditReportUrl(repo)}" target="_blank" rel="noreferrer">Audit ↗</a>`
       : "";
+  }
+
+  function auditIgnorePatterns(sidecar) {
+    const value = sidecar?.freshness?.ignore_paths;
+    return Array.isArray(value) ? value.filter(item => typeof item === "string" && item.trim()) : [];
+  }
+
+  function pathMatchesIgnore(path, pattern) {
+    if (pattern.endsWith("/**")) {
+      const prefix = pattern.slice(0, -3);
+      return path === prefix || path.startsWith(prefix + "/");
+    }
+    return path === pattern;
+  }
+
+  async function metadataAwareAuditState(repoName, auditedCommit, headCommit, patterns) {
+    if (auditedCommit === headCommit) return "current";
+    if (!patterns.length) return "stale";
+
+    const url =
+      GITHUB_API_BASE + encodeURIComponent(repoName) +
+      "/compare/" + encodeURIComponent(auditedCommit) + "..." + encodeURIComponent(headCommit);
+    const response = await fetch(url, {
+      cache: "no-store",
+      headers: { Accept: "application/vnd.github+json" }
+    });
+    if (!response.ok) throw new Error("GitHub compare HTTP " + response.status);
+    const comparison = await response.json();
+    const files = Array.isArray(comparison?.files)
+      ? comparison.files.map(item => item?.filename).filter(Boolean)
+      : [];
+
+    if (!files.length) return "stale";
+    return files.every(path => patterns.some(pattern => pathMatchesIgnore(path, pattern)))
+      ? "current-equivalent"
+      : "stale";
   }
 
   async function loadAuditStatus(repo) {
@@ -118,14 +160,18 @@
 
       const sidecar = await auditResponse.json();
       const commits = await headResponse.json();
+      const auditedCommit = sidecar.audited_commit || "";
       const headCommit = Array.isArray(commits) && commits[0]?.sha ? commits[0].sha : "";
+      if (!auditedCommit) throw new Error("Audit sidecar has no audited_commit");
       if (!headCommit) throw new Error("Could not resolve repository HEAD");
 
+      const patterns = auditIgnorePatterns(sidecar);
+      const state = await metadataAwareAuditState(repo.name, auditedCommit, headCommit, patterns);
       const open = (sidecar.findings || []).filter(f => f.status === "open");
       repo._audit = {
-        state: sidecar.audited_commit === headCommit ? "current" : "stale",
+        state,
         auditDate: sidecar.audit_date || "",
-        auditedCommit: sidecar.audited_commit || "",
+        auditedCommit,
         headCommit,
         openP0: open.filter(f => f.severity === "P0").length,
         openP1: open.filter(f => f.severity === "P1").length
