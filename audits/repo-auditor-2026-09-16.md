@@ -2,12 +2,12 @@
 
 > 审计日期：2026-09-16  
 > 审计对象：`CochraneK/repo-auditor`  
-> 审计基线：`main` @ `f4941ba1c937f5eba9dce0578858d9af244bff65`  
+> 审计基线：`main` @ `4429a9a416e5f46c4587fb90cbda1f1ec5c4899e`  
 > Portfolio 决策：**CONTINUE · 65 · P2-PLANNED**
 
 ## 一句话结论
 
-**repo-auditor 的“Portfolio + Structured Audit”双层结构已经收口成可用产品：审计结果进入 Pages、freshness 可执行、collector 有 fixture tests、Pages 源唯一化、bootstrap 遗留已清理。当前唯一开放的高优先项是 LICENSE，而这必须由仓库所有者明确选择。**
+**repo-auditor 的“Portfolio + Structured Audit”双层结构已经收口成可用产品，并新增结构化 Publication / IP gate：每次审计都要明确 Public、Private、review-before-public 或 split-public-private。当前唯一开放的高优先项仍是 LICENSE。**
 
 ## 2026-09-16 remediation recheck
 
@@ -20,6 +20,7 @@
 - **RA-P2-001 · FIXED** — 删除 root UI 重复源，`docs/` 成为唯一 canonical Pages source
 - **RA-P2-002 · FIXED** — collector / freshness fixture tests 已进入 CI
 - **RA-P2-003 · FIXED** — 退役且不完整的 bootstrap archive 已删除
+- **Publication / IP gate · PASS** — schema、validator、deterministic helper、fixture tests 与 CI 均已接入；不会把个人合同或单位敏感信息写入 public audit layer
 - **仍开放：RA-P1-001 · LICENSE**
 
 ### 为什么有 `Current*`
@@ -111,7 +112,8 @@ root 的 `index.html / app.js / styles.css` 已删除。
 9. collector / freshness 有自动化 fixture tests；
 10. Long Gate 已经 dogfood “审计 → 整改 → recheck”闭环；
 11. Pages source 已唯一化；
-12. 高权限一次性 bootstrap 入口和遗留 archive 都已退役。
+12. 高权限一次性 bootstrap 入口和遗留 archive 都已退役；
+13. Publication / IP gate 会在 Public 前检查潜在专利、Background IP、单位/客户/PI 请求、保密输入和权属不确定性。
 
 ## 下一步
 
