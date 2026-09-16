@@ -87,6 +87,7 @@ These are `owner-choice` or `external-blocked`, not failures of GO mode.
 - Preserve exact audited commit SHAs.
 - If a remediation changes source, CI, release, security, or user-facing behavior, the previous audit becomes stale and must be re-run.
 - Do not write private repository names or sensitive personal/employment/IP details into the public audit layer.
+- Treat `docs/data/` as a strict publication boundary: it must be reproducibly generated from public-only registry records and public audit sidecars.
 
 ## Public / Private and IP
 
