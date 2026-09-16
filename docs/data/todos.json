@@ -23,10 +23,10 @@
       "id": "auditor-hardening",
       "title": "repo-auditor hardening",
       "priority": "P0",
-      "status": "DOING",
+      "status": "DONE",
       "area": "Audit",
       "repo": "repo-auditor",
-      "detail": "继续真实 Audit → Fix → Re-audit 闭环；BLOCKED 必须有继续推进、替代路径或明确降级。"
+      "detail": "核心 Audit → Fix → Re-audit / GO 闭环、Private/Public publication boundary、PARTIAL coverage 语义与失败降级已完成；后续只按真实新 finding 迭代。"
     },
     {
       "id": "metadata-hygiene",
@@ -76,10 +76,10 @@
       "id": "todo-page-sync",
       "title": "TODO → Page structured sync",
       "priority": "P1",
-      "status": "DOING",
+      "status": "DONE",
       "area": "Infrastructure",
       "repo": "repo-auditor",
-      "detail": "以 portfolio/todos.json 作为公开安全的 Git Todo 单一数据源，由 Pages 构建流程自动发布，停止把 Todo 硬编码进 HTML。"
+      "detail": "portfolio/todos.json 已作为公开安全的 Git Todo 单一数据源进入 Pages 构建与 main 同步流程。"
     }
   ]
 }

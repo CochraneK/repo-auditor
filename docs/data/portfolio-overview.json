@@ -2,7 +2,7 @@
   "schema_version": 2,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-16T18:42:40.822266+00:00",
+  "generated_at": "2026-09-16T18:48:18.463554+00:00",
   "audit_status": "PARTIAL",
   "inventory": {
     "observed_total": 34,
@@ -22,7 +22,7 @@
     "evidence_collected": 34,
     "readme_present": 33,
     "license_present": 8,
-    "security_policy_present": 3,
+    "security_policy_present": 4,
     "repositories_with_workflows": 15,
     "repositories_with_unpinned_actions": 11,
     "head_ci_green": 21

@@ -6,6 +6,7 @@
   "live_visibility_exclusions": 0,
   "audit_sidecars": [
     "ming-2026-09-17.json",
+    "repo-auditor-2026-09-17.json",
     "we-read-2026-09-16.json"
   ],
   "private_repository_metadata_included": false,

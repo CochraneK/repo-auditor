@@ -239,8 +239,9 @@
       "work_status": "CONTINUE",
       "priority_score": 65,
       "priority_band": "P2-PLANNED",
-      "reason": "审计控制面与 GO remediation 基线已成型；继续维护 private/public coverage、Pages 隐私边界与自审，但不抢占产品主线。",
-      "last_commit_date": "2026-09-17"
+      "reason": "2026-09-17 自审：GO remediation、live visibility fail-closed、Public/Private publication boundary 与 Coverage/CI 分离均已收口；当前仅剩 LICENSE owner-choice 与 private PAT coverage external-blocked。",
+      "last_commit_date": "2026-09-17",
+      "latest_audit": "audits/repo-auditor-2026-09-17.md"
     },
     {
       "name": "RVC_factor",
