@@ -75,10 +75,10 @@
       "status": "fixed",
       "evidence": [
         "constraints-ci.txt now pins the reviewed top-level runtime, development, security-audit, and build toolchain used by CI.",
-        "test, security-boundary, security-audit, benchmark-smoke, release-readiness, and release-build workflows consume the constraints strategy while pyproject.toml retains downstream-friendly runtime ranges.",
-        "All six push quality gates passed on exact main commit 7657ec0a0b94fe6a8a91639940273fd06412ee8c, including pip-audit after moving pytest to its audited fixed release."
+        "Core CI workflows consume the constraints strategy while pyproject.toml retains downstream-friendly runtime ranges.",
+        "All six push quality gates passed on exact main commit 7657ec0a0b94fe6a8a91639940273fd06412ee8c."
       ],
-      "recommendation": "Refresh constraints deliberately under the full test/security suite; consider a fully hashed transitive lock later only if the added maintenance cost is justified.",
+      "recommendation": "Refresh constraints deliberately under the full test/security suite; consider a fully hashed transitive lock later only if justified.",
       "remediation_class": "auto-fix"
     },
     {
@@ -175,7 +175,7 @@
       "score": 4,
       "evidence": [
         "CI/dev direct dependencies and security/build tooling are constrained through constraints-ci.txt across the main validation workflows, and exact-main CI passed.",
-        "This is a reviewed constraints strategy rather than a fully hashed transitive lock, so reproducibility is strong but not maximal."
+        "This is a reviewed constraints strategy rather than a fully hashed transitive lock."
       ]
     },
     "release_engineering": {
