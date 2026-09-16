@@ -11,6 +11,7 @@
     "markdown",
     "decision",
     "quality_gates",
+    "quality_dimensions",
     "publication_gate",
     "findings",
     "limitations",
@@ -80,6 +81,293 @@
           }
         }
       }
+    },
+    "quality_dimensions": {
+      "type": "object",
+      "required": [
+        "purpose_scope",
+        "correctness",
+        "security_privacy",
+        "supply_chain",
+        "reproducibility",
+        "release_engineering",
+        "documentation_onboarding",
+        "maintainability",
+        "community_surface"
+      ],
+      "properties": {
+        "purpose_scope": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "correctness": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "security_privacy": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "supply_chain": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "reproducibility": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "release_engineering": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "documentation_onboarding": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "maintainability": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "community_surface": {
+          "type": "object",
+          "required": [
+            "score",
+            "evidence"
+          ],
+          "properties": {
+            "score": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
