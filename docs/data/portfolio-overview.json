@@ -2,11 +2,11 @@
   "schema_version": 1,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-16T15:52:00Z",
+  "generated_at": "2026-09-16T17:25:00Z",
   "inventory": {
     "total": 42,
-    "public": 33,
-    "private": 9,
+    "public": 32,
+    "private": 10,
     "scan_failures": 0,
     "private_names_published": false
   },
@@ -17,18 +17,13 @@
   },
   "privacy": {
     "pages_contains_private_details": false,
-    "note": "All 42 owner repositories were discovered through the authenticated GitHub connection. Private repositories are counted here but their names, URLs, SHAs, notes and findings are not published to Pages."
+    "note": "All owner repositories may be inventoried privately, but public Pages publishes only aggregate private counts and public-repository details. Private repository names, URLs, SHAs, notes and findings are excluded."
   },
   "self_audit": {
-    "included": true,
-    "repository": "repo-auditor"
+    "included": false,
+    "reason": "The control repository is private; its name and audit payload are not published in the public Pages snapshot."
   },
   "signals": [
-    {
-      "severity": "P0",
-      "kind": "visibility-drift",
-      "message": "The public registry snapshot contains at least one repository whose current GitHub visibility is private. Rebuild the public bundle from live visibility before publishing repository-level details."
-    },
     {
       "severity": "P1",
       "kind": "private-auth",

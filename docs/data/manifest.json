@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
   "scope": "public-pages-bundle",
-  "repository_count": 33,
-  "live_visibility_exclusions": 1,
+  "repository_count": 32,
+  "live_visibility_exclusions": 0,
   "audit_sidecars": [
-    "repo-auditor-2026-09-16.json",
+    "ming-2026-09-17.json",
     "we-read-2026-09-16.json"
   ],
   "private_repository_metadata_included": false,
