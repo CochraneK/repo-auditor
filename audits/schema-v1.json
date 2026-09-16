@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cochranek.github.io/repo-auditor/audits/schema-v1.json",
+  "title": "repo-auditor structured audit sidecar",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "audit_date",
+    "audited_commit",
+    "markdown",
+    "decision",
+    "quality_gates",
+    "findings",
+    "limitations",
+    "recheck_triggers"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+    "audit_date": {"type": "string", "format": "date"},
+    "audited_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "markdown": {"type": "string"},
+    "decision": {"type": "object"},
+    "quality_gates": {"type": "object"},
+    "findings": {"type": "array"},
+    "limitations": {"type": "array"},
+    "recheck_triggers": {"type": "array"}
+  }
+}

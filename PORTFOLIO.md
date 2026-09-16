@@ -1,15 +1,15 @@
 # Public GitHub 项目总控
 
-> Snapshot: 2026-09-15 · Public repositories only
+> Snapshot: 2026-09-16 · Public repositories only
 
 这个文件和 GitHub Pages 工作台**只包含公开仓库**。Private 仓库的名称、优先级和管理备注不写入本公开仓库。
 
 ## 当前统计
 
-- Public repositories: **33**
-- CONTINUE: **27**
+- Public repositories: **34**
+- CONTINUE: **28**
 - STOP: **6**
-- P0 NOW: **8**
+- P0 NOW: **9**
 
 ## CONTINUE · 按优先级排序
 
@@ -18,6 +18,7 @@
 | **100** | P0 · 现在 | `psy-exp` | 最近主打项目，当前最高优先级。 |
 | **96** | P0 · 现在 | `AI-Ques` | 2026-09-15 审计：保持 P0；先冻结功能扩张，修 baseline/研究范围/Future Me/测试与隐私安全问题。 |
 | **95** | P0 · 现在 | `ai-uni` | 近期主打，但方向可能走偏；优先做去留/大改决策和路线校正。 |
+| **94** | P0 · 现在 | `long-gate` | 2026-09-16 审计：pre-1.0 核心基线已成型；停止横向扩功能，收口 supply chain、repo profile、security-boundary CI 与发布可复现性。 |
 | **93** | P0 · 现在 | `FLP-Webui` | 工作需要，下周可能大量操作，时间窗口明确。 |
 | **93** | P0 · 现在 | `RVC_factor` | 工作需要，下周可能大量操作，时间窗口明确。 |
 | **93** | P0 · 现在 | `VA_emotion` | 工作需要，下周可能大量操作，时间窗口明确。 |

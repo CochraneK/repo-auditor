@@ -52,6 +52,39 @@ GitHub Pages 源码位于 `docs/`，线上入口：
 - `portfolio/registry.json` — **Public-only**
 - `PORTFOLIO.md` — **Public-only**
 
+## Repository Audit Layer
+
+`repo-auditor` 现在同时维护第二层：**可复现的 repository audit**。
+
+它不把项目质量压成一个总分，而是保存：
+
+- 精确 audited commit SHA；
+- CI / quality-gate evidence；
+- P0 / P1 / P2 / P3 findings；
+- 未能验证的边界；
+- 触发重审的条件。
+
+新审计使用 Markdown + JSON sidecar：
+
+```text
+audits/<repo>-YYYY-MM-DD.md
+audits/<repo>-YYYY-MM-DD.json
+```
+
+自动校验：
+
+```bash
+python scripts/audit_reports.py
+```
+
+公共仓库证据采集：
+
+```bash
+python scripts/collect_repo_evidence.py CochraneK/long-gate
+```
+
+详见 [Audit Rubric](AUDIT_RUBRIC.md) 和 [audits/](audits/README.md)。
+
 ## Public / Private 边界
 
 > [!IMPORTANT]

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/long-gate",
+  "audit_date": "2026-09-16",
+  "audited_commit": "1b3e9c54d451978b6f1f4da6e7fc8d8d22273d78",
+  "markdown": "audits/long-gate-2026-09-16.md",
+  "decision": {
+    "work_status": "CONTINUE",
+    "priority_score": 94,
+    "priority_band": "P0-NOW",
+    "note": "Priority reflects current attention value, not repository quality."
+  },
+  "quality_gates": {
+    "test": "pass",
+    "security_boundary": "pass",
+    "benchmark_smoke": "pass",
+    "release_readiness": "pass",
+    "security_audit": "pass",
+    "codeql": "pass"
+  },
+  "observed_tests": 58,
+  "strengths": [
+    "Raw/network capability separation is expressed in architecture, compose contracts, tests, and security invariants.",
+    "All six observed quality gates passed on the audited commit.",
+    "Model Vault catalog pins upstream model revisions and SHA-256 values.",
+    "Release-readiness builds distributions and smoke-installs the wheel in a clean environment.",
+    "README, Chinese README, threat model, security policy, contributing guide, citation, changelog, roadmap, and safe demo are present.",
+    "Unstructured semantic output remains fail-closed and local-only rather than being marketed as anonymous."
+  ],
+  "findings": [
+    {
+      "id": "LG-P1-001",
+      "severity": "P1",
+      "title": "GitHub repository profile metadata is empty",
+      "status": "open",
+      "evidence": [
+        "GitHub repository metadata returned description=null, homepage=null, topics=[].",
+        "docs/repository-profile.md exists, so the intended values are documented but not applied to the repository profile."
+      ],
+      "recommendation": "Apply the documented description, Safe Demo homepage, and discoverability topics in GitHub repository settings."
+    },
+    {
+      "id": "LG-P1-002",
+      "severity": "P1",
+      "title": "Most GitHub Actions use mutable tag references",
+      "status": "open",
+      "evidence": [
+        "Observed workflows use actions/checkout@v4, actions/setup-python@v5, github/codeql-action/*@v3, actions/upload-artifact@v4, aquasecurity/trivy-action@v0.36.0, and anchore/sbom-action@v0.17.2.",
+        "The Model Vault already uses stronger immutable upstream revision pins plus SHA-256 verification, creating an inconsistent supply-chain standard."
+      ],
+      "recommendation": "Pin third-party GitHub Actions to reviewed immutable commit SHAs and keep human-readable version comments."
+    },
+    {
+      "id": "LG-P1-003",
+      "severity": "P1",
+      "title": "The security-boundary workflow does not explicitly run deployment capability-contract tests",
+      "status": "open",
+      "evidence": [
+        ".github/workflows/security.yml explicitly runs tests/test_policy.py and tests/test_pipeline.py.",
+        "tests/test_deployment_contract.py verifies model-setup/private/network mount separation but currently relies on the general test workflow."
+      ],
+      "recommendation": "Add deployment-contract and Model Vault boundary tests to the security-boundary workflow so the badge matches the full capability-boundary claim."
+    },
+    {
+      "id": "LG-P2-001",
+      "severity": "P2",
+      "title": "CI/development dependency resolution is not locked",
+      "status": "open",
+      "evidence": [
+        "pyproject.toml intentionally uses broad library dependency ranges.",
+        "No uv.lock, poetry.lock, Pipfile.lock, or equivalent committed CI/dev lockfile was observed."
+      ],
+      "recommendation": "Keep library runtime ranges appropriate for packaging, but add a reproducible CI/dev lock or constraints strategy and periodically refresh it under dependency audit."
+    },
+    {
+      "id": "LG-P2-002",
+      "severity": "P2",
+      "title": "Tag release workflow builds artifacts but does not attest or sign them",
+      "status": "open",
+      "evidence": [
+        ".github/workflows/release.yml builds distributions and uploads an artifact.",
+        "The project documents integrity/provenance concepts, but the tag workflow does not yet attach a keyless attestation/signature or create a provenance-linked release artifact."
+      ],
+      "recommendation": "Before a mature public release, add artifact provenance/attestation and decide whether GitHub Releases/PyPI publication should be automated."
+    },
+    {
+      "id": "LG-P2-003",
+      "severity": "P2",
+      "title": "Branch protection and repository rules could not be verified",
+      "status": "open",
+      "evidence": [
+        "The connected GitHub App does not expose repository administration/branch-protection state in this audit context."
+      ],
+      "recommendation": "Manually verify required-status-check and protected-main rules before calling the repository release-hardened."
+    }
+  ],
+  "limitations": [
+    "This audit did not execute a real multi-gigabyte GGUF model locally.",
+    "No claim is made that synthetic data or semantic transformations are formally anonymous.",
+    "Repository administration settings such as branch protection were not visible through the connected GitHub permissions.",
+    "The public Railway demo was assessed as a static safe-demo architecture, not penetration-tested."
+  ],
+  "recheck_triggers": [
+    "Any change that permits row-level synthetic network egress.",
+    "Any new remote-model or remote-endpoint capability.",
+    "Changes to Model Vault download/source verification.",
+    "Release workflow changes or a first public package release.",
+    "Changes to hardened compose capability boundaries.",
+    "A major rewrite of privacy audit thresholds or semantic-release policy."
+  ]
+}

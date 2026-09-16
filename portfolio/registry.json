@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "owner": "CochraneK",
-  "snapshot_date": "2026-09-15",
+  "snapshot_date": "2026-09-16",
   "scope": "public-workbench",
   "privacy": {
     "public_repositories_only": true,
@@ -150,6 +150,16 @@
       "priority_band": "P3-LATER",
       "reason": "主仓保留，完善时间靠后。",
       "last_commit_date": "2026-08-04"
+    },
+    {
+      "name": "long-gate",
+      "visibility": "public",
+      "work_status": "CONTINUE",
+      "priority_score": 94,
+      "priority_band": "P0-NOW",
+      "reason": "2026-09-16 审计：pre-1.0 核心安全/测试基线已成型并 6/6 CI 全绿；停止无边界加功能，优先收口 GitHub profile、Actions 供应链 pinning、security-boundary 覆盖和发布可复现性。",
+      "last_commit_date": "2026-09-16",
+      "latest_audit": "audits/long-gate-2026-09-16.md"
     },
     {
       "name": "mao-skill",

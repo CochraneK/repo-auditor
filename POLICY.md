@@ -57,3 +57,19 @@ Private 项目必须在公开仓库之外管理。当前通过授权的 GitHub �
 - 不出现重复仓库。
 
 任何删除、改 visibility、归档等高影响操作都必须单独执行。
+
+
+## Repository audit
+
+Public audit reports may contain only evidence obtainable from public repositories and public CI metadata.
+
+Every new structured audit should record the exact audited commit and separate:
+
+- portfolio priority;
+- audit severity;
+- verified facts;
+- unverified/unknown settings.
+
+Priority score is never a project quality score.
+
+The public evidence collector must refuse private repositories.
