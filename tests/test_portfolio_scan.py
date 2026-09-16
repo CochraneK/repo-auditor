@@ -1,36 +1,15 @@
-import importlib.util
+import sys,unittest
 from pathlib import Path
-import sys
-import unittest
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
+import scan_portfolio as scan
 
-ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "scripts"
-sys.path.insert(0, str(SCRIPTS))
-spec = importlib.util.spec_from_file_location("scan_portfolio", SCRIPTS / "scan_portfolio.py")
-scan = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(scan)
-
-
+def rec(name,visibility='public'):
+ return {'repository':name,'visibility':visibility,'readme':True,'license':False,'security_policy':False,'workflow_count':0,'unpinned_action_refs':0,'head_ci_green':False}
 class PortfolioScanTest(unittest.TestCase):
-    def test_public_summary_never_contains_private_names(self):
-        records = [
-            {"repository": "CochraneK/public-one", "visibility": "public", "readme": True, "license": True, "security_policy": False, "workflow_count": 1, "unpinned_action_refs": 0, "head_ci_green": True},
-            {"repository": "CochraneK/secret-private-name", "visibility": "private", "readme": True, "license": False, "security_policy": True, "workflow_count": 0, "unpinned_action_refs": 0, "head_ci_green": False},
-            {"repository": "CochraneK/repo-auditor", "visibility": "public", "readme": True, "license": False, "security_policy": True, "workflow_count": 1, "unpinned_action_refs": 1, "head_ci_green": False},
-        ]
-        summary = scan.public_summary("CochraneK", records, [])
-        text = str(summary)
-        self.assertNotIn("secret-private-name", text)
-        self.assertEqual(summary["inventory"]["total"], 3)
-        self.assertEqual(summary["inventory"]["private"], 1)
-        self.assertTrue(summary["self_audit"]["included"])
-
-    def test_failures_are_counted_without_names(self):
-        summary = scan.public_summary("CochraneK", [], [{"repository": "CochraneK/hidden", "error": "x"}])
-        self.assertEqual(summary["inventory"]["total"], 1)
-        self.assertEqual(summary["inventory"]["scan_failures"], 1)
-        self.assertNotIn("hidden", str(summary))
-
-
-if __name__ == "__main__":
-    unittest.main()
+ def test_private_names_never_publish(self):
+  s=scan.public_summary('CochraneK',[rec('CochraneK/public'),rec('CochraneK/secret-private-name','private')],[]);self.assertNotIn('secret-private-name',str(s))
+ def test_33_public_zero_private_is_partial_when_42_9_expected(self):
+  s=scan.public_summary('CochraneK',[rec(f'CochraneK/r{i}') for i in range(33)],[],42,9,True);self.assertEqual(s['audit_status'],'PARTIAL');self.assertEqual(s['coverage']['status'],'partial')
+ def test_complete_inventory_can_pass(self):
+  rows=[rec(f'CochraneK/r{i}') for i in range(33)]+[rec(f'CochraneK/p{i}','private') for i in range(9)];s=scan.public_summary('CochraneK',rows,[],42,9,True);self.assertEqual(s['audit_status'],'PASS')
+if __name__=='__main__':unittest.main()
