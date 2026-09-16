@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
-"""Report whether the latest structured audit for each public repository is current.
+"""Report whether the latest structured audit for each repository is current.
 
-By default stale audits are reported as warnings and do not fail CI. Use --strict
-when a caller explicitly wants staleness to be blocking.
+Freshness is evaluated independently per repository. If GitHub cannot resolve a
+repository (for example because it became private or the current token cannot
+read it), that audit is marked unverifiable rather than aborting the whole
+batch. An unverifiable audit is never reported as current.
+
+By default stale and unverifiable audits are warnings. Use --strict when a
+caller explicitly wants either state to be blocking.
 
 A sidecar may opt into a narrow "current-equivalent" state with:
 
@@ -53,8 +58,9 @@ def request_json(path: str) -> Any:
     try:
         return _request(path, token)
     except urllib.error.HTTPError as exc:
-        # A repository-scoped Actions token can return 404/403 for another
-        # public repository. Retry anonymously before declaring it inaccessible.
+        # A repository-scoped Actions token may not be valid cross-repository.
+        # Retry anonymously so public audits remain verifiable without
+        # broadening the token's private-repository permissions.
         if token and exc.code in {403, 404}:
             try:
                 return _request(path, None)
@@ -126,6 +132,7 @@ def check(audits_dir: Path = AUDITS) -> list[dict[str, Any]]:
         audited = str(data["audited_commit"])
         patterns = ignore_patterns(data)
         files: list[str] = []
+        head: str | None = None
         error: str | None = None
 
         try:
@@ -136,18 +143,13 @@ def check(audits_dir: Path = AUDITS) -> list[dict[str, Any]]:
                 files = changed_files(repository, audited, head)
                 state = (
                     "current-equivalent"
-                    if files
-                    and all(
-                        path_is_ignored(filename, patterns)
-                        for filename in files
-                    )
+                    if files and all(path_is_ignored(filename, patterns) for filename in files)
                     else "stale"
                 )
             else:
                 state = "stale"
-        except RuntimeError as exc:
-            head = ""
-            state = "unknown"
+        except Exception as exc:
+            state = "unverifiable"
             error = str(exc)
 
         results.append(
@@ -165,18 +167,17 @@ def check(audits_dir: Path = AUDITS) -> list[dict[str, Any]]:
         )
     return results
 
-
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--strict", action="store_true", help="Return non-zero if any latest audit is stale.")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Return non-zero if any latest audit is stale or unverifiable.",
+    )
     parser.add_argument("--out", type=Path, help="Optional JSON output path.")
     args = parser.parse_args()
 
-    try:
-        results = check()
-    except Exception as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
-        return 2
+    results = check()
 
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
@@ -184,15 +185,16 @@ def main() -> int:
 
     stale = 0
     equivalent = 0
-    unknown = 0
+    unverifiable = 0
     for item in results:
         label = item["state"].upper()
-        print(f"{label}: {item['repository']} audited={item['audited_commit']} head={item['head_commit']}")
+        head = item["head_commit"] or "unknown"
+        print(f"{label}: {item['repository']} audited={item['audited_commit']} head={head}")
         if item["state"] == "stale":
             stale += 1
             print(
                 f"::warning file=audits/{item['sidecar']}::Audit is stale for {item['repository']}; "
-                f"audited {item['audited_commit'][:12]}, head {item['head_commit'][:12]}"
+                f"audited {item['audited_commit'][:12]}, head {str(item['head_commit'])[:12]}"
             )
         elif item["state"] == "current-equivalent":
             equivalent += 1
@@ -200,19 +202,20 @@ def main() -> int:
                 f"::notice file=audits/{item['sidecar']}::Audit remains current-equivalent; "
                 "all post-audit changes match explicit freshness.ignore_paths."
             )
-        elif item["state"] == "unknown":
-            unknown += 1
+        elif item["state"] == "unverifiable":
+            unverifiable += 1
             print(
-                f"::warning file=audits/{item['sidecar']}::Audit freshness is unknown for "
-                f"{item['repository']}: {item.get('error') or 'repository inaccessible'}"
+                f"::warning file=audits/{item['sidecar']}::Audit freshness is unverifiable for "
+                f"{item['repository']}: {item.get('error') or 'unknown error'}"
             )
 
-    current = len(results) - stale - equivalent - unknown
+    current = len(results) - stale - equivalent - unverifiable
     print(
-        f"Audit freshness: {current} current, {equivalent} current-equivalent, "
-        f"{stale} stale, {unknown} unknown"
+        "Audit freshness: "
+        f"{current} current, {equivalent} current-equivalent, "
+        f"{stale} stale, {unverifiable} unverifiable"
     )
-    return 1 if args.strict and (stale or unknown) else 0
+    return 1 if args.strict and (stale or unverifiable) else 0
 
 
 if __name__ == "__main__":
