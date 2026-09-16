@@ -2,12 +2,12 @@
 
 > Snapshot: 2026-09-17 · Public repositories only
 
-这个文件和 GitHub Pages 工作台**只包含当前公开仓库**。Private 仓库的名称、URL、优先级和管理备注不进入公开层。
+这个文件和 GitHub Pages 工作台**只包含当前公开仓库**。Private 仓库的名称、URL、SHA、优先级和管理备注不进入公开层。
 
 ## 当前统计
 
-- Public repositories: **32**
-- CONTINUE: **25**
+- Public repositories: **34**
+- CONTINUE: **27**
 - STOP: **7**
 - P0 NOW: **8**
 
@@ -27,12 +27,14 @@
 | **78** | P1 · 接下来 | `red-map` | 计划月底前完善，时间窗口较明确。 |
 | **72** | P1 · 接下来 | `pudding-skill` | 计划过几天不忙后继续完善。 |
 | **72** | P1 · 接下来 | `scientist-calendar` | 计划过几天不忙后继续完善。 |
+| **65** | P2 · 计划中 | `repo-auditor` | 审计控制面与 GO remediation 基线已成型；继续维护 private/public coverage、Pages 隐私边界与自审，但不抢占产品主线。 |
 | **62** | P2 · 计划中 | `neuropharm` | 已较成熟，但需要系统检查一遍，之后还会持续增加药物。 |
 | **58** | P2 · 计划中 | `we-read` | 2026-09-16 repo-auditor：核心产品已成熟；130 tests 双版本全绿，Actions 已 immutable-pin，publication docs 与 legacy A1 已收口。当前仅保留已接受的个人数据风险，以及 LICENSE / branch protection / GitHub profile 等 owner/external 项。 |
 | **50** | P2 · 计划中 | `persona-test` | 当前质量不满意，后续需要较大幅度重做。 |
 | **45** | P3 · 后续 | `emperor-skill` | 尚未完成，但当前先放着，后续继续。 |
 | **35** | P3 · 后续 | `changan` | 后续还要继续打磨，但不是近期主线。 |
 | **35** | P3 · 后续 | `fake_type` | 已可用但仍不满意，后续再改。 |
+| **35** | P3 · 后续 | `we-read-template` | 可复刻的 WeRead sanitized starter 已建立；后续主要随上游 we-read 的接口、隐私策略和兼容性变化维护。 |
 | **30** | P3 · 后续 | `Ji-Sui-Le` | 主仓保留，完善时间靠后。 |
 | **30** | P3 · 后续 | `NewsMail` | 暂留；未来考虑与 yihot 一并整合到统一公益情报主系统。 |
 | **30** | P3 · 后续 | `yihot` | 暂留；未来考虑与 NewsMail 一并整合到统一公益情报主系统。 |
@@ -57,6 +59,6 @@
 
 - 本文件不列出 Private 仓库。
 - `portfolio/registry.json` 同样只包含 Public 仓库。
-- Pages 构建还会实时核验 GitHub visibility；任何无法确认仍为 Public 的仓库都会 fail-closed 排除。
-- Private 项目的详细审计留在私有控制层；公开页面不会发布其名称、URL、SHA、备注或 findings。
+- Pages 构建会实时核验 GitHub visibility；无法确认仍为 Public 的仓库会 fail-closed 排除。
+- Private 项目的详细证据留在私有审计层；公开页面只允许聚合 coverage，不发布 private 名称、URL、SHA、备注或 findings。
 - `STOP` 只是总控提示，不等于 GitHub Archive / Delete。
