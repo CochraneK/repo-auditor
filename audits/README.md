@@ -23,6 +23,21 @@ python scripts/audit_reports.py
 
 Each structured audit records nine independent 0–5 quality dimensions: purpose/scope, correctness, security/privacy, supply chain, reproducibility, release engineering, documentation/onboarding, maintainability, and community surface. Scores require evidence. Unknown/not-applicable dimensions use `null`; they are not treated as zero. There is deliberately no aggregate repository-quality score.
 
+## Remediation classes
+
+Every finding declares how the GO agent may treat it:
+
+- `auto-fix` — safe/reversible; remediate automatically, test, and re-audit.
+- `owner-choice` — requires an explicit owner decision.
+- `external-blocked` — blocked by permissions, evidence, or an external dependency.
+- `accepted-risk` — deliberately left unresolved with rationale.
+
+List the current automatic remediation queue with:
+
+```bash
+python scripts/remediation_queue.py
+```
+
 ## Publication / IP gate
 
 Every new structured audit must explicitly record whether the repository is currently Public/Private and one recommendation: `public-ok`, `review-before-public`, `keep-private`, or `split-public-private`.

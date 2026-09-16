@@ -73,3 +73,37 @@ Every new structured audit should record the exact audited commit and separate:
 Priority score is never a project quality score.
 
 The public evidence collector must refuse private repositories.
+
+
+## GO remediation mode
+
+默认工作方式是 **Audit → Remediate → Re-audit**，而不是只输出建议。
+
+当 owner 已授权 GO mode 时：
+
+- `auto-fix` findings 直接进入修复队列；
+- 使用独立 branch / PR；
+- 修改后运行相关测试与 CI；
+- CI 通过后重新审计 exact commit；
+- 在现有授权范围内、且变更可逆时可继续合并，不需要重复询问。
+
+以下情况必须停在 `owner-choice` 或 `external-blocked`，不能为了“审计全绿”擅自处理：
+
+- 删除/Archive repository；
+- Public / Private visibility 变更；
+- force-push 或重写公开历史；
+- 选择/变更 LICENSE；
+- 版权、专利、IP 转让/许可/放弃；
+- 发布潜在专利或保密材料；
+- 暴露 secret、Private 仓库元数据、个人合同、患者/客户资料；
+- 产生重要外部费用或合同承诺；
+- 缺少必要的仓库/组织管理权限。
+
+完整 agent contract 见 `AGENTS.md`。
+
+开放的自动修复队列：
+
+```bash
+python scripts/remediation_queue.py
+python scripts/remediation_queue.py --repository CochraneK/long-gate
+```

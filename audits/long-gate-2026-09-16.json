@@ -39,7 +39,8 @@
         "GitHub repository metadata returned description=null, homepage=null, topics=[].",
         "docs/repository-profile.md exists, so the intended values are documented but not applied to the repository profile."
       ],
-      "recommendation": "Apply the documented description, Safe Demo homepage, and discoverability topics in GitHub repository settings."
+      "recommendation": "Apply the documented description, Safe Demo homepage, and discoverability topics in GitHub repository settings.",
+      "remediation_class": "external-blocked"
     },
     {
       "id": "LG-P1-002",
@@ -51,7 +52,8 @@
         "Version comments are retained beside pins for reviewability.",
         "The remediated main commit passed all six quality gates."
       ],
-      "recommendation": "Keep Dependabot or equivalent update review active and only advance pins after CI review."
+      "recommendation": "Keep Dependabot or equivalent update review active and only advance pins after CI review.",
+      "remediation_class": "auto-fix"
     },
     {
       "id": "LG-P1-003",
@@ -62,7 +64,8 @@
         ".github/workflows/security.yml now explicitly runs tests/test_policy.py, tests/test_pipeline.py, tests/test_agent_boundary.py, tests/test_deployment_contract.py, tests/test_egress.py, and tests/test_model_vault.py.",
         "The expanded security-boundary gate passed on audited commit b0eeb3b440efe8c69480028667d06952957dd661."
       ],
-      "recommendation": "Keep capability-boundary tests inside the named security-boundary gate whenever deployment or model setup architecture changes."
+      "recommendation": "Keep capability-boundary tests inside the named security-boundary gate whenever deployment or model setup architecture changes.",
+      "remediation_class": "auto-fix"
     },
     {
       "id": "LG-P2-001",
@@ -73,7 +76,8 @@
         "pyproject.toml intentionally uses broad library dependency ranges.",
         "No uv.lock, poetry.lock, Pipfile.lock, or equivalent committed CI/dev lockfile was observed."
       ],
-      "recommendation": "Keep library runtime ranges appropriate for packaging, but add a reproducible CI/dev lock or constraints strategy and periodically refresh it under dependency audit."
+      "recommendation": "Keep library runtime ranges appropriate for packaging, but add a reproducible CI/dev lock or constraints strategy and periodically refresh it under dependency audit.",
+      "remediation_class": "auto-fix"
     },
     {
       "id": "LG-P2-002",
@@ -84,7 +88,8 @@
         ".github/workflows/release.yml builds distributions and uploads an artifact.",
         "The project documents integrity/provenance concepts, but the tag workflow does not yet attach a keyless attestation/signature or create a provenance-linked release artifact."
       ],
-      "recommendation": "Before a mature public release, add artifact provenance/attestation and decide whether GitHub Releases/PyPI publication should be automated."
+      "recommendation": "Before a mature public release, add artifact provenance/attestation and decide whether GitHub Releases/PyPI publication should be automated.",
+      "remediation_class": "owner-choice"
     },
     {
       "id": "LG-P2-003",
@@ -94,7 +99,8 @@
       "evidence": [
         "The connected GitHub App does not expose repository administration/branch-protection state in this audit context."
       ],
-      "recommendation": "Manually verify required-status-check and protected-main rules before calling the repository release-hardened."
+      "recommendation": "Manually verify required-status-check and protected-main rules before calling the repository release-hardened.",
+      "remediation_class": "external-blocked"
     }
   ],
   "limitations": [

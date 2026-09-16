@@ -16,6 +16,7 @@ import audit_freshness as af
 import audit_reports as ar
 import collect_repo_evidence as cre
 import publication_gate as pg
+import remediation_queue as rq
 
 
 class CollectorTests(unittest.TestCase):
@@ -109,6 +110,69 @@ class QualityDimensionTests(unittest.TestCase):
         profile["correctness"]["score"] = 6
         errors = ar.validate_quality_dimensions(profile)
         self.assertTrue(any("0..5 or null" in error for error in errors))
+
+
+class RemediationQueueTests(unittest.TestCase):
+    def test_queue_only_returns_open_auto_fix_findings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "a.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/example",
+                    "audit_date": "2026-09-16",
+                    "findings": [
+                        {
+                            "id": "EX-P1-001",
+                            "severity": "P1",
+                            "title": "Auto",
+                            "status": "open",
+                            "recommendation": "Fix it",
+                            "remediation_class": "auto-fix",
+                        },
+                        {
+                            "id": "EX-P1-002",
+                            "severity": "P1",
+                            "title": "Owner choice",
+                            "status": "open",
+                            "recommendation": "Choose",
+                            "remediation_class": "owner-choice",
+                        },
+                        {
+                            "id": "EX-P2-001",
+                            "severity": "P2",
+                            "title": "Already fixed",
+                            "status": "fixed",
+                            "recommendation": "Done",
+                            "remediation_class": "auto-fix",
+                        },
+                    ],
+                }),
+                encoding="utf-8",
+            )
+            queue = rq.remediation_queue(root)
+        self.assertEqual([item["id"] for item in queue], ["EX-P1-001"])
+
+    def test_queue_can_filter_repository(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in ("a", "b"):
+                (root / f"{name}.json").write_text(
+                    json.dumps({
+                        "repository": f"CochraneK/{name}",
+                        "audit_date": "2026-09-16",
+                        "findings": [{
+                            "id": f"{name.upper()}-P2-001",
+                            "severity": "P2",
+                            "title": "Auto",
+                            "status": "open",
+                            "recommendation": "Fix",
+                            "remediation_class": "auto-fix",
+                        }],
+                    }),
+                    encoding="utf-8",
+                )
+            queue = rq.remediation_queue(root, "CochraneK/b")
+        self.assertEqual([item["repository"] for item in queue], ["CochraneK/b"])
 
 
 class PublicationGateTests(unittest.TestCase):

@@ -7,7 +7,7 @@
 
 ## 一句话结论
 
-**repo-auditor 的“Portfolio + Structured Audit”双层结构已经收口成可用产品，并新增结构化 Publication / IP gate：每次审计都要明确 Public、Private、review-before-public 或 split-public-private。当前唯一开放的高优先项仍是 LICENSE。**
+**repo-auditor 已从 recommendation-only reviewer 升级为 Evidence-backed Audit + Remediation Agent：GO 模式下会自动处理安全、可逆的 auto-fix finding，并执行 branch → 修复 → 测试 → re-audit → PR；License / IP / visibility 等 owner-choice 仍保留给所有者。当前唯一开放的高优先项仍是 LICENSE。**
 
 ## 多维质量画像
 
@@ -38,6 +38,7 @@
 - **RA-P2-003 · FIXED** — 退役且不完整的 bootstrap archive 已删除
 - **Publication / IP gate · PASS** — schema、validator、deterministic helper、fixture tests 与 CI 均已接入；不会把个人合同或单位敏感信息写入 public audit layer
 - **Multi-dimensional quality · PASS** — 9 个质量维度各自 0–5 分，允许 unverified=`null`，不计算单一质量总分；schema、validator、tests 与 Pages 展示均已接入
+- **GO remediation agent · PASS** — `AGENTS.md`、remediation class、auto-fix queue、fixture tests 与 CI 已接入；能安全改的默认继续改
 - **仍开放：RA-P1-001 · LICENSE**
 
 ### 为什么有 `Current*`
@@ -130,7 +131,8 @@ root 的 `index.html / app.js / styles.css` 已删除。
 10. Long Gate 已经 dogfood “审计 → 整改 → recheck”闭环；
 11. Pages source 已唯一化；
 12. 高权限一次性 bootstrap 入口和遗留 archive 都已退役；
-13. Publication / IP gate 会在 Public 前检查潜在专利、Background IP、单位/客户/PI 请求、保密输入和权属不确定性。
+13. Publication / IP gate 会在 Public 前检查潜在专利、Background IP、单位/客户/PI 请求、保密输入和权属不确定性；
+14. GO remediation contract 会自动推进 `auto-fix`，但不会越权替 owner 决定 License / IP / visibility / destructive actions。
 
 ## 下一步
 

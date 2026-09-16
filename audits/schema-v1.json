@@ -43,7 +43,66 @@
       "type": "object"
     },
     "findings": {
-      "type": "array"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "severity",
+          "title",
+          "status",
+          "evidence",
+          "recommendation",
+          "remediation_class"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "enum": [
+              "P0",
+              "P1",
+              "P2",
+              "P3"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "open",
+              "fixed",
+              "accepted",
+              "not-applicable"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "recommendation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "remediation_class": {
+            "enum": [
+              "auto-fix",
+              "owner-choice",
+              "external-blocked",
+              "accepted-risk"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
     },
     "limitations": {
       "type": "array"
