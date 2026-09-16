@@ -2,7 +2,7 @@
   "schema_version": 1,
   "repository": "CochraneK/AI-Ques",
   "audit_date": "2026-09-16",
-  "audited_commit": "38955a5e8fe43ec0dbf0d6e132ce0be0cee16eae",
+  "audited_commit": "56be6d0499a45f4bcf55da6df69462c9969ae474",
   "markdown": "audits/AI-Ques-P004-2026-09-16.md",
   "scope": "p004/ + direct supporting CI/shared-profile/Pages boundaries",
   "decision": {
@@ -15,85 +15,88 @@
     "p00_quality_gate": "pass",
     "github_pages_deploy": "pass",
     "p004_js_syntax": "pass",
-    "p004_runtime_behavior": "unknown",
+    "p004_runtime_behavior": "pass",
+    "p004_structure_invariants": "pass",
+    "p004_quality_sensor": "pass",
     "real_openai_compatible_browser_call": "unknown",
     "real_nvwa_backend_distillation": "unknown"
   },
   "strengths": [
-    "P004 is explicitly marked prototype_only and separates public character chat from research-side inference in its documented architecture.",
-    "Observed user/model rendering paths use textContent; observed innerHTML uses are fixed templates rather than user/model free text.",
-    "BYOK API keys are scoped to sessionStorage and the UI discloses browser-side key exposure risk.",
-    "The NVWA fallback is explicitly labelled a Character Skill draft rather than pretending to be a completed research distillation.",
-    "VIA 24 and Interpersonal Circumplex theory boundaries are documented without falsely claiming strict MECE for VIA.",
-    "P00 Quality Gate and GitHub Pages deployment both passed on the audited repository HEAD."
+    "P004 is explicitly prototype_only and keeps public character chat conceptually separate from research-side inference.",
+    "P005/Future You evidence import is now default-off, requires explicit user opt-in, is withdrawable, and legacy imported influence is removed when consent is absent.",
+    "P004 exposes a two-step clear-all control covering module-local localStorage, IndexedDB Skill Vault and the current-tab BYOK key without deleting other P00 modules.",
+    "P004 has executable runtime behavior tests for consent, creator validation, memory normalization, safety fallback, BYOK success/HTTP/network paths and key lifecycle.",
+    "All observed third-party GitHub Actions are pinned to immutable commit SHAs and the NVWA protocol is pinned to a concrete upstream commit.",
+    "Observed user/model rendering paths use textContent; observed innerHTML assignments are fixed templates rather than free model/user text.",
+    "BYOK API keys remain current-tab sessionStorage only and the UI discloses browser-side key exposure risk.",
+    "The NVWA local fallback remains explicitly labelled a Character Skill draft rather than pretending to be a completed research distillation.",
+    "P00 Quality Gate and GitHub Pages deployment both passed on the remediated audited commit."
   ],
   "quality_dimensions": {
     "purpose_scope": {
       "score": 4,
       "evidence": [
-        "p004/README.md, p004/module-manifest.json and p004/NVWA_CONTRACT.md clearly separate character chat, optional distillation, memory, Observer and prototype/non-diagnostic boundaries.",
-        "The intended production/admin boundary is documented, although the public static implementation does not yet enforce it."
+        "P004 README, module manifest and NVWA contract clearly separate character chat, optional distillation, memory, Observer and prototype/non-diagnostic boundaries.",
+        "Production-only boundaries such as authenticated admin access remain explicitly distinguished from the static Pages prototype."
       ]
     },
     "correctness": {
-      "score": 2,
+      "score": 3,
       "evidence": [
-        "The audited HEAD passed JS syntax and repository structure checks.",
-        "P004 has no runtime/browser behavior test covering creator flow, API branches, storage lifecycle, Observer import, safety override or chat rendering.",
-        "The immediate-risk override is implemented primarily as fixed keyword matching rather than a validated safety classifier."
+        "Exact-main P00 Quality Gate passed and now runs executable tests/p004-runtime.mjs in addition to syntax and structure checks.",
+        "Runtime tests exercise consent, creator-step validation, memory normalization, safety fallback and OpenAI-compatible API success/HTTP/network branches.",
+        "Full browser UI flows, real provider calls and production safety-classifier behavior remain outside automated coverage."
       ]
     },
     "security_privacy": {
-      "score": 2,
+      "score": 3,
       "evidence": [
-        "BYOK keys stay in current-tab sessionStorage and the UI discloses the browser-side key risk.",
-        "Characters, transcripts, relationship memory and Observer/safety evidence persist in localStorage/IndexedDB without a unified clear/retention control.",
-        "P005 narrative/chat data is imported into P004 Observer without an explicit opt-in gate.",
-        "The static admin view is enabled by ?admin=1 and therefore is a demo affordance, not authorization."
+        "P005/Future You secondary use is now default-off, explicit opt-in, withdrawable, and legacy P005-derived Observer influence is removed unless consent exists.",
+        "A visible P004 clear-all control covers module-local transcripts, memory, Observer state, Skill Vault and current-tab BYOK key while preserving other P00 modules.",
+        "BYOK keys remain sessionStorage-only, but static ?admin=1 is still not authorization and the safety fallback remains a keyword heuristic."
       ]
     },
     "supply_chain": {
-      "score": 2,
+      "score": 5,
       "evidence": [
-        "The runtime is dependency-light and does not load third-party JS packages from CDNs.",
-        "All five observed GitHub Action references use mutable version tags rather than immutable commit SHAs.",
-        "P004 identifies the NVWA protocol as xmg2024/nvwa-skill@main, which can drift over time."
+        "All five observed third-party GitHub Action references are pinned to full immutable commit SHAs with version comments.",
+        "P004 pins xmg2024/nvwa-skill protocol semantics to commit fdb181f0e057e837e15942707b1ea35845850979 instead of mutable @main.",
+        "The static frontend remains dependency-light and does not load third-party JavaScript packages from CDNs."
       ]
     },
     "reproducibility": {
-      "score": 3,
+      "score": 4,
       "evidence": [
-        "P004 is a static application with module-manifest metadata and no package dependency installation step, making basic local reproduction straightforward.",
-        "Exact behavior can still vary with user-supplied OpenAI-compatible endpoints, browser CORS/private-network behavior, and the mutable NVWA @main reference."
+        "P004 is static, module metadata is explicit, GitHub Actions and NVWA protocol semantics are pinned, and exact-main CI/Pages passed.",
+        "Actual output still depends on user-supplied model endpoints, provider behavior and browser CORS/private-network settings."
       ]
     },
     "release_engineering": {
-      "score": 2,
+      "score": 3,
       "evidence": [
-        "GitHub Pages deployment and the P00 Quality Gate passed on the audited HEAD.",
-        "The repository has no LICENSE or changelog/release provenance surface, and main branch protection is verified disabled."
+        "Exact-main P00 Quality Gate and GitHub Pages deployment both passed after remediation and the gate now includes executable P004 runtime tests.",
+        "Main branch remains unprotected and the public repository still lacks an explicit software license/changelog-style release surface."
       ]
     },
     "documentation_onboarding": {
       "score": 4,
       "evidence": [
-        "P004 README documents BYOK, NVWA limitations, local Skill Vault, long-term memory intent, Observer and safety boundaries.",
-        "The UI contains API test diagnostics and prototype/admin caveats.",
-        "Persistent transcript/Observer retention and cross-P005 secondary use are not yet presented as explicit user choices before processing."
+        "P004 README documents BYOK, NVWA limitations, privacy opt-in/withdrawal, local-data clearing, runtime tests, memory intent and safety boundaries.",
+        "The product UI exposes API diagnostics, local-data inventory and Future You consent state before cross-module import can occur."
       ]
     },
     "maintainability": {
-      "score": 2,
+      "score": 3,
       "evidence": [
-        "p004/app.js is approximately 50 KB and combines Character Studio, persistence, IndexedDB, memory, Observer, safety, admin rendering and API orchestration.",
-        "P004 regression coverage is dominated by static regex/structure invariants rather than executable behavior tests."
+        "A new p004/core.js extracts testable privacy/runtime primitives and executable tests now cover them.",
+        "p004/app.js remains approximately 46 KB and still combines Character Studio, rendering, Observer, persistence, memory and admin orchestration."
       ]
     },
     "community_surface": {
       "score": 1,
       "evidence": [
         "The repository has README and a live homepage, but GitHub description is null and topics are empty.",
-        "LICENSE, SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, CITATION.cff and CHANGELOG.md were not present at the audited HEAD."
+        "LICENSE, SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, CITATION.cff and CHANGELOG.md were not present at the audited repository baseline and no owner-choice changes were made."
       ]
     }
   },
@@ -110,25 +113,26 @@
       "id": "AQ4-P1-001",
       "severity": "P1",
       "title": "Cross-module P005 evidence import lacks explicit opt-in",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "p004/app.js importP005() reads bjtu.p005.state.v1 and converts P005 profile/open responses and user chat into P004 Observer evidence.",
-        "backgroundObserve() invokes importP005() without a consent-state check.",
-        "The page discloses BACKGROUND OBSERVER but does not expose an explicit allow/deny control for this secondary use."
+        "p004/core.js defaults p005Observer to false and p004/app.js gates importP005()/collectP005() on CORE.canImportP005(consentState()).",
+        "The P004 Data panel exposes an explicit Future You opt-in toggle and withdrawal path.",
+        "When consent is absent or withdrawn, P004 rebuilds Observer state from P004-only user messages so legacy P005 influence is not retained."
       ],
-      "recommendation": "Default P005 import to off, add explicit opt-in/withdrawal, and only import after consent.",
+      "recommendation": "Keep P005 import default-off and retain executable consent regression tests when interoperability changes.",
       "remediation_class": "auto-fix"
     },
     {
       "id": "AQ4-P1-002",
       "severity": "P1",
       "title": "Persistent P004 data lacks a unified clear/retention control",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "P004 persists characters, threads, memory and Observer data in localStorage and distilled skills in IndexedDB.",
-        "The API settings modal can clear the BYOK key, but no clear-all control for P004 transcripts/memory/observer/skills was found."
+        "P004 now exposes a visible Data panel with a two-step clear-all action.",
+        "The action removes P004 character/thread/memory/observer/active/consent localStorage keys, clears the current-tab BYOK key and deletes the IndexedDB Skill Vault.",
+        "The UI explicitly states that P001/P002/P005 and the shared Persona are not deleted."
       ],
-      "recommendation": "Add a visible clear-P004-local-data control covering localStorage and IndexedDB, with explicit scope and confirmation; consider retention/session-only options.",
+      "recommendation": "Keep the clear-all scope aligned with any future P004 storage namespace or database additions.",
       "remediation_class": "auto-fix"
     },
     {
@@ -159,26 +163,26 @@
       "id": "AQ4-P1-005",
       "severity": "P1",
       "title": "P004 core behavior is not exercised by automated runtime tests",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        ".github/workflows/quality-gate.yml checks p004/app.js and p004/api-client.js syntax.",
-        "tests/structure.mjs asserts many P004 strings and structural invariants but does not execute the creator/chat/storage/API behavior.",
-        "No dedicated P004 runtime/browser smoke test was found."
+        "tests/p004-runtime.mjs is executable and is run by the P00 Quality Gate.",
+        "It exercises consent semantics, creator validation, memory normalization, safety fallback, BYOK success, 401, network failure, temporary test-key restoration and clearDirect lifecycle.",
+        "The remediated PR gate and exact-main P00 Quality Gate both passed."
       ],
-      "recommendation": "Add P004 behavior tests for creator flow, API success/failure, storage lifecycle, consent/import, safety override and rendering; split pure logic where needed for zero-dependency Node tests.",
+      "recommendation": "Extend runtime coverage with a lightweight browser smoke when a browser-test dependency is justified.",
       "remediation_class": "auto-fix"
     },
     {
       "id": "AQ4-P1-006",
       "severity": "P1",
       "title": "Mutable GitHub Action and NVWA references weaken supply-chain reproducibility",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "Observed workflows use actions/checkout@v6, actions/configure-pages@v5, actions/upload-pages-artifact@v4 and actions/deploy-pages@v4.",
-        "repo-auditor's immutable-ref rule classifies these tag references as unpinned.",
-        "P004 uses protocolVersion xmg2024/nvwa-skill@main."
+        "actions/checkout, configure-pages, upload-pages-artifact and deploy-pages are pinned to full reviewed commit SHAs in the observed workflows.",
+        "P004 app/NVWA contract pins protocolVersion to xmg2024/nvwa-skill@fdb181f0e057e837e15942707b1ea35845850979.",
+        "tests/structure.mjs enforces immutable Action refs and the exact expected pins."
       ],
-      "recommendation": "Pin reviewed GitHub Actions to full commit SHAs with version comments and pin NVWA protocol to a concrete commit/release.",
+      "recommendation": "Advance Action/NVWA pins only through reviewed updates with the full P00 Quality Gate.",
       "remediation_class": "auto-fix"
     },
     {
@@ -187,9 +191,10 @@
       "title": "P004 runtime is concentrated in one large application file",
       "status": "open",
       "evidence": [
-        "p004/app.js is approximately 50 KB and contains Character Studio, persistence, IndexedDB, NVWA orchestration, memory, Observer, safety, admin rendering and API settings."
+        "p004/core.js now extracts storage keys, consent semantics, creator validation, memory normalization and the keyword safety fallback into a testable module.",
+        "p004/app.js is still approximately 46 KB and continues to own Character Studio rendering, persistence orchestration, Observer, admin rendering and most memory/chat workflow."
       ],
-      "recommendation": "Incrementally split pure logic and module responsibilities before adding further character-world features.",
+      "recommendation": "Continue incremental extraction of Observer/storage/memory/rendering modules before major new P004 feature growth.",
       "remediation_class": "auto-fix"
     },
     {
@@ -198,10 +203,10 @@
       "title": "Local fallback memory is closer to truncated transcript storage than summarized retrieval memory",
       "status": "open",
       "evidence": [
-        "Without a memory backend, maybeRemember() stores a whitespace-normalized user input truncated to roughly 190 characters as a durable memory item.",
-        "No embedding/salience/relevance retrieval is used in the static BYOK fallback."
+        "The static BYOK fallback still stores normalized/truncated user text as a durable local memory item when no memory backend is present.",
+        "The README describes the intended future summary/salience/retrieval architecture, but the local fallback is not yet that architecture."
       ],
-      "recommendation": "Label current local memory as prototype memory blocks and later add summary/salience/retrieval before making stronger long-term-memory claims.",
+      "recommendation": "Either rename the local fallback as prototype memory notes in the UI or add summary/salience/retrieval behavior before stronger long-term-memory claims.",
       "remediation_class": "auto-fix"
     },
     {
@@ -228,9 +233,10 @@
     }
   ],
   "limitations": [
-    "The repo-auditor network collector could not run directly inside the execution container because outbound DNS is disabled; equivalent collector fields were gathered through the authorized GitHub connector and the structured report is validated by repo-auditor CI.",
-    "No real OpenAI-compatible, FreeLLMAPI or NVWA backend request was executed as part of this audit.",
-    "No browser-level accessibility or cross-browser test was run.",
+    "No real OpenAI-compatible, FreeLLMAPI or NVWA backend request was executed as part of this re-audit.",
+    "No full browser automation/accessibility/cross-browser test was run; P004 runtime coverage is Node-based for extracted core/API behavior.",
+    "The client-side safety fallback is still keyword-based and is not a validated or production-grade safety classifier.",
+    "Static ?admin=1 remains a demo/research-preview affordance rather than authenticated authorization.",
     "No claim is made that P004's heuristic personality/clinical inference is psychometrically validated.",
     "Owner-supplied patent, employer/client/PI request, background-IP and ownership questions were not collected in this P004-focused pass."
   ],
@@ -242,5 +248,31 @@
     "Changes to NVWA protocol pinning or distillation execution.",
     "Major refactor of p004/app.js or addition of runtime/browser tests.",
     "First formal research data collection or production deployment."
-  ]
+  ],
+  "remediation_recheck": {
+    "date": "2026-09-16",
+    "head_commit": "56be6d0499a45f4bcf55da6df69462c9969ae474",
+    "quality_gates": {
+      "p00_quality_gate": "pass",
+      "github_pages_deploy": "pass",
+      "p004_runtime_behavior": "pass",
+      "structure_invariants": "pass",
+      "quality_sensor": "pass"
+    },
+    "resolved_findings": [
+      "AQ4-P1-001",
+      "AQ4-P1-002",
+      "AQ4-P1-005",
+      "AQ4-P1-006"
+    ],
+    "still_open": [
+      "AQ4-P1-003",
+      "AQ4-P1-004",
+      "AQ4-P2-001",
+      "AQ4-P2-002",
+      "AQ4-P2-003",
+      "AQ4-P2-004"
+    ],
+    "go_auto_fix": "P1 auto-fix queue cleared; P2 auto-fix items remain open."
+  }
 }
