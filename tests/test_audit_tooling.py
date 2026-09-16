@@ -285,6 +285,60 @@ class FreshnessTests(unittest.TestCase):
 
         self.assertEqual(result[0]["state"], "stale")
 
+    def test_unreachable_repository_is_unverifiable_without_aborting_batch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "a.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/a",
+                    "audit_date": "2026-09-16",
+                    "audited_commit": "a" * 40,
+                }),
+                encoding="utf-8",
+            )
+            (root / "private.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/private",
+                    "audit_date": "2026-09-16",
+                    "audited_commit": "b" * 40,
+                }),
+                encoding="utf-8",
+            )
+
+            def resolve(repo):
+                if repo == "CochraneK/private":
+                    raise RuntimeError("GitHub API 404: Not Found")
+                return "a" * 40
+
+            with mock.patch.object(af, "default_head", side_effect=resolve):
+                result = af.check(root)
+
+        by_repo = {item["repository"]: item for item in result}
+        self.assertEqual(by_repo["CochraneK/a"]["state"], "current")
+        self.assertEqual(by_repo["CochraneK/private"]["state"], "unverifiable")
+        self.assertIsNone(by_repo["CochraneK/private"]["head_commit"])
+        self.assertIn("404", by_repo["CochraneK/private"]["error"])
+
+    def test_compare_failure_is_unverifiable_not_current_equivalent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "self.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/example",
+                    "audit_date": "2026-09-16",
+                    "audited_commit": "a" * 40,
+                    "freshness": {"ignore_paths": ["audits/**"]},
+                }),
+                encoding="utf-8",
+            )
+            with mock.patch.object(af, "default_head", return_value="b" * 40), mock.patch.object(
+                af, "changed_files", side_effect=RuntimeError("GitHub API 403: Forbidden")
+            ):
+                result = af.check(root)
+
+        self.assertEqual(result[0]["state"], "unverifiable")
+        self.assertIn("403", result[0]["error"])
+
     def test_empty_compare_is_fail_closed_when_sha_moved(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
