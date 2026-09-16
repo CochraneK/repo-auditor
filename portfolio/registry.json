@@ -157,7 +157,7 @@
       "work_status": "CONTINUE",
       "priority_score": 94,
       "priority_band": "P0-NOW",
-      "reason": "2026-09-16 审计：pre-1.0 核心安全/测试基线已成型并 6/6 CI 全绿；停止无边界加功能，优先收口 GitHub profile、Actions 供应链 pinning、security-boundary 覆盖和发布可复现性。",
+      "reason": "2026-09-16 审计整改：pre-1.0 核心安全/测试基线稳定，6/6 CI 全绿；GitHub Actions 已 immutable-pin，security-boundary 已覆盖部署/模型边界。当前优先收口 GitHub profile、CI/dev reproducibility 与 release attestation。",
       "last_commit_date": "2026-09-16",
       "latest_audit": "audits/long-gate-2026-09-16.md"
     },
@@ -248,8 +248,8 @@
       "work_status": "CONTINUE",
       "priority_score": 65,
       "priority_band": "P2-PLANNED",
-      "reason": "2026-09-16 自审：总控 + 结构化审计框架已成型；下一阶段补 LICENSE 决策、审计结果 UI、staleness detection、静态页面去重和 collector 测试，不应抢占产品主线。",
-      "last_commit_date": "2026-09-15",
+      "reason": "2026-09-16 自审整改完成：审计状态已进入 Pages，freshness/staleness 可执行，collector 有 fixture tests，Pages 源与 bootstrap 遗留已清理；当前只剩 LICENSE 需要所有者明确选择。",
+      "last_commit_date": "2026-09-16",
       "latest_audit": "audits/repo-auditor-2026-09-16.md"
     },
     {
