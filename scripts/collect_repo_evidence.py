@@ -71,11 +71,12 @@ def action_refs(repo: str, paths: list[str], ref: str) -> dict[str, Any]:
     }
 
 
-def collect(repo: str) -> dict[str, Any]:
+def collect(repo: str, allow_private: bool = False) -> dict[str, Any]:
     metadata = request_json(f"/repos/{repo}")
-    if metadata.get("private"):
+    is_private = bool(metadata.get("private"))
+    if is_private and not allow_private:
         raise RuntimeError(
-            "repo-auditor public evidence collector refuses private repositories"
+            "repo-auditor refuses private repositories unless --allow-private is explicit"
         )
 
     branch = str(metadata["default_branch"])
@@ -137,7 +138,8 @@ def collect(repo: str) -> dict[str, Any]:
         "schema_version": 1,
         "collected_at": datetime.now(timezone.utc).isoformat(),
         "repository": repo,
-        "public": True,
+        "public": not is_private,
+        "visibility": "private" if is_private else "public",
         "default_branch": branch,
         "head_sha": sha,
         "metadata": {
@@ -159,8 +161,13 @@ def collect(repo: str) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("repository", help="Public GitHub repository in owner/name form")
+    parser.add_argument("repository", help="GitHub repository in owner/name form")
     parser.add_argument("--out", type=Path)
+    parser.add_argument(
+        "--allow-private",
+        action="store_true",
+        help="Explicitly permit authenticated private-repository evidence collection.",
+    )
     args = parser.parse_args()
 
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", args.repository):
