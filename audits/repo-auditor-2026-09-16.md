@@ -2,7 +2,7 @@
 
 > 审计日期：2026-09-16  
 > 审计对象：`CochraneK/repo-auditor`  
-> 审计基线：`main` @ `69affc0de2c31f767f26cee17de3bfd19a0fbd47`  
+> 审计基线：`main` @ `cbc436ec25a880d1327566e68c0241bbd79f1ee8`  
 > Portfolio 决策：**CONTINUE · 65 · P2-PLANNED**
 
 ## 一句话结论
