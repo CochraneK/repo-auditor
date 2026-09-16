@@ -2,7 +2,7 @@
   "schema_version": 1,
   "repository": "CochraneK/repo-auditor",
   "audit_date": "2026-09-16",
-  "audited_commit": "f4941ba1c937f5eba9dce0578858d9af244bff65",
+  "audited_commit": "4429a9a416e5f46c4587fb90cbda1f1ec5c4899e",
   "markdown": "audits/repo-auditor-2026-09-16.md",
   "decision": {
     "work_status": "CONTINUE",
@@ -18,6 +18,7 @@
     "Public/private portfolio boundary is explicit and registry validation enforces public-only records.",
     "Priority score is documented as an attention-allocation score rather than a quality score.",
     "Structured audit sidecars, a rubric, validator, public evidence collector, and metadata-aware freshness checker are now integrated.",
+    "Structured audits now require a publication/IP gate that separates Public/Private release decisions from code-quality scoring and flags patent, background-IP, organization-request, confidentiality, and ownership-review triggers.",
     "The Pages workbench surfaces audit Current/Stale state and open P0/P1 counts without conflating them with portfolio priority.",
     "Audit freshness is exact-SHA by default and only permits explicit, per-audit metadata-only current-equivalent exceptions.",
     "Evidence collector and freshness behavior have deterministic fixture tests in CI.",
@@ -120,7 +121,7 @@
   },
   "remediation_recheck": {
     "date": "2026-09-16",
-    "audited_commit": "f4941ba1c937f5eba9dce0578858d9af244bff65",
+    "audited_commit": "4429a9a416e5f46c4587fb90cbda1f1ec5c4899e",
     "portfolio_audit": "pass",
     "pages": "pass",
     "resolved_findings": [
@@ -132,7 +133,8 @@
     ],
     "remaining_open_findings": [
       "RA-P1-001"
-    ]
+    ],
+    "publication_ip_gate": "pass"
   },
   "publication_gate": {
     "current_visibility": "public",
