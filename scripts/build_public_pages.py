@@ -17,8 +17,6 @@ def live_visibility(repository:str)->str:
     try:
         with urllib.request.urlopen(req,timeout=20) as response: payload=json.load(response)
     except urllib.error.HTTPError as exc:
-        # 404 is GitHub's normal response for a private/inaccessible repo.
-        # It is safe to classify as non-public without learning why it is hidden.
         if exc.code==404: return "non-public"
         raise PublicBundleError(f"Cannot verify live visibility for {repository}; refusing publication") from exc
     except (urllib.error.URLError,TimeoutError) as exc:
@@ -31,7 +29,7 @@ def build(registry_path:Path=REGISTRY,audits_dir:Path=AUDITS,out_dir:Path=OUT,vi
     if resolver is None: resolver=live_visibility if registry_path.resolve()==REGISTRY.resolve() else (lambda _:"public")
     owner=str(registry.get("owner") or "CochraneK"); safe=[]; excluded=0
     for item in repos:
-        if not isinstance(item,dict) or item.get("visibility")!="public" or not item.get("name"): raise PublicBundleError("Public registry contains an invalid/non-public record")
+        if not isinstance(item,dict) or item.get("visibility")!="public" or not item.get("name"): raise PublicBundleError("Public Pages bundle refuses non-public repository records")
         if resolver(f"{owner}/{item['name']}")!="public": excluded+=1; continue
         safe.append(item)
     public_registry=dict(registry); public_registry["repositories"]=safe
