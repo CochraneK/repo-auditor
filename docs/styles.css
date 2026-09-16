@@ -907,3 +907,29 @@ footer {
     transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
   }
 }
+
+
+/* Structured audit status: intentionally separate from portfolio priority. */
+.badge.audit {
+  max-width: 100%;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.badge.audit.current {
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 34%, var(--line));
+  background: color-mix(in srgb, var(--green) 10%, transparent);
+}
+.badge.audit.stale {
+  color: var(--amber);
+  border-color: color-mix(in srgb, var(--amber) 34%, var(--line));
+  background: color-mix(in srgb, var(--amber) 10%, transparent);
+}
+.badge.audit.unknown {
+  color: var(--muted);
+  border-color: var(--line);
+  background: var(--panel-soft);
+}
+.table-audit {
+  margin-top: 6px;
+}
