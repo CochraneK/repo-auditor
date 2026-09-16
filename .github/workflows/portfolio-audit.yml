@@ -1,5 +1,4 @@
 name: Portfolio Audit
-
 on:
   workflow_dispatch:
   push:
@@ -8,37 +7,24 @@ on:
     paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "scripts/**", "tests/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
   schedule:
     - cron: "17 1 1 * *"
-permissions:
-  contents: read
+permissions: { contents: read }
 jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Validate Python audit tooling
-        run: python -m py_compile scripts/*.py
-      - name: Run audit tooling fixture tests
-        run: python -m unittest discover -s tests -v
-      - name: Visual UX regression audit
-        run: python scripts/visual_ux_audit.py docs/index.html --json --fail-on-findings
-      - name: Validate portfolio registry
-        run: python scripts/audit_registry.py
-      - name: Rebuild privacy-safe Pages data bundle
-        env: { GITHUB_TOKEN: "${{ github.token }}" }
+      - run: python -m py_compile scripts/*.py
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/visual_ux_audit.py docs/index.html --json --fail-on-findings
+      - run: python scripts/audit_registry.py
+      - env: { GITHUB_TOKEN: "${{ github.token }}" }
         run: python scripts/build_public_pages.py
-      - name: Show generated Pages drift
-        run: git diff -- docs/data/registry.json docs/data/manifest.json docs/data/audits
-      - name: Validate structured audit reports
-        run: python scripts/audit_reports.py
-      - name: Report GO remediation queue
-        run: python scripts/remediation_queue.py
-      - name: Report audit freshness
-        env: { GITHUB_TOKEN: "${{ github.token }}" }
+      - run: python scripts/audit_reports.py
+      - run: python scripts/remediation_queue.py
+      - env: { GITHUB_TOKEN: "${{ github.token }}" }
         run: python scripts/audit_freshness.py
-      - name: Validate Pages JavaScript syntax
-        run: node --check docs/app.js
-      - name: Validate account-wide scanner import
-        run: python scripts/scan_portfolio.py --help
+      - run: node --check docs/app.js
+      - run: python scripts/scan_portfolio.py --help
   sync-public-pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: audit
@@ -46,32 +32,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Rebuild sanitized public bundle from live visibility
-        env: { GITHUB_TOKEN: "${{ github.token }}" }
+      - env: { GITHUB_TOKEN: "${{ github.token }}" }
         run: python scripts/build_public_pages.py
-      - name: Commit sanitized bundle when visibility changed
-        run: |
-          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits; then echo 'Public bundle already sanitized.'; exit 0; fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/data/registry.json docs/data/manifest.json docs/data/audits
-          git commit -m 'chore: sync privacy-safe Pages bundle [skip ci]'
-          git push
+      - run: |
+          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits; then exit 0; fi
+          git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/data/registry.json docs/data/manifest.json docs/data/audits; git commit -m 'chore: sync privacy-safe Pages bundle [skip ci]'; git push
   private-portfolio-scan:
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
-    env: { PORTFOLIO_AUDIT_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN }}" }
+    env:
+      PORTFOLIO_AUDIT_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN }}"
+      PORTFOLIO_EXPECTED_TOTAL: "42"
+      PORTFOLIO_EXPECTED_PRIVATE: "9"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Explain credential boundary
+      - name: Require account-wide credential
         if: env.PORTFOLIO_AUDIT_TOKEN == ''
         run: |
-          echo 'PORTFOLIO_AUDIT_TOKEN is not configured.'
-          echo 'The default GITHUB_TOKEN cannot enumerate other private repositories.'
-          echo 'Keeping the last privacy-safe aggregate snapshot; no private details are published.'
-      - name: Scan all owned repositories including private
+          echo '::error::PORTFOLIO_AUDIT_TOKEN is required for full account coverage.'
+          exit 2
+      - name: Scan all owned repositories and require complete coverage
         if: env.PORTFOLIO_AUDIT_TOKEN != ''
         env: { GITHUB_TOKEN: "${{ env.PORTFOLIO_AUDIT_TOKEN }}" }
-        run: |
-          python scripts/scan_portfolio.py --allow-private
-          echo 'Private evidence remains only on this ephemeral runner and is never uploaded or committed.'
+        run: python scripts/scan_portfolio.py --allow-private --require-complete
