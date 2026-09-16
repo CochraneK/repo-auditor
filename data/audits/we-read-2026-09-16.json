@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/we-read",
+  "audit_date": "2026-09-16",
+  "audited_commit": "d370443e009a6fcf4399caa040b4a73a7126b76e",
+  "markdown": "audits/we-read-2026-09-16.md",
+  "decision": {
+    "work_status": "CONTINUE",
+    "priority_score": 58,
+    "priority_band": "P2-PLANNED",
+    "note": "Priority is inherited from the portfolio registry and is independent of repository quality."
+  },
+  "quality_gates": {
+    "python_3_11": "pass",
+    "python_3_13": "pass",
+    "pages_deploy": "pass",
+    "public_artifact_validation": "pass",
+    "action_supply_chain": "pass",
+    "privacy_repository_scope": "fail"
+  },
+  "observed_tests": 130,
+  "strengths": [
+    "The project has a clear Public Reading Archive / Private Reading Lab product split and evidence-first architecture.",
+    "Exact audited HEAD passed 130 tests on Python 3.11 and Python 3.13.",
+    "The latest Pages-changing commit completed the Pages deploy successfully, including public artifact validation and inline JavaScript syntax checking.",
+    "All observed third-party GitHub Actions are pinned to immutable commit SHAs after remediation.",
+    "Ten JSON schemas and extensive regression coverage make high-level analysis contracts executable rather than documentation-only.",
+    "Publication policy, AGENTS guidance, Pages documentation, and ecosystem documentation were aligned to one canonical publication boundary.",
+    "Legacy A1 category double-counting now uses the shared union-by-bookId metric and Issue #1 was closed."
+  ],
+  "findings": [
+    {
+      "id": "WR-P0-001",
+      "severity": "P0",
+      "title": "Personal WeRead exports remain tracked in the public repository",
+      "status": "accepted",
+      "evidence": [
+        "The audited tree still tracks data/weread_notes_export.json, data/weread_notes_export.md, data/weread_readdata.json, data/weread_notebooks.json, data/weread_shelf.json, data/weread_progress.json and data/weread_bookinfo.json.",
+        ".gitignore now classifies data/weread_*.json, data/weread_*.md and data/analysis/* as local/private by default, so the current tracked state is intentionally grandfathered rather than the desired default.",
+        "Issue #2 explicitly tracks current-branch and history cleanup.",
+        "The repository owner explicitly chose on 2026-09-16 not to clean the personal data yet."
+      ],
+      "recommendation": "Preserve this as an accepted risk for now. Re-open cleanup before broader redistribution or when the owner authorizes current-tree removal/history rewrite; never rewrite history automatically.",
+      "remediation_class": "accepted-risk"
+    },
+    {
+      "id": "WR-P1-001",
+      "severity": "P1",
+      "title": "GitHub Actions used mutable major-version tags",
+      "status": "fixed",
+      "evidence": [
+        "Before remediation, both workflows referenced actions/checkout@v7 and actions/setup-python@v7; Pages also used configure-pages@v6, upload-pages-artifact@v5 and deploy-pages@v5.",
+        "All seven observed references are now pinned to full immutable commit SHAs with version comments.",
+        "Python 3.11 and 3.13 tests passed after the pinning change, and the Pages workflow successfully deployed on the Pages-changing commit."
+      ],
+      "recommendation": "Keep action upgrades explicit and reviewed; advance pins only after the test and Pages gates pass.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "WR-P1-002",
+      "severity": "P1",
+      "title": "Publication/privacy documentation had contradictory old and new rules",
+      "status": "fixed",
+      "evidence": [
+        "Older AGENTS/pages/ecosystem text described the public site as synthetic-only while the active workflow and README published a bounded real-data archive.",
+        "docs/publication-policy.md is now the canonical publication source of truth and AGENTS.md, docs/pages.md and docs/ecosystem.md were aligned to it."
+      ],
+      "recommendation": "Treat docs/publication-policy.md as canonical and re-audit whenever public/private switches or validators change.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "WR-P2-001",
+      "severity": "P2",
+      "title": "Legacy A1 analysis double-counted books present in both shelf and notes",
+      "status": "fixed",
+      "evidence": [
+        "Issue #1 documented the duplicate-counting behavior in legacy scripts/analysis.py.",
+        "scripts/analysis.py now calls metrics.category_participation(), which counts the union of unique bookId values and has regression coverage.",
+        "The post-fix exact HEAD passed 130 tests on Python 3.11 and 3.13; Issue #1 was closed as completed."
+      ],
+      "recommendation": "Keep legacy analysis frozen and route future deterministic metrics through scripts/metrics.py.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "WR-P2-002",
+      "severity": "P2",
+      "title": "main branch is not protected",
+      "status": "open",
+      "evidence": [
+        "GitHub branch metadata for main returned protected=false with no required status checks."
+      ],
+      "recommendation": "If the repository is treated as a stable public product, enable protected-main rules and require the test matrix before merge.",
+      "remediation_class": "owner-choice"
+    },
+    {
+      "id": "WR-P2-003",
+      "severity": "P2",
+      "title": "Public repository has no software license",
+      "status": "open",
+      "evidence": [
+        "GitHub metadata reports license=null and the repository tree has no LICENSE file."
+      ],
+      "recommendation": "Choose a license only when the owner decides the intended reuse rights; do not infer MIT/Apache automatically.",
+      "remediation_class": "owner-choice"
+    },
+    {
+      "id": "WR-P2-004",
+      "severity": "P2",
+      "title": "GitHub repository profile metadata is empty",
+      "status": "open",
+      "evidence": [
+        "GitHub repository metadata returns description=null, homepage=null and topics=[].",
+        "The project already has a live GitHub Pages URL and a strong README, so discoverability metadata is the missing layer rather than project positioning."
+      ],
+      "recommendation": "Apply a concise description, the GitHub Pages homepage, and relevant topics in repository settings.",
+      "remediation_class": "external-blocked"
+    }
+  ],
+  "limitations": [
+    "The repo-auditor HTTP collector could not directly resolve api.github.com from the execution sandbox; the same collector evidence fields were gathered through the authenticated GitHub connector instead.",
+    "A real private-data end-to-end WeRead API run was not executed in this audit.",
+    "The exact audited HEAD did not re-run Pages because its final changes were outside the Pages path filter; the immediately preceding Pages-changing commit 2fabc220c3b5df6bf35ea3c86a8db44eceef4c77 completed the deploy successfully.",
+    "This audit is not a copyright, privacy-law, or security certification."
+  ],
+  "recheck_triggers": [
+    "Any change to docs/publication-policy.md or the public/private publication switches.",
+    "Any change to scripts/validate_pages_output.py or the Pages workflow.",
+    "Owner authorization to remove tracked personal data or rewrite repository history.",
+    "Any new remote write capability to WeRead.",
+    "A license decision, first tagged release, or branch-protection change.",
+    "Material changes to the shared fact layer, schemas, or Private Reading Lab architecture."
+  ],
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "split-public-private",
+    "reasons": [
+      "The repository is already public, so changing visibility later would not erase prior disclosure.",
+      "The codebase and validated Public Reading Archive are suitable for a public layer, while raw personal exports are better treated as a private/local evidence layer when the owner later authorizes that separation.",
+      "No employer/client/PI ownership or patent-sensitive mechanism blocker was identified in this audit; this is not legal clearance."
+    ]
+  },
+  "quality_dimensions": {
+    "purpose_scope": {
+      "score": 5,
+      "evidence": [
+        "README and supporting docs clearly define Public Reading Archive, Private Reading Lab, evidence semantics, and non-claims."
+      ]
+    },
+    "correctness": {
+      "score": 4,
+      "evidence": [
+        "Exact audited HEAD passed 130 tests on Python 3.11 and 3.13; Pages deploy/validation passed on the latest Pages-changing commit.",
+        "A real private-data end-to-end API run was outside this audit."
+      ]
+    },
+    "security_privacy": {
+      "score": 2,
+      "evidence": [
+        "Public/private Page boundaries are backed by validators and a canonical publication policy, but full personal WeRead exports remain tracked in the public repository as an explicitly accepted risk."
+      ]
+    },
+    "supply_chain": {
+      "score": 4,
+      "evidence": [
+        "All observed GitHub Actions are pinned to immutable commit SHAs after remediation.",
+        "Optional legacy analysis dependencies remain version-unlocked and there is no general lockfile."
+      ]
+    },
+    "reproducibility": {
+      "score": 3,
+      "evidence": [
+        "Core tests run on Python 3.11 and 3.13 and much of the current pipeline uses the standard library; schemas and deterministic builders are committed.",
+        "No lockfile exists and full real-data/private-lab reproduction requires user-local data/API access."
+      ]
+    },
+    "release_engineering": {
+      "score": 2,
+      "evidence": [
+        "GitHub Pages build/deploy and artifact validation are automated, but main is unprotected, there is no LICENSE, and there is no formal tagged-release/changelog surface."
+      ]
+    },
+    "documentation_onboarding": {
+      "score": 5,
+      "evidence": [
+        "README, AGENTS, ecosystem, Pages, publication policy, skill landscape and skill audit provide unusually complete product and architecture guidance."
+      ]
+    },
+    "maintainability": {
+      "score": 4,
+      "evidence": [
+        "The repository has 40 test modules, 10 schemas, shared deterministic metrics and aligned documentation; the known legacy A1 bug was removed rather than merely documented."
+      ]
+    },
+    "community_surface": {
+      "score": 2,
+      "evidence": [
+        "README, Issues and SECURITY.md exist, but description/homepage/topics are empty and LICENSE/CONTRIBUTING/CHANGELOG/CITATION are absent."
+      ]
+    }
+  },
+  "remediation_recheck": {
+    "date": "2026-09-16",
+    "head_commit": "d370443e009a6fcf4399caa040b4a73a7126b76e",
+    "resolved_findings": [
+      "WR-P1-001",
+      "WR-P1-002",
+      "WR-P2-001"
+    ],
+    "go_auto_fix": "pass"
+  }
+}
