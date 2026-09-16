@@ -234,6 +234,15 @@
       "last_commit_date": "2026-05-21"
     },
     {
+      "name": "repo-auditor",
+      "visibility": "public",
+      "work_status": "CONTINUE",
+      "priority_score": 65,
+      "priority_band": "P2-PLANNED",
+      "reason": "审计控制面与 GO remediation 基线已成型；继续维护 private/public coverage、Pages 隐私边界与自审，但不抢占产品主线。",
+      "last_commit_date": "2026-09-17"
+    },
+    {
       "name": "RVC_factor",
       "visibility": "public",
       "work_status": "CONTINUE",
@@ -305,6 +314,15 @@
       "reason": "2026-09-16 repo-auditor：核心产品已成熟；130 tests 双版本全绿，Actions 已 immutable-pin，publication docs 与 legacy A1 已收口。当前仅保留已接受的个人数据风险，以及 LICENSE / branch protection / GitHub profile 等 owner/external 项。",
       "last_commit_date": "2026-09-16",
       "latest_audit": "audits/we-read-2026-09-16.md"
+    },
+    {
+      "name": "we-read-template",
+      "visibility": "public",
+      "work_status": "CONTINUE",
+      "priority_score": 35,
+      "priority_band": "P3-LATER",
+      "reason": "可复刻的 WeRead sanitized starter 已建立；后续主要随上游 we-read 的接口、隐私策略和兼容性变化维护。",
+      "last_commit_date": "2026-09-16"
     },
     {
       "name": "wechat-article-analysis",

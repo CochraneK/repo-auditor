@@ -1,7 +1,8 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "scope": "public-pages-bundle",
-  "repository_count": 32,
+  "repository_count": 34,
+  "todo_count": 8,
   "live_visibility_exclusions": 0,
   "audit_sidecars": [
     "ming-2026-09-17.json",

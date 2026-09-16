@@ -2,7 +2,7 @@
   "schema_version": 2,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-16T18:01:40.817908+00:00",
+  "generated_at": "2026-09-16T18:42:40.822266+00:00",
   "audit_status": "PARTIAL",
   "inventory": {
     "observed_total": 34,
@@ -29,19 +29,10 @@
   },
   "privacy": {
     "private_details_location": "private-evidence/portfolio-scan.json (gitignored; never Pages)",
-    "pages_contains_private_details": false,
-    "note": "Public Pages exposes only aggregate coverage state. Private repository names, URLs, SHAs, notes, evidence and findings remain excluded."
+    "pages_contains_private_details": false
   },
   "self_audit": {
     "included": true,
     "repository": "repo-auditor"
-  },
-  "signals": [
-    {
-      "severity": "P1",
-      "kind": "private-auth",
-      "remediation_class": "external-blocked",
-      "message": "The configured Actions credential currently sees the public inventory but does not cover the expected private repositories. Engineering CI remains independent; Audit Coverage stays PARTIAL until the credential is broadened."
-    }
-  ]
+  }
 }
