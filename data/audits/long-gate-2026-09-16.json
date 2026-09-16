@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/long-gate",
+  "audit_date": "2026-09-16",
+  "audited_commit": "7657ec0a0b94fe6a8a91639940273fd06412ee8c",
+  "markdown": "audits/long-gate-2026-09-16.md",
+  "decision": {
+    "work_status": "CONTINUE",
+    "priority_score": 94,
+    "priority_band": "P0-NOW",
+    "note": "Priority reflects current attention value, not repository quality."
+  },
+  "quality_gates": {
+    "test": "pass",
+    "security_boundary": "pass",
+    "benchmark_smoke": "pass",
+    "release_readiness": "pass",
+    "security_audit": "pass",
+    "codeql": "pass"
+  },
+  "observed_tests": 58,
+  "strengths": [
+    "Raw/network capability separation is expressed in architecture, compose contracts, tests, and security invariants.",
+    "All six observed quality gates passed on the remediated audited commit.",
+    "Every observed third-party GitHub Action is pinned to an immutable reviewed commit SHA with a human-readable version comment.",
+    "The security-boundary workflow now directly runs policy, pipeline, agent, deployment-contract, egress, and Model Vault boundary tests.",
+    "Model Vault catalog pins upstream model revisions and SHA-256 values.",
+    "Release-readiness builds distributions and smoke-installs the wheel in a clean environment.",
+    "CI/dev reproducibility now uses a reviewed constraints-ci.txt baseline across tests, security gates, benchmarks, and package builds while keeping pyproject runtime ranges library-friendly.",
+    "README, Chinese README, threat model, security policy, contributing guide, citation, changelog, roadmap, and safe demo are present.",
+    "Unstructured semantic output remains fail-closed and local-only rather than being marketed as anonymous."
+  ],
+  "findings": [
+    {
+      "id": "LG-P1-001",
+      "severity": "P1",
+      "title": "GitHub repository profile metadata is empty",
+      "status": "open",
+      "evidence": [
+        "GitHub repository metadata returned description=null, homepage=null, topics=[].",
+        "docs/repository-profile.md exists, so the intended values are documented but not applied to the repository profile."
+      ],
+      "recommendation": "Apply the documented description, Safe Demo homepage, and discoverability topics in GitHub repository settings.",
+      "remediation_class": "external-blocked"
+    },
+    {
+      "id": "LG-P1-002",
+      "severity": "P1",
+      "title": "Most GitHub Actions use mutable tag references",
+      "status": "fixed",
+      "evidence": [
+        "All observed third-party GitHub Actions in .github/workflows are pinned to full immutable commit SHAs.",
+        "Version comments are retained beside pins for reviewability.",
+        "The remediated main commit passed all six quality gates."
+      ],
+      "recommendation": "Keep Dependabot or equivalent update review active and only advance pins after CI review.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "LG-P1-003",
+      "severity": "P1",
+      "title": "The security-boundary workflow does not explicitly run deployment capability-contract tests",
+      "status": "fixed",
+      "evidence": [
+        ".github/workflows/security.yml now explicitly runs tests/test_policy.py, tests/test_pipeline.py, tests/test_agent_boundary.py, tests/test_deployment_contract.py, tests/test_egress.py, and tests/test_model_vault.py.",
+        "The expanded security-boundary gate passed on audited commit b0eeb3b440efe8c69480028667d06952957dd661."
+      ],
+      "recommendation": "Keep capability-boundary tests inside the named security-boundary gate whenever deployment or model setup architecture changes.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "LG-P2-001",
+      "severity": "P2",
+      "title": "CI/development dependency resolution is not locked",
+      "status": "fixed",
+      "evidence": [
+        "constraints-ci.txt now pins the reviewed top-level runtime, development, security-audit, and build toolchain used by CI.",
+        "Core CI workflows consume the constraints strategy while pyproject.toml retains downstream-friendly runtime ranges.",
+        "All six push quality gates passed on exact main commit 7657ec0a0b94fe6a8a91639940273fd06412ee8c."
+      ],
+      "recommendation": "Refresh constraints deliberately under the full test/security suite; consider a fully hashed transitive lock later only if justified.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "LG-P2-002",
+      "severity": "P2",
+      "title": "Tag release workflow builds artifacts but does not attest or sign them",
+      "status": "open",
+      "evidence": [
+        ".github/workflows/release.yml builds distributions and uploads an artifact.",
+        "The project documents integrity/provenance concepts, but the tag workflow does not yet attach a keyless attestation/signature or create a provenance-linked release artifact."
+      ],
+      "recommendation": "Before a mature public release, add artifact provenance/attestation and decide whether GitHub Releases/PyPI publication should be automated.",
+      "remediation_class": "owner-choice"
+    },
+    {
+      "id": "LG-P2-003",
+      "severity": "P2",
+      "title": "Branch protection and repository rules could not be verified",
+      "status": "open",
+      "evidence": [
+        "The connected GitHub App does not expose repository administration/branch-protection state in this audit context."
+      ],
+      "recommendation": "Manually verify required-status-check and protected-main rules before calling the repository release-hardened.",
+      "remediation_class": "external-blocked"
+    }
+  ],
+  "limitations": [
+    "This audit did not execute a real multi-gigabyte GGUF model locally.",
+    "No claim is made that synthetic data or semantic transformations are formally anonymous.",
+    "Repository administration settings such as branch protection were not visible through the connected GitHub permissions.",
+    "The public Railway demo was assessed as a static safe-demo architecture, not penetration-tested."
+  ],
+  "recheck_triggers": [
+    "Any change that permits row-level synthetic network egress.",
+    "Any new remote-model or remote-endpoint capability.",
+    "Changes to Model Vault download/source verification.",
+    "Release workflow changes or a first public package release.",
+    "Changes to hardened compose capability boundaries.",
+    "A major rewrite of privacy audit thresholds or semantic-release policy."
+  ],
+  "remediation_recheck": {
+    "date": "2026-09-16",
+    "head_commit": "7657ec0a0b94fe6a8a91639940273fd06412ee8c",
+    "quality_gates": {
+      "test": "pass",
+      "security_boundary": "pass",
+      "benchmark_smoke": "pass",
+      "release_readiness": "pass",
+      "security_audit": "pass",
+      "codeql": "pass"
+    },
+    "resolved_findings": [
+      "LG-P1-002",
+      "LG-P1-003",
+      "LG-P2-001"
+    ],
+    "go_auto_fix": "pass"
+  },
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "split-public-private",
+    "reasons": [
+      "The existing Long Gate repository is already public, so changing visibility later would not erase prior disclosure.",
+      "Future genuinely new technical mechanisms may warrant patent/ownership review before they are merged into the public tree.",
+      "Keep the existing public/background code stable while developing patent-sensitive or organization-specific extensions privately until reviewed."
+    ]
+  },
+  "quality_dimensions": {
+    "purpose_scope": {
+      "score": 5,
+      "evidence": [
+        "README and supporting docs clearly define local-first privacy scope, threat boundaries, and explicit non-claims."
+      ]
+    },
+    "correctness": {
+      "score": 4,
+      "evidence": [
+        "58 tests passed and six quality gates were green; a real multi-gigabyte GGUF execution was not part of this audit."
+      ]
+    },
+    "security_privacy": {
+      "score": 5,
+      "evidence": [
+        "Raw/network capability separation, fail-closed egress, deployment-contract tests, and Model Vault boundary tests are executable rather than documentation-only."
+      ]
+    },
+    "supply_chain": {
+      "score": 5,
+      "evidence": [
+        "Observed third-party GitHub Actions are pinned to full commit SHAs; curated models pin upstream revisions and SHA-256 values."
+      ]
+    },
+    "reproducibility": {
+      "score": 4,
+      "evidence": [
+        "CI/dev direct dependencies and security/build tooling are constrained through constraints-ci.txt across the main validation workflows, and exact-main CI passed.",
+        "This is a reviewed constraints strategy rather than a fully hashed transitive lock."
+      ]
+    },
+    "release_engineering": {
+      "score": 3,
+      "evidence": [
+        "Build artifacts and release-readiness checks exist, but release attestation/signing and a mature publication policy are still open."
+      ]
+    },
+    "documentation_onboarding": {
+      "score": 5,
+      "evidence": [
+        "README, Chinese README, threat model, security policy, contributing guide, citation, changelog, roadmap, safe demo, and model setup guidance are present."
+      ]
+    },
+    "maintainability": {
+      "score": 4,
+      "evidence": [
+        "Architecture, tests, workflows, and security documentation are well aligned; the repository remains pre-1.0 with some release/reproducibility debt."
+      ]
+    },
+    "community_surface": {
+      "score": 3,
+      "evidence": [
+        "License, contribution/security/citation surfaces exist, but GitHub description/homepage/topics are still empty and branch protection was not verifiable."
+      ]
+    }
+  }
+}

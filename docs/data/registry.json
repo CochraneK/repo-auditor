@@ -163,11 +163,12 @@
     {
       "name": "ming",
       "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 45,
-      "priority_band": "P3-LATER",
-      "reason": "整体成熟，只差少量完善，后续处理。",
-      "last_commit_date": "2026-09-14"
+      "work_status": "STOP",
+      "priority_score": 0,
+      "priority_band": "STOP",
+      "reason": "2026-09-17 双层审查：产品与工程均已成熟，暂停主动开发并进入 maintenance；仅在真实 bug、史实/数据纠错或兼容性破坏时重新打开，不做无证据 UI 重构。",
+      "last_commit_date": "2026-09-16",
+      "latest_audit": "audits/ming-2026-09-17.md"
     },
     {
       "name": "NaoDao_code",
@@ -301,8 +302,9 @@
       "work_status": "CONTINUE",
       "priority_score": 58,
       "priority_band": "P2-PLANNED",
-      "reason": "产品已成熟，主要剩下可供其他人直接使用的 template。",
-      "last_commit_date": "2026-09-14"
+      "reason": "2026-09-16 repo-auditor：核心产品已成熟；130 tests 双版本全绿，Actions 已 immutable-pin，publication docs 与 legacy A1 已收口。当前仅保留已接受的个人数据风险，以及 LICENSE / branch protection / GitHub profile 等 owner/external 项。",
+      "last_commit_date": "2026-09-16",
+      "latest_audit": "audits/we-read-2026-09-16.md"
     },
     {
       "name": "wechat-article-analysis",

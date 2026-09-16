@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "scope": "privacy-preserving-account-audit-summary",
+  "owner": "CochraneK",
+  "generated_at": "2026-09-16T17:25:00Z",
+  "inventory": {
+    "total": 42,
+    "public": 32,
+    "private": 10,
+    "scan_failures": 0,
+    "private_names_published": false
+  },
+  "coverage": {
+    "inventory_scanned": 42,
+    "deep_evidence_status": "scanner-ready",
+    "structured_audits_currently_persisted": 4
+  },
+  "privacy": {
+    "pages_contains_private_details": false,
+    "note": "All owner repositories may be inventoried privately, but public Pages publishes only aggregate private counts and public-repository details. Private repository names, URLs, SHAs, notes and findings are excluded."
+  },
+  "self_audit": {
+    "included": false,
+    "reason": "The control repository is private; its name and audit payload are not published in the public Pages snapshot."
+  },
+  "signals": [
+    {
+      "severity": "P1",
+      "kind": "private-auth",
+      "message": "Persistent deep scanning of private repositories requires an Actions credential with access to those repositories; the default per-repository GITHUB_TOKEN cannot provide account-wide private access."
+    }
+  ]
+}

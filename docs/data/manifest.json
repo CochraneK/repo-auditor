@@ -1,7 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "scope": "public-pages-bundle",
   "repository_count": 32,
-  "audit_sidecars": [],
-  "private_repository_metadata_included": false
+  "live_visibility_exclusions": 0,
+  "audit_sidecars": [
+    "ming-2026-09-17.json",
+    "we-read-2026-09-16.json"
+  ],
+  "private_repository_metadata_included": false,
+  "visibility_policy": "live-github-fail-closed"
 }

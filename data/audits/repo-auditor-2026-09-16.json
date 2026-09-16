@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/repo-auditor",
+  "audit_date": "2026-09-16",
+  "audited_commit": "cbc436ec25a880d1327566e68c0241bbd79f1ee8",
+  "markdown": "audits/repo-auditor-2026-09-16.md",
+  "decision": {
+    "work_status": "CONTINUE",
+    "priority_score": 65,
+    "priority_band": "P2-PLANNED",
+    "note": "Infrastructure is useful and should improve, but it should not displace higher-priority product/research work."
+  },
+  "quality_gates": {
+    "portfolio_audit": "pass",
+    "pages": "pass"
+  },
+  "strengths": [
+    "Public/private portfolio boundary is explicit and registry validation enforces public-only records.",
+    "Priority score is documented as an attention-allocation score rather than a quality score.",
+    "Structured audit sidecars, a rubric, validator, public evidence collector, and metadata-aware freshness checker are now integrated.",
+    "Structured audits now require a publication/IP gate that separates Public/Private release decisions from code-quality scoring and flags patent, background-IP, organization-request, confidentiality, and ownership-review triggers.",
+    "Structured audits now require nine evidence-backed 0–5 quality dimensions without collapsing them into a single quality score or mixing them with portfolio priority.",
+    "GO remediation is now explicit: open auto-fix findings enter a branch/test/re-audit/PR loop while license/IP/visibility and other owner choices remain gated.",
+    "The Pages workbench surfaces audit Current/Stale state and open P0/P1 counts without conflating them with portfolio priority.",
+    "Audit freshness is exact-SHA by default and only permits explicit, per-audit metadata-only current-equivalent exceptions.",
+    "Evidence collector and freshness behavior have deterministic fixture tests in CI.",
+    "docs/ is the single canonical Pages source and the retired bootstrap archive has been removed.",
+    "Long Gate audit is dogfooding the structured audit and remediation workflow.",
+    "GO mode exposes a deterministic remediation queue of open auto-fix findings and keeps owner-choice/external-blocked findings out of automatic mutation."
+  ],
+  "findings": [
+    {
+      "id": "RA-P1-001",
+      "severity": "P1",
+      "title": "The repository has no explicit LICENSE",
+      "status": "open",
+      "evidence": [
+        "No LICENSE file was present in the repository root at the audited commit."
+      ],
+      "recommendation": "Choose and add an explicit license before encouraging third-party reuse. This is an owner/legal choice and should not be inferred automatically.",
+      "remediation_class": "owner-choice"
+    },
+    {
+      "id": "RA-P1-002",
+      "severity": "P1",
+      "title": "Audit results are not surfaced in the GitHub Pages workbench",
+      "status": "fixed",
+      "evidence": [
+        "docs/app.js loads structured audit sidecars for repositories with latest_audit.",
+        "The workbench displays Audit Current/Stale/Current* state plus open P0/P1 counts and links to the audit report.",
+        "Pages deployment succeeded on the remediated baseline."
+      ],
+      "recommendation": "Keep audit severity visually and semantically separate from portfolio priority as the UI evolves.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "RA-P1-003",
+      "severity": "P1",
+      "title": "No audit staleness detection exists yet",
+      "status": "fixed",
+      "evidence": [
+        "scripts/audit_freshness.py compares audited_commit with the repository default-branch HEAD.",
+        "Optional freshness.ignore_paths is explicit per audit and only yields current-equivalent when every changed file matches an allowed metadata path.",
+        "Non-ignored code/UI/CI changes remain stale and empty compares fail closed.",
+        "CI runs the freshness checker and fixture tests."
+      ],
+      "recommendation": "Keep ignore paths narrow; do not add source, CI, release, or security-policy paths merely to suppress stale status.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "RA-P2-001",
+      "severity": "P2",
+      "title": "Static workbench sources are duplicated at repository root and under docs/",
+      "status": "fixed",
+      "evidence": [
+        "The duplicate root index.html, app.js, and styles.css were removed.",
+        "docs/index.html, docs/app.js, and docs/styles.css remain the canonical GitHub Pages source.",
+        "Pages deployment succeeded after cleanup."
+      ],
+      "recommendation": "Keep docs/ canonical unless a future build step deliberately generates it from another source.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "RA-P2-002",
+      "severity": "P2",
+      "title": "Evidence collector has no dedicated automated tests",
+      "status": "fixed",
+      "evidence": [
+        "tests/test_audit_tooling.py now covers immutable action refs, private-repository refusal, workflow-run deduplication, HTTP errors, latest-sidecar selection, exact freshness, metadata-only current-equivalent freshness, and fail-closed stale cases.",
+        "Portfolio Audit CI runs the fixture tests."
+      ],
+      "recommendation": "Expand fixtures when collector support grows to new evidence types or language-specific adapters.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "RA-P2-003",
+      "severity": "P2",
+      "title": "Legacy bootstrap source archive remains in the repository",
+      "status": "fixed",
+      "evidence": [
+        "The retired .repo-auditor-bootstrap archive and READY marker were removed after confirming no active references.",
+        "The archive was incomplete and no longer served the current publication path.",
+        "Removal was isolated in a reviewed cleanup branch and preserved in Git history."
+      ],
+      "recommendation": "Do not reintroduce bootstrap archives into the public runtime tree; use normal Git history or release artifacts for recovery.",
+      "remediation_class": "auto-fix"
+    }
+  ],
+  "limitations": [
+    "The self-audit does not infer or choose a software license on behalf of the repository owner.",
+    "GitHub Pages deployment passed, but this recheck did not perform a full cross-browser visual regression suite.",
+    "Branch protection and repository administration settings were not evaluated.",
+    "The evidence collector has deterministic fixtures but has not been exercised against a large cross-language repository corpus."
+  ],
+  "recheck_triggers": [
+    "A LICENSE is added or release/reuse policy changes.",
+    "Audit freshness semantics or ignore-path handling changes.",
+    "The Pages audit-status UI changes materially.",
+    "Public/private registry boundaries change.",
+    "The evidence collector gains new evidence classes or language-specific adapters.",
+    "CI validation or GitHub Pages publication architecture changes.",
+    "Publication/IP gate semantics or recommendation rules change.",
+    "GO remediation policy, remediation classes, or auto-fix queue behavior changes."
+  ],
+  "freshness": {
+    "ignore_paths": [
+      "audits/**",
+      "portfolio/registry.json",
+      "PORTFOLIO.md"
+    ]
+  },
+  "remediation_recheck": {
+    "date": "2026-09-16",
+    "audited_commit": "cbc436ec25a880d1327566e68c0241bbd79f1ee8",
+    "portfolio_audit": "pass",
+    "pages": "pass",
+    "resolved_findings": [
+      "RA-P1-002",
+      "RA-P1-003",
+      "RA-P2-001",
+      "RA-P2-002",
+      "RA-P2-003"
+    ],
+    "remaining_open_findings": [
+      "RA-P1-001"
+    ],
+    "publication_ip_gate": "pass",
+    "multidimensional_quality_scoring": "pass",
+    "go_remediation_agent": "pass",
+    "auto_fix_queue": "pass"
+  },
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "public-ok",
+    "reasons": [
+      "No project-specific patent, confidential-input, employer/client/PI-request, or ownership-uncertainty trigger is recorded for repo-auditor.",
+      "The missing LICENSE remains a separate reuse-policy finding and is not by itself a reason to make the repository private."
+    ]
+  },
+  "quality_dimensions": {
+    "purpose_scope": {
+      "score": 5,
+      "evidence": [
+        "README and rubric clearly separate portfolio priority, audit findings, publication gating, and repository quality."
+      ]
+    },
+    "correctness": {
+      "score": 4,
+      "evidence": [
+        "Structured sidecar validation, freshness checks, deterministic fixture tests, and CI are active; the collector has not yet been exercised across a large cross-language corpus."
+      ]
+    },
+    "security_privacy": {
+      "score": 4,
+      "evidence": [
+        "Public/private boundaries are explicit and the public collector refuses private repositories; broader repository administration controls were not evaluated."
+      ]
+    },
+    "supply_chain": {
+      "score": 4,
+      "evidence": [
+        "GitHub Actions use immutable references where observed and the tool has a small dependency surface; there is not yet a broader supply-chain corpus test."
+      ]
+    },
+    "reproducibility": {
+      "score": 4,
+      "evidence": [
+        "Deterministic fixtures, static Pages sources, schema validation, and CI make the audit workflow reproducible; cross-environment corpus coverage remains limited."
+      ]
+    },
+    "release_engineering": {
+      "score": 3,
+      "evidence": [
+        "GitHub Pages deployment and CI are reliable, but the repository still lacks an explicit software LICENSE and is not managed as a packaged release product."
+      ]
+    },
+    "documentation_onboarding": {
+      "score": 5,
+      "evidence": [
+        "README, audit rubric, audit README, public workbench, structured sidecars, and helper commands make the workflow easy to inspect and reuse."
+      ]
+    },
+    "maintainability": {
+      "score": 4,
+      "evidence": [
+        "docs/ is canonical, freshness semantics are tested, structured schema is validated, and legacy bootstrap duplication was removed."
+      ]
+    },
+    "community_surface": {
+      "score": 3,
+      "evidence": [
+        "Public Pages and audit links are available, but the missing LICENSE remains a high-priority reuse-policy gap."
+      ]
+    }
+  }
+}
