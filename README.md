@@ -1,62 +1,108 @@
-# repo-auditor · Public GitHub 工作台
+<div align="center">
 
-`repo-auditor` 的公开层只管理和展示 **Public repositories**。
+# repo-auditor
 
-## Public workbench
+**Public GitHub 工作台 · 把“我有哪些仓库”变成“我现在该推进什么”。**
 
-GitHub Pages 源码位于 `docs/`，启用后地址：
+<p>
+  <img alt="Public only" src="https://img.shields.io/badge/scope-public%20repositories-2F80ED">
+  <img alt="GitHub Pages" src="https://img.shields.io/badge/UI-GitHub%20Pages-222222">
+  <img alt="Priority system" src="https://img.shields.io/badge/planning-NOW%20%C2%B7%20NEXT%20%C2%B7%20LATER-6C63FF">
+  <img alt="Private safe" src="https://img.shields.io/badge/private%20repos-not%20published-27AE60">
+</p>
 
-`https://cochranek.github.io/repo-auditor/`
+[**打开工作台**](https://cochranek.github.io/repo-auditor/) · [**查看 Portfolio**](PORTFOLIO.md) · [**数据源**](portfolio/registry.json)
 
-公开工作台包含：
+</div>
 
-- 当前执行队列
-- NOW / NEXT / LATER / DON'T TOUCH 分区
-- Public 项目的 CONTINUE / STOP 和优先级
-- 搜索与优先级筛选
-- 明暗主题
-- 一键进入公开仓库
+---
+
+## 它解决什么问题
+
+当仓库越来越多，真正困难的往往不是“找到代码”，而是：
+
+- 哪些项目正在推进；
+- 哪些应该排到下一步；
+- 哪些已经暂停；
+- 哪些只是值得保留，但暂时不值得继续投入；
+- 如何把这些状态放在一个公开、可浏览、不会泄露私有项目的工作台里。
+
+`repo-auditor` 的公开层只管理和展示 **Public repositories**，并把仓库组织成一个轻量的执行与优先级界面。
+
+## Public Workbench
+
+GitHub Pages 源码位于 `docs/`，线上入口：
+
+**https://cochranek.github.io/repo-auditor/**
+
+当前公开工作台包含：
+
+| 能力 | 说明 |
+| --- | --- |
+| **执行队列** | 聚合当前真正需要推进的项目 |
+| **NOW / NEXT / LATER / DON'T TOUCH** | 按行动时序分区，而不是只按仓库列表展示 |
+| **CONTINUE / STOP** | 标记是否继续投入 |
+| **Priority score** | 表达“现在该不该花时间”，不是项目质量评分 |
+| **搜索 / 筛选** | 快速缩小项目范围 |
+| **明暗主题** | 适配不同浏览环境 |
+| **Repository jump** | 一键进入对应公开仓库 |
 
 数据源：
 
 - `portfolio/registry.json` — **Public-only**
 - `PORTFOLIO.md` — **Public-only**
 
-## Private workspace
+## Public / Private 边界
 
-Private 仓库不再写入本公开仓库：
+> [!IMPORTANT]
+> Private 仓库不会写入这个公开仓库，也不会因为总控需求而被间接暴露。
+
+Private 仓库：
 
 - 不出现在 GitHub Pages；
 - 不出现在当前 `registry.json`；
 - 不出现在 `PORTFOLIO.md`；
 - 公开页面不会显示 Private 数量、名称或备注。
 
-当前 Private 项目由已授权的 GitHub 连接按需读取和汇总。若要建立持久的 Private Web 工作台，推荐单独建立一个 private 管理仓库（例如 `repo-auditor-private`），再复用同一套静态工作台结构。
+当前 Private 项目由已授权的 GitHub 连接按需读取和汇总。若未来需要持久的 Private Web 工作台，应使用单独的 private 管理仓库，再复用同一套静态工作台结构。
 
-> 当前 GitHub 连接器没有“新建仓库”动作，因此这里不会擅自把 Private 总控数据塞进某个无关的私有项目仓库。
+## Work Status
 
-## Work status
+| 状态 | 含义 |
+| --- | --- |
+| `CONTINUE` | 未来还要继续投入 |
+| `STOP` | 当前不用继续做 |
 
-- `CONTINUE`：未来还要继续投入
-- `STOP`：当前不用继续做
+> [!NOTE]
+> `STOP` 只是总控提示，不会触发 GitHub Archive、Delete、可见性修改或项目代码变更。
 
-`STOP` 只是总控提示，不会触发 GitHub Archive、Delete、改可见性或修改项目代码。
+## Priority Score
 
-## Priority score
-
-分数表示“**现在该不该花时间**”，不是项目质量分。
+分数表示 **“现在该不该花时间”**，不是项目质量分。
 
 | 分数 | 含义 |
-|---:|---|
-| 90–100 | P0 · 当前 / 下周明确要做 |
-| 70–89 | P1 · 本月应推进 |
-| 50–69 | P2 · 已计划，但不是当前主线 |
-| 20–49 | P3 · 后续再做 |
-| 1–19 | P4 · 极低优先级保留 |
-| 0 | STOP · 当前不用做 |
+| ---: | --- |
+| **90–100** | P0 · 当前 / 下周明确要做 |
+| **70–89** | P1 · 本月应推进 |
+| **50–69** | P2 · 已计划，但不是当前主线 |
+| **20–49** | P3 · 后续再做 |
+| **1–19** | P4 · 极低优先级保留 |
+| **0** | STOP · 当前不用做 |
 
-## 一次性启用 GitHub Pages
+## 启用 GitHub Pages
 
-`Settings → Pages → Deploy from a branch → main → /docs → Save`
+首次启用一次即可：
+
+```text
+Settings → Pages → Deploy from a branch → main → /docs → Save
+```
 
 之后页面直接读取 Public-only registry，无需手工重新生成。
+
+---
+
+<div align="center">
+
+**A small control plane for a growing GitHub portfolio.**
+
+</div>
