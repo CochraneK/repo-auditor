@@ -13,6 +13,7 @@ on:
       - "scripts/audit_reports.py"
       - "scripts/collect_repo_evidence.py"
       - "scripts/audit_freshness.py"
+      - "scripts/publication_gate.py"
       - "tests/**"
       - "docs/**"
       - ".github/workflows/portfolio-audit.yml"
@@ -27,6 +28,7 @@ on:
       - "scripts/audit_reports.py"
       - "scripts/collect_repo_evidence.py"
       - "scripts/audit_freshness.py"
+      - "scripts/publication_gate.py"
       - "tests/**"
       - "docs/**"
       - ".github/workflows/portfolio-audit.yml"
@@ -42,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Validate Python audit tooling
-        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py
+        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py scripts/publication_gate.py
       - name: Run audit tooling fixture tests
         run: python -m unittest discover -s tests -v
       - name: Validate portfolio registry

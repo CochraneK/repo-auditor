@@ -46,6 +46,7 @@ GitHub Pages 源码位于 `docs/`，线上入口：
 | **搜索 / 筛选** | 快速缩小项目范围 |
 | **明暗主题** | 适配不同浏览环境 |
 | **Repository jump** | 一键进入对应公开仓库 |
+| **Publication / IP gate** | 审计时明确给出 Public / Private / split 的发布建议，提醒专利披露、Background IP、单位/客户请求与权属不确定性 |
 
 数据源：
 
@@ -69,6 +70,14 @@ GitHub Pages 源码位于 `docs/`，线上入口：
 ```text
 audits/<repo>-YYYY-MM-DD.md
 audits/<repo>-YYYY-MM-DD.json
+```
+
+每份 structured audit 还必须记录 `publication_gate`：它不替代律师或专利代理师，而是避免把 Public/Private 当作纯技术设置。若出现潜在专利、单位/客户/PI 请求、Background IP、保密输入或权属不清，会提示先 review、keep private 或拆成 public/private 两层。
+
+本地辅助判断：
+
+```bash
+python scripts/publication_gate.py --visibility private --patent-candidate
 ```
 
 自动校验：
