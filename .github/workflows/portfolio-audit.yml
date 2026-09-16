@@ -73,12 +73,6 @@ jobs:
         if: ${{ secrets.PORTFOLIO_AUDIT_TOKEN != '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.PORTFOLIO_AUDIT_TOKEN }}
-        run: python scripts/scan_portfolio.py --allow-private
-      - name: Upload private scan evidence
-        if: ${{ secrets.PORTFOLIO_AUDIT_TOKEN != '' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: private-portfolio-audit
-          path: private-evidence/portfolio-scan.json
-          retention-days: 7
-          if-no-files-found: error
+        run: |
+          python scripts/scan_portfolio.py --allow-private
+          echo 'Private evidence remains only on this ephemeral runner and is never uploaded or committed.'
