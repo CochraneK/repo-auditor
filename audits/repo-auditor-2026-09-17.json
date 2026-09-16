@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/repo-auditor",
+  "audit_date": "2026-09-17",
+  "audited_commit": "871d701e68b8a8535a791c9c3eae19e4c59a9b5e",
+  "markdown": "audits/repo-auditor-2026-09-17.md",
+  "decision": {
+    "work_status": "CONTINUE",
+    "priority_score": 65,
+    "priority_band": "P2-PLANNED",
+    "note": "The audit/remediation control plane is mature enough for normal use. Continue dogfooding and evidence-driven maintenance without displacing higher-priority product work."
+  },
+  "quality_gates": {
+    "portfolio_audit": "pass",
+    "public_bundle": "pass",
+    "visual_ux": "pass",
+    "pages": "pass",
+    "private_account_coverage": "unknown"
+  },
+  "strengths": [
+    "GO mode is implemented as an evidence-backed Audit → classify → auto-fix → test → re-audit loop with owner-choice and external-blocked boundaries.",
+    "Public Pages generation performs live visibility checks and fails closed instead of trusting stale registry visibility.",
+    "Public Pages publishes public-repository details plus privacy-safe aggregate coverage only; private repository identities, URLs, SHAs, notes, evidence and findings are excluded.",
+    "Audit Coverage is now orthogonal to engineering CI: incomplete private credential coverage is preserved as PARTIAL rather than faked as PASS or misreported as a code failure.",
+    "Current public inventory and public-safe Todo publication are generated through the same validated Pages bundle.",
+    "Structured audits enforce nine independent evidence-backed quality dimensions and keep publication/IP gating separate from quality scoring.",
+    "A dedicated SECURITY.md now treats private-evidence leakage and publication-boundary bypasses as security issues.",
+    "The current pre-audit baseline passed Portfolio Audit CI after the final security-policy and Todo-state changes."
+  ],
+  "findings": [
+    {
+      "id": "RA-P1-001",
+      "severity": "P1",
+      "title": "The repository still has no explicit LICENSE",
+      "status": "open",
+      "evidence": [
+        "No LICENSE file is present at the audited commit.",
+        "The repository is currently public, so visible source code does not itself establish a clear reuse license."
+      ],
+      "recommendation": "Choose an explicit reuse license only when the owner is ready; do not infer MIT, Apache-2.0, or another license automatically.",
+      "remediation_class": "owner-choice"
+    },
+    {
+      "id": "RA-P1-004",
+      "severity": "P1",
+      "title": "Actions credential does not currently provide complete private-repository coverage",
+      "status": "open",
+      "evidence": [
+        "The latest account scan observed 34 public repositories and 0 private repositories while the independently verified owner inventory is 43 total with 9 private.",
+        "The public aggregate coverage snapshot records audit_status=PARTIAL and does not expose any private repository identity."
+      ],
+      "recommendation": "Broaden or replace PORTFOLIO_AUDIT_TOKEN with a credential authorized for the intended private repositories. Until then, retain PARTIAL / external-blocked rather than claiming full-account coverage.",
+      "remediation_class": "external-blocked"
+    },
+    {
+      "id": "RA-P2-004",
+      "severity": "P2",
+      "title": "Security reporting policy for private-evidence boundary failures was missing",
+      "status": "fixed",
+      "evidence": [
+        "SECURITY.md now defines private-evidence leakage, publication-boundary bypass, credential exposure and fail-open visibility behavior as security-sensitive.",
+        "The policy explicitly forbids putting private repository details or sensitive source material in public issues."
+      ],
+      "recommendation": "Keep the security policy aligned with future private-evidence and publication architecture changes.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "RA-P2-005",
+      "severity": "P2",
+      "title": "Private coverage failures previously made the engineering workflow red",
+      "status": "fixed",
+      "evidence": [
+        "Private-account scanning now records PASS/PARTIAL coverage separately from core engineering CI.",
+        "Incomplete credential coverage emits a warning and privacy-safe aggregate state while public bundle, schema, UI and deterministic audit checks remain independently blocking.",
+        "The main workflow completed successfully after this separation."
+      ],
+      "recommendation": "Do not downgrade missing evidence to PASS; preserve PARTIAL as an explicit coverage state.",
+      "remediation_class": "auto-fix"
+    },
+    {
+      "id": "RA-P2-006",
+      "severity": "P2",
+      "title": "Public registry and Todo publication had drifted from live repository visibility",
+      "status": "fixed",
+      "evidence": [
+        "The public registry is synchronized to 34 current public repositories, including repo-auditor and we-read-template.",
+        "The generated Pages manifest reports 34 repositories, 8 public-safe Todos and zero live visibility exclusions.",
+        "Todo-to-Page synchronization is now part of the main Pages sync commit set."
+      ],
+      "recommendation": "Continue live visibility verification at build time; never treat registry visibility as authoritative by itself.",
+      "remediation_class": "auto-fix"
+    }
+  ],
+  "limitations": [
+    "Complete private-repository audit coverage cannot be verified until the Actions credential is authorized for the intended private repositories.",
+    "Branch protection/ruleset administration was not evaluated.",
+    "The audit does not choose a software license or make legal/IP ownership determinations.",
+    "Static Visual UX checks are deterministic regression guards, not a full multi-browser visual test suite."
+  ],
+  "recheck_triggers": [
+    "PORTFOLIO_AUDIT_TOKEN permissions or private-repository inventory changes.",
+    "Repository visibility, Pages publication architecture, or public/private bundle rules change.",
+    "Audit schema, quality dimensions, remediation classes, or GO execution policy change.",
+    "A LICENSE or external contribution/release policy is added.",
+    "New evidence collectors, language-specific adapters, or private evidence outputs are introduced."
+  ],
+  "freshness": {
+    "ignore_paths": [
+      "audits/**",
+      "portfolio/registry.json",
+      "PORTFOLIO.md",
+      "docs/data/audits/**",
+      "docs/data/registry.json",
+      "docs/data/manifest.json",
+      "docs/data/todos.json",
+      "docs/data/portfolio-overview.json"
+    ]
+  },
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "public-ok",
+    "reasons": [
+      "repo-auditor is currently a public control-plane/tooling repository and no recorded confidential-input, employer/client/PI-request, patent-candidate, or ownership-uncertainty trigger requires it to be private.",
+      "The build pipeline excludes private repository identities and evidence from public Pages.",
+      "The missing LICENSE remains a reuse-policy owner choice rather than a confidentiality/publication blocker."
+    ]
+  },
+  "quality_dimensions": {
+    "purpose_scope": {
+      "score": 5,
+      "evidence": [
+        "README, rubric, maturity model and policy clearly distinguish priority, quality, coverage, remediation and publication/IP gating."
+      ]
+    },
+    "correctness": {
+      "score": 5,
+      "evidence": [
+        "The audited baseline passed Portfolio Audit CI including compilation, 43 deterministic tests, registry/schema validation, audit validation, freshness checks and JavaScript syntax validation."
+      ]
+    },
+    "security_privacy": {
+      "score": 5,
+      "evidence": [
+        "Live visibility is fail-closed, private evidence is segregated, public bundle rules are tested, PARTIAL coverage preserves uncertainty, and SECURITY.md now documents boundary-failure reporting."
+      ]
+    },
+    "supply_chain": {
+      "score": 4,
+      "evidence": [
+        "The observed Actions workflow uses an immutable checkout action SHA and the runtime is mostly standard-library tooling; broader dependency/provenance hardening is limited because repo-auditor is not a packaged release product."
+      ]
+    },
+    "reproducibility": {
+      "score": 5,
+      "evidence": [
+        "Structured schemas, deterministic tests, exact audited SHAs, freshness semantics and reproducible Pages bundle generation make the control-plane behavior independently checkable."
+      ]
+    },
+    "release_engineering": {
+      "score": 4,
+      "evidence": [
+        "Pages generation/deployment, generated-data synchronization and structured audit publication are automated; the repository still lacks an explicit LICENSE and formal packaged releases are not a current product goal."
+      ]
+    },
+    "documentation_onboarding": {
+      "score": 5,
+      "evidence": [
+        "README, POLICY, AGENTS, AUDIT_RUBRIC, AUDIT_MATURITY, SECURITY and the public workbench describe the operating model and safety boundaries."
+      ]
+    },
+    "maintainability": {
+      "score": 5,
+      "evidence": [
+        "Canonical public data sources, generated Pages snapshots, schema validation, Todo synchronization, freshness checks and regression tests reduce silent drift across the control plane."
+      ]
+    },
+    "community_surface": {
+      "score": 3,
+      "evidence": [
+        "The project has a public workbench and security policy, but no explicit LICENSE, CONTRIBUTING guide, code of conduct, citation metadata or formal release surface."
+      ]
+    }
+  }
+}
