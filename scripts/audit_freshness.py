@@ -33,7 +33,7 @@ AUDITS = ROOT / "audits"
 API = "https://api.github.com"
 
 
-def request_json(path: str) -> Any:
+def _request(path: str, token: str | None) -> Any:
     request = urllib.request.Request(
         API + path,
         headers={
@@ -42,13 +42,30 @@ def request_json(path: str) -> Any:
             "User-Agent": "repo-auditor-freshness-check",
         },
     )
-    token = os.environ.get("GITHUB_TOKEN")
     if token:
         request.add_header("Authorization", f"Bearer {token}")
+    with urllib.request.urlopen(request, timeout=30) as response:
+        return json.load(response)
+
+
+def request_json(path: str) -> Any:
+    token = os.environ.get("GITHUB_TOKEN")
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            return json.load(response)
+        return _request(path, token)
     except urllib.error.HTTPError as exc:
+        # A repository-scoped Actions token can return 404/403 for another
+        # public repository. Retry anonymously before declaring it inaccessible.
+        if token and exc.code in {403, 404}:
+            try:
+                return _request(path, None)
+            except urllib.error.HTTPError as public_exc:
+                detail = public_exc.read().decode(
+                    "utf-8",
+                    errors="replace",
+                )
+                raise RuntimeError(
+                    f"GitHub API {public_exc.code}: {detail}"
+                ) from public_exc
         detail = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"GitHub API {exc.code}: {detail}") from exc
 
@@ -107,21 +124,31 @@ def check(audits_dir: Path = AUDITS) -> list[dict[str, Any]]:
     for path, data in load_latest_sidecars(audits_dir):
         repository = str(data["repository"])
         audited = str(data["audited_commit"])
-        head = default_head(repository)
         patterns = ignore_patterns(data)
         files: list[str] = []
+        error: str | None = None
 
-        if audited == head:
-            state = "current"
-        elif patterns:
-            files = changed_files(repository, audited, head)
-            state = (
-                "current-equivalent"
-                if files and all(path_is_ignored(filename, patterns) for filename in files)
-                else "stale"
-            )
-        else:
-            state = "stale"
+        try:
+            head = default_head(repository)
+            if audited == head:
+                state = "current"
+            elif patterns:
+                files = changed_files(repository, audited, head)
+                state = (
+                    "current-equivalent"
+                    if files
+                    and all(
+                        path_is_ignored(filename, patterns)
+                        for filename in files
+                    )
+                    else "stale"
+                )
+            else:
+                state = "stale"
+        except RuntimeError as exc:
+            head = ""
+            state = "unknown"
+            error = str(exc)
 
         results.append(
             {
@@ -133,6 +160,7 @@ def check(audits_dir: Path = AUDITS) -> list[dict[str, Any]]:
                 "state": state,
                 "ignored_paths": patterns,
                 "changed_files": files,
+                "error": error,
             }
         )
     return results
@@ -156,6 +184,7 @@ def main() -> int:
 
     stale = 0
     equivalent = 0
+    unknown = 0
     for item in results:
         label = item["state"].upper()
         print(f"{label}: {item['repository']} audited={item['audited_commit']} head={item['head_commit']}")
@@ -171,10 +200,19 @@ def main() -> int:
                 f"::notice file=audits/{item['sidecar']}::Audit remains current-equivalent; "
                 "all post-audit changes match explicit freshness.ignore_paths."
             )
+        elif item["state"] == "unknown":
+            unknown += 1
+            print(
+                f"::warning file=audits/{item['sidecar']}::Audit freshness is unknown for "
+                f"{item['repository']}: {item.get('error') or 'repository inaccessible'}"
+            )
 
-    current = len(results) - stale - equivalent
-    print(f"Audit freshness: {current} current, {equivalent} current-equivalent, {stale} stale")
-    return 1 if args.strict and stale else 0
+    current = len(results) - stale - equivalent - unknown
+    print(
+        f"Audit freshness: {current} current, {equivalent} current-equivalent, "
+        f"{stale} stale, {unknown} unknown"
+    )
+    return 1 if args.strict and (stale or unknown) else 0
 
 
 if __name__ == "__main__":
