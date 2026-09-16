@@ -12,6 +12,9 @@ on:
       - "scripts/audit_registry.py"
       - "scripts/audit_reports.py"
       - "scripts/collect_repo_evidence.py"
+      - "scripts/audit_freshness.py"
+      - "tests/**"
+      - "docs/**"
       - ".github/workflows/portfolio-audit.yml"
   pull_request:
     paths:
@@ -23,6 +26,9 @@ on:
       - "scripts/audit_registry.py"
       - "scripts/audit_reports.py"
       - "scripts/collect_repo_evidence.py"
+      - "scripts/audit_freshness.py"
+      - "tests/**"
+      - "docs/**"
       - ".github/workflows/portfolio-audit.yml"
   schedule:
     - cron: "17 1 1 * *"
@@ -36,8 +42,16 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Validate Python audit tooling
-        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py
+        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py
+      - name: Run audit tooling fixture tests
+        run: python -m unittest discover -s tests -v
       - name: Validate portfolio registry
         run: python scripts/audit_registry.py
       - name: Validate structured audit reports
         run: python scripts/audit_reports.py
+      - name: Report audit freshness
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/audit_freshness.py
+      - name: Validate Pages JavaScript syntax
+        run: node --check docs/app.js
