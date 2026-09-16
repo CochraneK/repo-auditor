@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "repository": "CochraneK/ming",
+  "audit_date": "2026-09-17",
+  "audited_commit": "d696a7e785879876a67cbc70cada5fe5182e2eb1",
+  "decision": {
+    "work_status": "STOP",
+    "priority_score": 0,
+    "priority_band": "STOP",
+    "lifecycle": "maintenance",
+    "note": "Feature development can pause. Resume only for real bugs, factual/data corrections, or compatibility/dependency breakage."
+  },
+  "quality_gates": {
+    "product_completeness": "pass",
+    "ui_coherence": "pass",
+    "documentation": "pass",
+    "ci_definition": "pass",
+    "current_head_ci_observed": "unknown",
+    "publication_boundary": "pass-with-caveat"
+  },
+  "strengths": [
+    "The product is end-to-end complete rather than a visualization demo: people, places, events, relationships, maps, timelines, emperors, chronology, insights, search, details, deep links and offline delivery form a coherent digital-humanities product.",
+    "The warm paper, ink, cinnabar and gold visual language is coherent and distinctive; no redesign is justified by the current evidence.",
+    "The engineering surface includes sharded data, lazy loading, service-worker/offline behavior, payload budgets, build checks and browser-oriented validation.",
+    "README and repository structure provide strong product, architecture and local-build guidance.",
+    "The project preserves uncertainty in historical data instead of forcing false precision, which is the correct direction for long-term content quality."
+  ],
+  "findings": [
+    {
+      "id": "MING-P2-001",
+      "severity": "P2",
+      "title": "Community and release surface is lighter than the core product",
+      "status": "deferred",
+      "evidence": [
+        "The repository is already usable and publicly presentable, while formal community/release surfaces such as a dedicated security policy, contribution guidance and formal release/versioning are not central to current product operation."
+      ],
+      "recommendation": "Do not reopen active development solely to add repository ceremony. Add these surfaces only when external contribution or formal release needs become real.",
+      "remediation_class": "maintenance-only"
+    },
+    {
+      "id": "MING-P3-001",
+      "severity": "P3",
+      "title": "Tracked standalone artifact is large",
+      "status": "accepted",
+      "evidence": [
+        "standalone.html is approximately 5.5 MB and is tracked at repository root."
+      ],
+      "recommendation": "Leave the working build/release boundary unchanged unless repository size or artifact management becomes a practical problem.",
+      "remediation_class": "accepted-debt"
+    },
+    {
+      "id": "MING-P3-002",
+      "severity": "P3",
+      "title": "Top-level navigation is dense but not currently broken",
+      "status": "accepted",
+      "evidence": [
+        "The product exposes twelve major views, creating a dense navigation surface, but the information architecture and README already provide conceptual grouping and the current UI remains coherent."
+      ],
+      "recommendation": "Do not redesign speculatively. Revisit navigation only after concrete usability evidence shows users cannot find or understand major views.",
+      "remediation_class": "evidence-triggered"
+    }
+  ],
+  "limitations": [
+    "The GitHub connector exposed the CI workflow definition but did not provide a confirmed green combined status for the audited HEAD, so this audit does not claim that exact HEAD CI was observed passing.",
+    "This review is not copyright or legal clearance for source-derived historical content.",
+    "Historical factual accuracy was reviewed as a product-quality concern, not exhaustively verified entity by entity."
+  ],
+  "recheck_triggers": [
+    "A real user-facing bug is reported.",
+    "A historical fact, date, place, relationship or extraction is shown to be incorrect.",
+    "Browser, dependency, GitHub Pages or service-worker changes break existing behavior.",
+    "Concrete usability evidence shows the current navigation or information hierarchy is failing users.",
+    "The project begins accepting external contributions or formal releases."
+  ],
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "public-ok-existing-disclosure",
+    "reasons": [
+      "No new publication blocker was identified in this repository review.",
+      "The project should continue avoiding committed source-book full text and retain structured/derived-data boundaries.",
+      "This recommendation is not legal clearance."
+    ]
+  },
+  "quality_dimensions": {
+    "purpose_scope": {"score": 5, "evidence": ["The project purpose, data scope and exploration model are clearly defined and implemented."]},
+    "correctness": {"score": 5, "evidence": ["CI defines syntax, tests, build, data invariants, payload and browser-oriented checks; exact audited-HEAD green status was not independently observed."]},
+    "security_privacy": {"score": 4, "evidence": ["Static delivery has a relatively small attack surface and workflow permissions are constrained; a dedicated security/community surface is not a current product blocker."]},
+    "supply_chain": {"score": 4, "evidence": ["Dependency and workflow surface is comparatively small and controlled, with room for additional provenance hardening if the project resumes active development."]},
+    "reproducibility": {"score": 5, "evidence": ["The repository documents a unified build/check path, tests and data architecture."]},
+    "release_engineering": {"score": 4, "evidence": ["Online and standalone outputs plus automated validation are mature; formal tagged release/versioning is lighter."]},
+    "documentation_onboarding": {"score": 5, "evidence": ["README provides extensive product, architecture, build and navigation documentation."]},
+    "maintainability": {"score": 5, "evidence": ["Data, generators, templates, static delivery and tests are separated and guarded by checks."]},
+    "community_surface": {"score": 3, "evidence": ["The public product is well documented, while formal contribution/security/release community surfaces are comparatively sparse."]}
+  },
+  "product_review": {
+    "verdict": "complete-enough-to-freeze",
+    "development_mode": "maintenance-only",
+    "ui_action": "no-redesign",
+    "highest_value_future_work": "historical-data-correction",
+    "resume_policy": "bugs-data-corrections-compatibility-only"
+  }
+}
