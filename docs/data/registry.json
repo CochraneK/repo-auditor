@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "owner": "CochraneK",
-  "snapshot_date": "2026-09-16",
+  "snapshot_date": "2026-09-17",
   "scope": "public-workbench",
   "privacy": {
     "public_repositories_only": true,
@@ -152,16 +152,6 @@
       "last_commit_date": "2026-08-04"
     },
     {
-      "name": "long-gate",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 94,
-      "priority_band": "P0-NOW",
-      "reason": "2026-09-16 审计整改：pre-1.0 核心安全/测试基线稳定，6/6 CI 全绿；GitHub Actions 已 immutable-pin，security-boundary 已覆盖部署/模型边界。当前优先收口 GitHub profile、CI/dev reproducibility 与 release attestation。",
-      "last_commit_date": "2026-09-16",
-      "latest_audit": "audits/long-gate-2026-09-16.md"
-    },
-    {
       "name": "mao-skill",
       "visibility": "public",
       "work_status": "CONTINUE",
@@ -241,16 +231,6 @@
       "priority_band": "P1-NEXT",
       "reason": "计划月底前完善，时间窗口较明确。",
       "last_commit_date": "2026-05-21"
-    },
-    {
-      "name": "repo-auditor",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 65,
-      "priority_band": "P2-PLANNED",
-      "reason": "2026-09-16 自审整改完成：审计状态已进入 Pages，freshness/staleness 可执行，collector 有 fixture tests，Pages 源与 bootstrap 遗留已清理；当前只剩 LICENSE 需要所有者明确选择。",
-      "last_commit_date": "2026-09-16",
-      "latest_audit": "audits/repo-auditor-2026-09-16.md"
     },
     {
       "name": "RVC_factor",
