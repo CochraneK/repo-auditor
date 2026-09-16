@@ -1,23 +1,40 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-16T15:52:00Z",
+  "generated_at": "2026-09-16T17:15:00Z",
+  "audit_status": "PARTIAL",
+  "coverage_integrity": {
+    "complete": false,
+    "expected_total": 42,
+    "expected_private": 9,
+    "observed_total": 33,
+    "observed_private": 0,
+    "reasons": [
+      "Latest authenticated scan observed 33 public repositories and 0 private repositories.",
+      "Private repository coverage is below the expected account inventory."
+    ]
+  },
   "inventory": {
-    "total": 42,
+    "total": 33,
     "public": 33,
-    "private": 9,
+    "private": 0,
     "scan_failures": 0,
     "private_names_published": false
   },
   "coverage": {
-    "inventory_scanned": 42,
-    "deep_evidence_status": "scanner-ready",
+    "evidence_collected": 33,
+    "readme_present": 32,
+    "license_present": 8,
+    "security_policy_present": 2,
+    "repositories_with_workflows": 13,
+    "repositories_with_unpinned_actions": 10,
+    "head_ci_green": 20,
     "structured_audits_currently_persisted": 4
   },
   "privacy": {
     "pages_contains_private_details": false,
-    "note": "All 42 owner repositories were discovered through the authenticated GitHub connection. Private repositories are counted here but their names, URLs, SHAs, notes and findings are not published to Pages."
+    "note": "Private repository names, URLs, SHAs, notes and findings are never published to Pages. Current account-wide coverage is explicitly PARTIAL until authenticated private inventory is visible."
   },
   "self_audit": {
     "included": true,
@@ -26,13 +43,13 @@
   "signals": [
     {
       "severity": "P0",
-      "kind": "visibility-drift",
-      "message": "The public registry snapshot contains at least one repository whose current GitHub visibility is private. Rebuild the public bundle from live visibility before publishing repository-level details."
+      "kind": "coverage-partial",
+      "message": "Account-wide audit is not complete: latest scan saw 33 public repositories and 0 private repositories; expected inventory is 42 total including 9 private."
     },
     {
       "severity": "P1",
-      "kind": "private-auth",
-      "message": "Persistent deep scanning of private repositories requires an Actions credential with access to those repositories; the default per-repository GITHUB_TOKEN cannot provide account-wide private access."
+      "kind": "structured-audit-coverage",
+      "message": "Repository evidence scanning is broader than structured audit coverage. Portfolio-level scan results must not be presented as equivalent to full per-repository semantic audits."
     }
   ]
 }
