@@ -46,6 +46,40 @@ Severity is not a numeric quality score.
 7. **Documentation & onboarding** — Can a new user reach a safe first success without tribal knowledge?
 8. **Maintainability** — Are architecture, tests, workflows, and docs aligned rather than drifting?
 9. **Community surface** — Security reporting, contribution guidance, issues/templates, citation, and repository metadata.
+10. **IP provenance & publication** — Is Public/Private a deliberate decision given prior disclosure, possible patent value, background IP, employer/client/PI requests, confidential inputs, and ownership uncertainty?
+
+## Publication / IP disclosure gate
+
+Every structured audit must record a `publication_gate`. This is a conservative release check, **not** a legal opinion, patentability decision, or ownership adjudication.
+
+Required owner-supplied questions:
+
+- Is the repository already public or private?
+- Does it contain a technical mechanism that may be worth a patent search before further disclosure?
+- Was any material requested by an employer, client, PI, funder, or other organization?
+- Is there pre-existing/background IP that should be separated from project-specific work?
+- Does it contain confidential, restricted, patient, client, employer, or otherwise non-public input?
+- Is ownership or authorization unclear?
+- Has an earlier version already been publicly disclosed?
+
+Allowed recommendations:
+
+- **public-ok** — no recorded publication blocker; this does not mean the work is patentable or legally cleared.
+- **review-before-public** — keep the private working copy private until patent/ownership/publication review is complete.
+- **keep-private** — confidential/restricted input or unresolved ownership/authorization makes publication inappropriate for now.
+- **split-public-private** — keep already-public/background material public, while new potentially patentable or organization-specific work stays private until reviewed.
+
+The gate must preserve provenance. Do not erase prior public history, rewrite evidence, or treat changing a repository from Public to Private as undoing an earlier disclosure. Do not publish personal employment/contract details in this public repository; record only the minimum abstract trigger needed for the audit.
+
+A helper is available:
+
+```bash
+python scripts/publication_gate.py \
+  --visibility private \
+  --patent-candidate \
+  --employer-or-client-requested \
+  --background-ip-exists
+```
 
 ## Rules
 
