@@ -4,7 +4,8 @@
   "repository_count": 34,
   "audit_sidecars": [
     "long-gate-2026-09-16.json",
-    "repo-auditor-2026-09-16.json"
+    "repo-auditor-2026-09-16.json",
+    "we-read-2026-09-16.json"
   ],
   "private_repository_metadata_included": false
 }
