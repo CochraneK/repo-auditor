@@ -104,6 +104,25 @@ python scripts/publication_gate.py \
   --background-ip-exists
 ```
 
+## Remediation semantics
+
+repo-auditor is not recommendation-only when GO mode is authorized. Every finding must declare a `remediation_class`:
+
+- **auto-fix** — safe, reversible engineering/documentation remediation; execute it in GO mode, then test and re-audit.
+- **owner-choice** — requires an explicit owner decision such as license, IP ownership, repository visibility, material cost, or an irreversible/contractual action.
+- **external-blocked** — cannot be completed with current permissions/evidence or depends on an external system/person.
+- **accepted-risk** — intentionally left unresolved for now; preserve rationale and recheck trigger.
+
+GO mode loops over open `auto-fix` findings until none remain that can be completed safely with current authorization. A remediation must not be performed merely to improve a score; the underlying evidence must improve.
+
+The default safe workflow is:
+
+```text
+audit -> classify -> branch -> remediate -> test -> re-audit -> PR -> merge when green
+```
+
+High-impact owner choices must remain visible as open findings rather than being silently "fixed."
+
 ## Rules
 
 - Prefer evidence over impressions.
