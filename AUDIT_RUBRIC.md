@@ -55,3 +55,24 @@ Severity is not a numeric quality score.
 - Do not call a benchmark pass a security/privacy certification.
 - Record the audited commit. A report without a baseline SHA becomes stale silently.
 - Re-audit when security boundaries, dependency/model supply chains, release workflows, or core architecture materially change.
+
+
+## Freshness semantics
+
+Structured audits are anchored to an exact `audited_commit`.
+
+- **Current** — the repository HEAD still equals the audited commit.
+- **Stale** — HEAD moved and at least one relevant file changed.
+- **Current-equivalent** — optional, explicit exception for repositories whose only post-audit changes are audit/control metadata.
+
+A sidecar may declare:
+
+```json
+{
+  "freshness": {
+    "ignore_paths": ["audits/**", "portfolio/registry.json"]
+  }
+}
+```
+
+This exception is fail-closed and per-audit. If HEAD moved, every changed file must match an explicit ignore path; otherwise the audit is stale. Do not ignore source code, CI/workflow files, release configuration, security policy, or user-facing product code merely to keep an audit green.
