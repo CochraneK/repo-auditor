@@ -14,6 +14,7 @@ on:
       - "scripts/collect_repo_evidence.py"
       - "scripts/audit_freshness.py"
       - "scripts/publication_gate.py"
+      - "scripts/remediation_queue.py"
       - "tests/**"
       - "docs/**"
       - ".github/workflows/portfolio-audit.yml"
@@ -29,6 +30,7 @@ on:
       - "scripts/collect_repo_evidence.py"
       - "scripts/audit_freshness.py"
       - "scripts/publication_gate.py"
+      - "scripts/remediation_queue.py"
       - "tests/**"
       - "docs/**"
       - ".github/workflows/portfolio-audit.yml"
@@ -44,13 +46,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Validate Python audit tooling
-        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py scripts/publication_gate.py
+        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py scripts/publication_gate.py scripts/remediation_queue.py
       - name: Run audit tooling fixture tests
         run: python -m unittest discover -s tests -v
       - name: Validate portfolio registry
         run: python scripts/audit_registry.py
       - name: Validate structured audit reports
         run: python scripts/audit_reports.py
+      - name: Report GO remediation queue
+        run: python scripts/remediation_queue.py
       - name: Report audit freshness
         env:
           GITHUB_TOKEN: ${{ github.token }}
