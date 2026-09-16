@@ -41,6 +41,15 @@ GITHUB_TOKEN=... python scripts/collect_repo_evidence.py owner/private-repo --al
 
 `private-evidence/` 被 gitignore。公开 bundle 在生成时再次查询 live visibility；不可验证时 fail closed。Pages 运行时只读取 `docs/data/` 的隐私安全快照。
 
+## Audit Coverage ≠ CI status
+
+Account-wide Private 扫描属于独立的 **Audit Coverage**。如果 Actions credential 无法看到全部 Private repositories，控制面应显示 `PARTIAL / external-blocked`，而不是把代码工程 CI 伪装成失败或伪装成完整覆盖。
+
+- 工程 CI：验证 repo-auditor 自己的代码、schema、Pages privacy boundary 与 deterministic checks。
+- Audit Coverage：说明当前凭据实际覆盖了多少账户仓库。
+- `PARTIAL` 可以和工程 CI 绿色同时存在；这表示“工具正常，但外部授权覆盖不足”。
+- Pages 只允许展示聚合覆盖数量与状态，永不发布 Private 仓库名称、URL、SHA、备注、代码证据或 findings。
+
 ## Structured audits
 
 ```text
