@@ -108,7 +108,8 @@
     "The Pages audit-status UI changes materially.",
     "Public/private registry boundaries change.",
     "The evidence collector gains new evidence classes or language-specific adapters.",
-    "CI validation or GitHub Pages publication architecture changes."
+    "CI validation or GitHub Pages publication architecture changes.",
+    "Publication/IP gate semantics or recommendation rules change."
   ],
   "freshness": {
     "ignore_paths": [
@@ -131,6 +132,14 @@
     ],
     "remaining_open_findings": [
       "RA-P1-001"
+    ]
+  },
+  "publication_gate": {
+    "current_visibility": "public",
+    "recommendation": "public-ok",
+    "reasons": [
+      "No project-specific patent, confidential-input, employer/client/PI-request, or ownership-uncertainty trigger is recorded for repo-auditor.",
+      "The missing LICENSE remains a separate reuse-policy finding and is not by itself a reason to make the repository private."
     ]
   }
 }
