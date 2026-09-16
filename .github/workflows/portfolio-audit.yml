@@ -10,6 +10,7 @@ on:
       - "POLICY.md"
       - "AUDIT_RUBRIC.md"
       - "scripts/audit_registry.py"
+      - "scripts/build_public_pages.py"
       - "scripts/audit_reports.py"
       - "scripts/collect_repo_evidence.py"
       - "scripts/audit_freshness.py"
@@ -46,11 +47,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Validate Python audit tooling
-        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py scripts/publication_gate.py scripts/remediation_queue.py
+        run: python -m py_compile scripts/audit_registry.py scripts/audit_reports.py scripts/collect_repo_evidence.py scripts/audit_freshness.py scripts/publication_gate.py scripts/remediation_queue.py scripts/build_public_pages.py
       - name: Run audit tooling fixture tests
         run: python -m unittest discover -s tests -v
       - name: Validate portfolio registry
         run: python scripts/audit_registry.py
+      - name: Rebuild public Pages data bundle
+        run: python scripts/build_public_pages.py
+      - name: Ensure committed Pages bundle is current
+        run: git diff --exit-code -- docs/data
       - name: Validate structured audit reports
         run: python scripts/audit_reports.py
       - name: Report GO remediation queue
