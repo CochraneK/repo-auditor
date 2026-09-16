@@ -152,16 +152,6 @@
       "last_commit_date": "2026-08-04"
     },
     {
-      "name": "long-gate",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 94,
-      "priority_band": "P0-NOW",
-      "reason": "2026-09-16 审计整改：pre-1.0 核心安全/测试基线稳定，6/6 CI 全绿；GitHub Actions 已 immutable-pin，security-boundary 已覆盖部署/模型边界。当前优先收口 GitHub profile、CI/dev reproducibility 与 release attestation。",
-      "last_commit_date": "2026-09-16",
-      "latest_audit": "audits/long-gate-2026-09-16.md"
-    },
-    {
       "name": "mao-skill",
       "visibility": "public",
       "work_status": "CONTINUE",
