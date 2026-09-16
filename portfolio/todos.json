@@ -3,15 +3,83 @@
   "snapshot_date": "2026-09-17",
   "scope": "public-safe-repository-todos",
   "privacy": "Never include private repository names, URLs, code evidence, or private notes.",
-  "statuses": ["TODO", "DOING", "BLOCKED", "DECISION", "DONE"],
+  "statuses": [
+    "TODO",
+    "DOING",
+    "BLOCKED",
+    "DECISION",
+    "DONE"
+  ],
   "items": [
-    {"id":"portfolio-cleanup","title":"Repository portfolio cleanup","priority":"P0","status":"DOING","area":"Portfolio","detail":"全仓盘点；判断继续维护、Archive、合并与删除候选，并处理明显重复或边界重叠项目。"},
-    {"id":"auditor-hardening","title":"repo-auditor hardening","priority":"P0","status":"DOING","area":"Audit","repo":"repo-auditor","detail":"继续真实 Audit → Fix → Re-audit 闭环；BLOCKED 必须有继续推进、替代路径或明确降级。"},
-    {"id":"metadata-hygiene","title":"Repository metadata hygiene","priority":"P1","status":"TODO","area":"Portfolio","detail":"统一 About、Topics、Homepage、License、Social Preview、Pages、命名与描述规范。"},
-    {"id":"portfolio-ia","title":"Portfolio information architecture","priority":"P1","status":"DOING","area":"Portfolio","repo":"repo-auditor","detail":"梳理 Workstream、项目关系与 pinned-repo 策略，让 Page 成为仓库总控而不是静态列表。"},
-    {"id":"ai-ques-integration","title":"AI-Ques integration work","priority":"P1","status":"DOING","area":"Research","repo":"AI-Ques","detail":"统一 participant/user ID、共享资料、管理员数据体系、后端与跨设备同步，并继续 repo-auditor 复审。"},
-    {"id":"dsh-release","title":"dsh-gate-game-plugin release","priority":"P1","status":"TODO","area":"Skills","repo":"dsh-gate-game-plugin","detail":"完成真实测试后再上线 Hub。"},
-    {"id":"red-map-milestone","title":"red-map milestone","priority":"P1","status":"TODO","area":"Creative","repo":"red-map","detail":"按当前计划在月底前继续完善。"},
-    {"id":"todo-page-sync","title":"TODO → Page structured sync","priority":"P1","status":"DOING","area":"Infrastructure","repo":"repo-auditor","detail":"以 portfolio/todos.json 作为公开安全的 Git Todo 单一数据源，由 Pages 构建流程自动发布，停止把 Todo 硬编码进 HTML。"}
+    {
+      "id": "portfolio-cleanup",
+      "title": "Repository portfolio cleanup",
+      "priority": "P0",
+      "status": "DOING",
+      "area": "Portfolio",
+      "detail": "全仓盘点；判断继续维护、Archive、合并与删除候选，并处理明显重复或边界重叠项目。"
+    },
+    {
+      "id": "auditor-hardening",
+      "title": "repo-auditor hardening",
+      "priority": "P0",
+      "status": "DONE",
+      "area": "Audit",
+      "repo": "repo-auditor",
+      "detail": "核心 Audit → Fix → Re-audit / GO 闭环、Private/Public publication boundary、PARTIAL coverage 语义与失败降级已完成；后续只按真实新 finding 迭代。"
+    },
+    {
+      "id": "metadata-hygiene",
+      "title": "Repository metadata hygiene",
+      "priority": "P1",
+      "status": "TODO",
+      "area": "Portfolio",
+      "detail": "统一 About、Topics、Homepage、License、Social Preview、Pages、命名与描述规范。"
+    },
+    {
+      "id": "portfolio-ia",
+      "title": "Portfolio information architecture",
+      "priority": "P1",
+      "status": "DOING",
+      "area": "Portfolio",
+      "repo": "repo-auditor",
+      "detail": "梳理 Workstream、项目关系与 pinned-repo 策略，让 Page 成为仓库总控而不是静态列表。"
+    },
+    {
+      "id": "ai-ques-integration",
+      "title": "AI-Ques integration work",
+      "priority": "P1",
+      "status": "DOING",
+      "area": "Research",
+      "repo": "AI-Ques",
+      "detail": "统一 participant/user ID、共享资料、管理员数据体系、后端与跨设备同步，并继续 repo-auditor 复审。"
+    },
+    {
+      "id": "dsh-release",
+      "title": "dsh-gate-game-plugin release",
+      "priority": "P1",
+      "status": "TODO",
+      "area": "Skills",
+      "repo": "dsh-gate-game-plugin",
+      "detail": "完成真实测试后再上线 Hub。"
+    },
+    {
+      "id": "red-map-milestone",
+      "title": "red-map milestone",
+      "priority": "P1",
+      "status": "TODO",
+      "area": "Creative",
+      "repo": "red-map",
+      "detail": "按当前计划在月底前继续完善。"
+    },
+    {
+      "id": "todo-page-sync",
+      "title": "TODO → Page structured sync",
+      "priority": "P1",
+      "status": "DONE",
+      "area": "Infrastructure",
+      "repo": "repo-auditor",
+      "detail": "portfolio/todos.json 已作为公开安全的 Git Todo 单一数据源进入 Pages 构建与 main 同步流程。"
+    }
   ]
 }
