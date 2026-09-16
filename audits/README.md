@@ -19,6 +19,10 @@ The JSON sidecar records the exact audited commit, CI evidence, a publication/IP
 python scripts/audit_reports.py
 ```
 
+## Quality dimensions
+
+Each structured audit records nine independent 0–5 quality dimensions: purpose/scope, correctness, security/privacy, supply chain, reproducibility, release engineering, documentation/onboarding, maintainability, and community surface. Scores require evidence. Unknown/not-applicable dimensions use `null`; they are not treated as zero. There is deliberately no aggregate repository-quality score.
+
 ## Publication / IP gate
 
 Every new structured audit must explicitly record whether the repository is currently Public/Private and one recommendation: `public-ok`, `review-before-public`, `keep-private`, or `split-public-private`.

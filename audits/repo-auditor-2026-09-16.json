@@ -143,5 +143,61 @@
       "No project-specific patent, confidential-input, employer/client/PI-request, or ownership-uncertainty trigger is recorded for repo-auditor.",
       "The missing LICENSE remains a separate reuse-policy finding and is not by itself a reason to make the repository private."
     ]
+  },
+  "quality_dimensions": {
+    "purpose_scope": {
+      "score": 5,
+      "evidence": [
+        "README and rubric clearly separate portfolio priority, audit findings, publication gating, and repository quality."
+      ]
+    },
+    "correctness": {
+      "score": 4,
+      "evidence": [
+        "Structured sidecar validation, freshness checks, deterministic fixture tests, and CI are active; the collector has not yet been exercised across a large cross-language corpus."
+      ]
+    },
+    "security_privacy": {
+      "score": 4,
+      "evidence": [
+        "Public/private boundaries are explicit and the public collector refuses private repositories; broader repository administration controls were not evaluated."
+      ]
+    },
+    "supply_chain": {
+      "score": 4,
+      "evidence": [
+        "GitHub Actions use immutable references where observed and the tool has a small dependency surface; there is not yet a broader supply-chain corpus test."
+      ]
+    },
+    "reproducibility": {
+      "score": 4,
+      "evidence": [
+        "Deterministic fixtures, static Pages sources, schema validation, and CI make the audit workflow reproducible; cross-environment corpus coverage remains limited."
+      ]
+    },
+    "release_engineering": {
+      "score": 3,
+      "evidence": [
+        "GitHub Pages deployment and CI are reliable, but the repository still lacks an explicit software LICENSE and is not managed as a packaged release product."
+      ]
+    },
+    "documentation_onboarding": {
+      "score": 5,
+      "evidence": [
+        "README, audit rubric, audit README, public workbench, structured sidecars, and helper commands make the workflow easy to inspect and reuse."
+      ]
+    },
+    "maintainability": {
+      "score": 4,
+      "evidence": [
+        "docs/ is canonical, freshness semantics are tested, structured schema is validated, and legacy bootstrap duplication was removed."
+      ]
+    },
+    "community_surface": {
+      "score": 3,
+      "evidence": [
+        "Public Pages and audit links are available, but the missing LICENSE remains a high-priority reuse-policy gap."
+      ]
+    }
   }
 }

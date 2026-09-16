@@ -16,6 +16,48 @@ BANDS = {"P0-NOW", "P1-NEXT", "P2-PLANNED", "P3-LATER", "P4-LOW", "STOP"}
 GATES = {"pass", "fail", "unknown", "in-progress"}
 PUBLICATION_RECOMMENDATIONS = {"public-ok", "review-before-public", "keep-private", "split-public-private"}
 VISIBILITIES = {"public", "private"}
+QUALITY_DIMENSIONS = (
+    "purpose_scope",
+    "correctness",
+    "security_privacy",
+    "supply_chain",
+    "reproducibility",
+    "release_engineering",
+    "documentation_onboarding",
+    "maintainability",
+    "community_surface",
+)
+
+
+def validate_quality_dimensions(value: object, label: str = "quality_dimensions") -> list[str]:
+    errors: list[str] = []
+    if not isinstance(value, dict):
+        return [f"{label} must be an object"]
+    missing = set(QUALITY_DIMENSIONS) - value.keys()
+    extra = value.keys() - set(QUALITY_DIMENSIONS)
+    if missing:
+        errors.append(f"{label} missing {sorted(missing)}")
+    if extra:
+        errors.append(f"{label} has unknown dimensions {sorted(extra)}")
+    for dimension in QUALITY_DIMENSIONS:
+        if dimension not in value:
+            continue
+        item = value[dimension]
+        prefix = f"{label}.{dimension}"
+        if not isinstance(item, dict):
+            errors.append(f"{prefix} must be an object")
+            continue
+        if "score" not in item or "evidence" not in item:
+            errors.append(f"{prefix} must contain score and evidence")
+            continue
+        score = item["score"]
+        if score is not None and (not isinstance(score, int) or isinstance(score, bool) or not 0 <= score <= 5):
+            errors.append(f"{prefix}.score must be integer 0..5 or null")
+        evidence = item["evidence"]
+        if not isinstance(evidence, list) or not evidence or not all(isinstance(x, str) and x.strip() for x in evidence):
+            errors.append(f"{prefix}.evidence must be a non-empty list of strings")
+    return errors
+
 
 
 def expected_band(score: int, status: str) -> str:
@@ -47,6 +89,7 @@ def validate(path: Path) -> list[str]:
         "markdown",
         "decision",
         "quality_gates",
+        "quality_dimensions",
         "publication_gate",
         "findings",
         "limitations",
@@ -99,6 +142,11 @@ def validate(path: Path) -> list[str]:
         for gate, state in gates.items():
             if state not in GATES:
                 errors.append(f"{path.name}: gate {gate} has invalid state {state}")
+
+    errors.extend(
+        f"{path.name}: {error}"
+        for error in validate_quality_dimensions(data["quality_dimensions"])
+    )
 
     publication_gate = data["publication_gate"]
     if not isinstance(publication_gate, dict):

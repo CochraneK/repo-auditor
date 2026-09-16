@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import audit_freshness as af
+import audit_reports as ar
 import collect_repo_evidence as cre
 import publication_gate as pg
 
@@ -77,6 +78,37 @@ class CollectorTests(unittest.TestCase):
         with mock.patch.object(cre.urllib.request, "urlopen", side_effect=error):
             with self.assertRaisesRegex(RuntimeError, "GitHub API 403"):
                 cre.request_json("/demo")
+
+
+class QualityDimensionTests(unittest.TestCase):
+    def complete_profile(self):
+        return {
+            name: {"score": 3, "evidence": ["fixture evidence"]}
+            for name in ar.QUALITY_DIMENSIONS
+        }
+
+    def test_complete_quality_profile_is_valid(self):
+        self.assertEqual(ar.validate_quality_dimensions(self.complete_profile()), [])
+
+    def test_unknown_dimension_is_rejected(self):
+        profile = self.complete_profile()
+        profile["mystery"] = {"score": 5, "evidence": ["nope"]}
+        errors = ar.validate_quality_dimensions(profile)
+        self.assertTrue(any("unknown dimensions" in error for error in errors))
+
+    def test_null_score_is_allowed_but_needs_evidence(self):
+        profile = self.complete_profile()
+        profile["community_surface"] = {
+            "score": None,
+            "evidence": ["Repository administration state was not verifiable."],
+        }
+        self.assertEqual(ar.validate_quality_dimensions(profile), [])
+
+    def test_out_of_range_score_is_rejected(self):
+        profile = self.complete_profile()
+        profile["correctness"]["score"] = 6
+        errors = ar.validate_quality_dimensions(profile)
+        self.assertTrue(any("0..5 or null" in error for error in errors))
 
 
 class PublicationGateTests(unittest.TestCase):

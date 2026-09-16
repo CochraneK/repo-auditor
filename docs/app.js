@@ -13,6 +13,17 @@
     "STOP": "DON'T TOUCH"
   };
   const BOARD_ORDER = ["P0-NOW","P1-NEXT","P2-PLANNED","P3-LATER","P4-LOW","STOP"];
+  const QUALITY_LABELS = {
+    purpose_scope: "Purpose",
+    correctness: "Correctness",
+    security_privacy: "Security",
+    supply_chain: "Supply chain",
+    reproducibility: "Reproducibility",
+    release_engineering: "Release",
+    documentation_onboarding: "Docs",
+    maintainability: "Maintainability",
+    community_surface: "Community"
+  };
 
   const $ = id => document.getElementById(id);
   let data = null;
@@ -83,6 +94,19 @@
 
   function auditReportUrl(repo) {
     return repo.latest_audit ? AUDIT_REPORT_BASE + repo.latest_audit : "";
+  }
+
+  function qualityChip(repo) {
+    const dims = repo._audit?.qualityDimensions;
+    if (!dims || typeof dims !== "object") return "";
+    const rows = Object.entries(QUALITY_LABELS).map(([key, label]) => {
+      const score = dims[key]?.score;
+      const value = Number.isInteger(score) ? score + "/5" : "—";
+      return label + " " + value;
+    });
+    const scored = Object.values(dims).filter(item => Number.isInteger(item?.score)).length;
+    const title = "Quality dimensions (no total score): " + rows.join(" · ");
+    return `<span class="badge" title="${esc(title)}">Quality · ${scored}D</span>`;
   }
 
   function auditChip(repo) {
@@ -174,7 +198,8 @@
         auditedCommit,
         headCommit,
         openP0: open.filter(f => f.severity === "P0").length,
-        openP1: open.filter(f => f.severity === "P1").length
+        openP1: open.filter(f => f.severity === "P1").length,
+        qualityDimensions: sidecar.quality_dimensions || null
       };
     } catch (error) {
       repo._audit = {
@@ -184,6 +209,7 @@
         headCommit: "",
         openP0: 0,
         openP1: 0,
+        qualityDimensions: null,
         error: String(error?.message || error)
       };
     }
@@ -269,6 +295,7 @@
           <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
           <span class="badge">commit · ${esc(ageLabel(r.last_commit_date))}</span>
           ${auditChip(r)}
+          ${qualityChip(r)}
         </div>
       </a>
     `).join("");
@@ -362,6 +389,7 @@
               <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
               <span class="badge ${r.work_status === "STOP" ? "stop" : "public"}">${esc(r.work_status)}</span>
               ${auditChip(r)}
+          ${qualityChip(r)}
             </div>
           </div>
           <span class="badge public">public</span>
@@ -387,7 +415,7 @@
         <td class="table-score">${r.priority_score}</td>
         <td>
           <a class="table-repo" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a>
-          <div class="table-audit">${auditChip(r)}</div>
+          <div class="table-audit">${auditChip(r)} ${qualityChip(r)}</div>
         </td>
         <td><span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span></td>
         <td><span class="${r.work_status === "STOP" ? "status-stop" : "status-continue"}">${esc(r.work_status)}</span></td>
