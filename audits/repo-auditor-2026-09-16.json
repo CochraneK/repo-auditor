@@ -2,7 +2,7 @@
   "schema_version": 1,
   "repository": "CochraneK/repo-auditor",
   "audit_date": "2026-09-16",
-  "audited_commit": "cdfc87e99bb31ed636df9505596e70e4a62a9f9a",
+  "audited_commit": "f4941ba1c937f5eba9dce0578858d9af244bff65",
   "markdown": "audits/repo-auditor-2026-09-16.md",
   "decision": {
     "work_status": "CONTINUE",
@@ -11,15 +11,18 @@
     "note": "Infrastructure is useful and should improve, but it should not displace higher-priority product/research work."
   },
   "quality_gates": {
-    "portfolio_audit": "unknown",
-    "pages": "in-progress"
+    "portfolio_audit": "pass",
+    "pages": "pass"
   },
   "strengths": [
     "Public/private portfolio boundary is explicit and registry validation enforces public-only records.",
     "Priority score is documented as an attention-allocation score rather than a quality score.",
-    "Structured audit sidecars, a rubric, a validator, and a public evidence collector now exist.",
-    "The first structured external audit records an exact commit and separates facts, findings, limitations, and recheck triggers.",
-    "The failed high-permission one-shot bootstrap workflow has been retired."
+    "Structured audit sidecars, a rubric, validator, public evidence collector, and metadata-aware freshness checker are now integrated.",
+    "The Pages workbench surfaces audit Current/Stale state and open P0/P1 counts without conflating them with portfolio priority.",
+    "Audit freshness is exact-SHA by default and only permits explicit, per-audit metadata-only current-equivalent exceptions.",
+    "Evidence collector and freshness behavior have deterministic fixture tests in CI.",
+    "docs/ is the single canonical Pages source and the retired bootstrap archive has been removed.",
+    "Long Gate audit is dogfooding the structured audit and remediation workflow."
   ],
   "findings": [
     {
@@ -36,69 +39,98 @@
       "id": "RA-P1-002",
       "severity": "P1",
       "title": "Audit results are not surfaced in the GitHub Pages workbench",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "The dashboard is driven by portfolio/registry.json and focuses on priority/work status.",
-        "Structured audit reports now exist under audits/, but the Pages UI does not expose latest audit status, audited SHA, or open P1/P0 counts."
+        "docs/app.js loads structured audit sidecars for repositories with latest_audit.",
+        "The workbench displays Audit Current/Stale/Current* state plus open P0/P1 counts and links to the audit report.",
+        "Pages deployment succeeded on the remediated baseline."
       ],
-      "recommendation": "Add a compact audit-status layer to the workbench without conflating audit severity with portfolio priority."
+      "recommendation": "Keep audit severity visually and semantically separate from portfolio priority as the UI evolves."
     },
     {
       "id": "RA-P1-003",
       "severity": "P1",
       "title": "No audit staleness detection exists yet",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "Structured audits store audited_commit, but CI currently validates shape only.",
-        "There is no check that compares an audited commit to the repository's current default-branch head."
+        "scripts/audit_freshness.py compares audited_commit with the repository default-branch HEAD.",
+        "Optional freshness.ignore_paths is explicit per audit and only yields current-equivalent when every changed file matches an allowed metadata path.",
+        "Non-ignored code/UI/CI changes remain stale and empty compares fail closed.",
+        "CI runs the freshness checker and fixture tests."
       ],
-      "recommendation": "Add an optional public staleness check that marks audits stale when the head SHA moves, with configurable re-audit triggers."
+      "recommendation": "Keep ignore paths narrow; do not add source, CI, release, or security-policy paths merely to suppress stale status."
     },
     {
       "id": "RA-P2-001",
       "severity": "P2",
       "title": "Static workbench sources are duplicated at repository root and under docs/",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "index.html, app.js, and styles.css exist at the root.",
-        "docs/index.html, docs/app.js, and docs/styles.css also exist and README documents docs/ as the Pages source."
+        "The duplicate root index.html, app.js, and styles.css were removed.",
+        "docs/index.html, docs/app.js, and docs/styles.css remain the canonical GitHub Pages source.",
+        "Pages deployment succeeded after cleanup."
       ],
-      "recommendation": "Make docs/ the single canonical Pages source or generate one copy from the other to prevent UI drift."
+      "recommendation": "Keep docs/ canonical unless a future build step deliberately generates it from another source."
     },
     {
       "id": "RA-P2-002",
       "severity": "P2",
       "title": "Evidence collector has no dedicated automated tests",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        "scripts/collect_repo_evidence.py is syntax-checked by CI.",
-        "There are no fixtures/unit tests for GitHub API parsing, action-ref pin detection, or private-repository refusal."
+        "tests/test_audit_tooling.py now covers immutable action refs, private-repository refusal, workflow-run deduplication, HTTP errors, latest-sidecar selection, exact freshness, metadata-only current-equivalent freshness, and fail-closed stale cases.",
+        "Portfolio Audit CI runs the fixture tests."
       ],
-      "recommendation": "Add deterministic fixture-based tests with mocked API responses before expanding the collector."
+      "recommendation": "Expand fixtures when collector support grows to new evidence types or language-specific adapters."
     },
     {
       "id": "RA-P2-003",
       "severity": "P2",
       "title": "Legacy bootstrap source archive remains in the repository",
-      "status": "open",
+      "status": "fixed",
       "evidence": [
-        ".repo-auditor-bootstrap/source.part-* files remain after the bootstrap workflow was retired.",
-        "The earlier bootstrap run failed with invalid base64 before publication."
+        "The retired .repo-auditor-bootstrap archive and READY marker were removed after confirming no active references.",
+        "The archive was incomplete and no longer served the current publication path.",
+        "Removal was isolated in a reviewed cleanup branch and preserved in Git history."
       ],
-      "recommendation": "After confirming no recovery value is needed, remove the legacy archive in a separate cleanup commit."
+      "recommendation": "Do not reintroduce bootstrap archives into the public runtime tree; use normal Git history or release artifacts for recovery."
     }
   ],
   "limitations": [
     "The self-audit does not infer or choose a software license on behalf of the repository owner.",
-    "GitHub Pages visual rendering was not browser-tested in this self-audit.",
+    "GitHub Pages deployment passed, but this recheck did not perform a full cross-browser visual regression suite.",
     "Branch protection and repository administration settings were not evaluated.",
-    "The evidence collector was reviewed statically but not exercised against a large cross-language corpus."
+    "The evidence collector has deterministic fixtures but has not been exercised against a large cross-language repository corpus."
   ],
   "recheck_triggers": [
-    "A LICENSE is added.",
-    "Audit results become visible in the Pages workbench.",
-    "Staleness detection is added.",
-    "The root/docs static source duplication is removed.",
-    "The evidence collector gains automated fixture tests or language-specific adapters."
-  ]
+    "A LICENSE is added or release/reuse policy changes.",
+    "Audit freshness semantics or ignore-path handling changes.",
+    "The Pages audit-status UI changes materially.",
+    "Public/private registry boundaries change.",
+    "The evidence collector gains new evidence classes or language-specific adapters.",
+    "CI validation or GitHub Pages publication architecture changes."
+  ],
+  "freshness": {
+    "ignore_paths": [
+      "audits/**",
+      "portfolio/registry.json",
+      "PORTFOLIO.md"
+    ]
+  },
+  "remediation_recheck": {
+    "date": "2026-09-16",
+    "audited_commit": "f4941ba1c937f5eba9dce0578858d9af244bff65",
+    "portfolio_audit": "pass",
+    "pages": "pass",
+    "resolved_findings": [
+      "RA-P1-002",
+      "RA-P1-003",
+      "RA-P2-001",
+      "RA-P2-002",
+      "RA-P2-003"
+    ],
+    "remaining_open_findings": [
+      "RA-P1-001"
+    ]
+  }
 }
