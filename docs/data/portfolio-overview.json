@@ -1,33 +1,47 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-16T17:25:00Z",
+  "generated_at": "2026-09-16T18:01:40.817908+00:00",
+  "audit_status": "PARTIAL",
   "inventory": {
-    "total": 42,
-    "public": 32,
-    "private": 10,
+    "observed_total": 34,
+    "public": 34,
+    "private": 0,
     "scan_failures": 0,
+    "expected_total": 43,
+    "expected_private": 9,
     "private_names_published": false
   },
   "coverage": {
-    "inventory_scanned": 42,
-    "deep_evidence_status": "scanner-ready",
-    "structured_audits_currently_persisted": 4
+    "status": "partial",
+    "reasons": [
+      "authenticated inventory is smaller than expected inventory",
+      "private repository coverage is below expected inventory"
+    ],
+    "evidence_collected": 34,
+    "readme_present": 33,
+    "license_present": 8,
+    "security_policy_present": 3,
+    "repositories_with_workflows": 15,
+    "repositories_with_unpinned_actions": 11,
+    "head_ci_green": 21
   },
   "privacy": {
+    "private_details_location": "private-evidence/portfolio-scan.json (gitignored; never Pages)",
     "pages_contains_private_details": false,
-    "note": "All owner repositories may be inventoried privately, but public Pages publishes only aggregate private counts and public-repository details. Private repository names, URLs, SHAs, notes and findings are excluded."
+    "note": "Public Pages exposes only aggregate coverage state. Private repository names, URLs, SHAs, notes, evidence and findings remain excluded."
   },
   "self_audit": {
-    "included": false,
-    "reason": "The control repository is private; its name and audit payload are not published in the public Pages snapshot."
+    "included": true,
+    "repository": "repo-auditor"
   },
   "signals": [
     {
       "severity": "P1",
       "kind": "private-auth",
-      "message": "Persistent deep scanning of private repositories requires an Actions credential with access to those repositories; the default per-repository GITHUB_TOKEN cannot provide account-wide private access."
+      "remediation_class": "external-blocked",
+      "message": "The configured Actions credential currently sees the public inventory but does not cover the expected private repositories. Engineering CI remains independent; Audit Coverage stays PARTIAL until the credential is broadened."
     }
   ]
 }
