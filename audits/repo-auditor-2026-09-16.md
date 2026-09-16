@@ -2,128 +2,129 @@
 
 > 审计日期：2026-09-16  
 > 审计对象：`CochraneK/repo-auditor`  
-> 审计基线：`main` @ `cdfc87e99bb31ed636df9505596e70e4a62a9f9a`  
+> 审计基线：`main` @ `f4941ba1c937f5eba9dce0578858d9af244bff65`  
 > Portfolio 决策：**CONTINUE · 65 · P2-PLANNED**
 
 ## 一句话结论
 
-**repo-auditor 已经从“项目优先级看板”升级成“Portfolio + Structured Audit”双层工具，但它现在最需要的是把审计结果产品化，而不是继续堆新的管理概念。**
+**repo-auditor 的“Portfolio + Structured Audit”双层结构已经收口成可用产品：审计结果进入 Pages、freshness 可执行、collector 有 fixture tests、Pages 源唯一化、bootstrap 遗留已清理。当前唯一开放的高优先项是 LICENSE，而这必须由仓库所有者明确选择。**
 
-本轮已经完成：
+## 2026-09-16 remediation recheck
 
-- Audit Rubric；
-- 结构化 JSON sidecar；
-- audit schema validator；
-- public GitHub evidence collector；
-- Long Gate 正式审计；
-- CI 校验 structured audits；
-- 退役失败的一次性 bootstrap workflow。
+本次整改后：
+
+- **Portfolio Audit：PASS**
+- **GitHub Pages deployment：PASS**
+- **RA-P1-002 · FIXED** — Pages 已显示 `Audit · Current / Current* / Stale · P0/P1`
+- **RA-P1-003 · FIXED** — exact-SHA freshness + 显式 metadata-only `current-equivalent`
+- **RA-P2-001 · FIXED** — 删除 root UI 重复源，`docs/` 成为唯一 canonical Pages source
+- **RA-P2-002 · FIXED** — collector / freshness fixture tests 已进入 CI
+- **RA-P2-003 · FIXED** — 退役且不完整的 bootstrap archive 已删除
+- **仍开放：RA-P1-001 · LICENSE**
+
+### 为什么有 `Current*`
+
+repo-auditor 会审计自己。若“提交审计报告”本身就让审计立刻过期，会形成自审悖论。
+
+现在的规则是：
+
+1. 默认仍要求 `HEAD == audited_commit`；
+2. 只有 sidecar **显式**声明 `freshness.ignore_paths` 时才考虑例外；
+3. 从 audited commit 到 HEAD 的**每一个** changed file 都必须落在允许的审计/总控元数据路径内；
+4. 一旦出现代码、CI、UI 或其他未允许路径，立即回到 **Stale**；
+5. SHA 已变化但 compare 结果为空时也 fail closed 为 **Stale**。
+
+因此 `Current*` 不是“忽略变化”，而是“仅发生了明确声明的审计元数据变化”。
 
 ## P1
 
-### 1. 还没有 LICENSE
+### 1. 还没有 LICENSE · **OPEN**
 
-这是公开工具仓库最明显的发布缺口。
+这是现在最明确的发布缺口。
 
 没有 LICENSE 时，别人“看得到代码”不等于“获得明确复用授权”。
 
-**这项不能由自动审计替你选择。** 建议你之后明确决定 MIT / Apache-2.0 / 其他许可。
+**这项不应由自动审计替你选择。** 后续由仓库所有者明确决定 MIT / Apache-2.0 / 其他许可即可。
 
-### 2. 审计结果还没进入工作台 UI
+### 2. 审计结果进入工作台 UI · **FIXED**
 
-现在 Pages 工作台擅长回答：
-
-> 我现在该推进哪个项目？
-
-但还不能直观看到：
-
-- latest audit date；
-- audited SHA；
-- open P0/P1；
-- audit stale / current。
-
-建议增加第二视觉层：
+工作台现在会对含 `latest_audit` 的仓库读取 structured audit sidecar，并展示：
 
 ```text
 Priority: P0 NOW
-Audit: Current · 0 P0 · 3 P1
+Audit: Current · 0 P0 · 1 P1
 ```
 
-二者必须视觉上明确分开，避免“Priority 94”被误读为“质量 94”。
+两者继续保持独立：
 
-### 3. 没有 audit staleness detection
+- Priority = 现在是否值得投入时间；
+- Audit = 当前仓库有哪些已知风险/缺口。
 
-现在 sidecar 已记录 `audited_commit`，这是正确第一步。
+### 3. Audit staleness detection · **FIXED**
 
-下一步应增加：
+`scripts/audit_freshness.py` 已进入 CI，并支持：
 
-> 当前 default branch SHA != audited_commit → 标记 STALE
-
-但不建议“每次 commit 都强制全量重审”，应结合 `recheck_triggers` 和路径/风险变化。
+- exact-SHA Current；
+- Stale；
+- 显式、窄范围的 Current-equivalent；
+- `--strict` 模式；
+- GitHub Actions warning / notice 输出。
 
 ## P2
 
-### 4. Pages 源码重复
+### 4. Pages 源码重复 · **FIXED**
 
-目前同时存在：
+root 的 `index.html / app.js / styles.css` 已删除。
 
-- root `index.html / app.js / styles.css`
-- `docs/index.html / app.js / styles.css`
+`docs/` 现在是唯一 canonical Pages source，避免两套 UI 漂移。
 
-README 又说明 Pages 以 `docs/` 为源。
+### 5. Evidence collector 单测 · **FIXED**
 
-建议只保留一个 canonical source，防止两个 UI 慢慢漂移。
+现有 deterministic fixture tests 覆盖：
 
-### 5. evidence collector 还缺单测
-
-目前 CI 会：
-
-- py_compile；
-- 校验 registry；
-- 校验 structured audit sidecar。
-
-但 `collect_repo_evidence.py` 还没有 mock fixture tests。
-
-应测试：
-
-- public repo 正常解析；
+- action SHA pin / mutable tag 判定；
 - private repo 拒绝；
-- workflow action pin 判定；
-- API 失败；
-- missing metadata；
-- duplicate workflow runs。
+- duplicate workflow run 去重；
+- GitHub API failure；
+- latest sidecar selection；
+- exact current / stale；
+- metadata-only current-equivalent；
+- 非 ignore 路径触发 stale；
+- 空 compare fail closed。
 
-### 6. legacy bootstrap archive 还留着
+### 6. Legacy bootstrap archive · **FIXED**
 
-高权限 bootstrap workflow 已经退役，这是正确的。
+`.repo-auditor-bootstrap/` 已确认无现行引用，且旧 source archive 本身不完整，因此已从当前树删除。
 
-但 `.repo-auditor-bootstrap/source.part-*` 仍然存在。
+恢复仍可依赖 Git 历史，而无需把一次性 bootstrap 碎片留在公开运行树中。
 
-建议确认不再需要恢复后，用单独 cleanup commit 删除，避免和功能提交混在一起。
+## 当前强项
 
-## 做得好的地方
-
-1. Public / Private 边界非常明确；
+1. Public / Private 边界明确且 registry validator 会执行约束；
 2. STOP 不自动 Archive/Delete；
 3. priority 明确不是 quality；
-4. 现在 audit 也不再试图用单一总分代替 findings；
+4. audit 不用单一总分替代 findings；
 5. audit 有 exact commit baseline；
-6. 新 collector 明确拒绝 private repository；
-7. Long Gate audit 已经开始 dogfood 新体系；
-8. 一次性 bootstrap 高权限入口已经退役。
+6. freshness 有可执行、fail-closed 的 stale 检测；
+7. Pages 已把审计状态产品化；
+8. collector 明确拒绝 private repository；
+9. collector / freshness 有自动化 fixture tests；
+10. Long Gate 已经 dogfood “审计 → 整改 → recheck”闭环；
+11. Pages source 已唯一化；
+12. 高权限一次性 bootstrap 入口和遗留 archive 都已退役。
 
-## 下一步顺序
+## 下一步
+
+现在不建议继续给 repo-auditor 堆新概念。
+
+只保留：
 
 1. 你明确 LICENSE；
-2. audit status 进入 Pages；
-3. staleness detection；
-4. collector fixture tests；
-5. 清理 root/docs duplication；
-6. 删除 legacy bootstrap archive；
-7. 再考虑语言/框架-specific audit adapters。
+2. 需要时再增加 language/framework-specific adapters；
+3. 随真实仓库审计暴露出的需求渐进增强，而不是预先造复杂体系。
 
 ## Repo-auditor 决策
 
 **CONTINUE · 65 · P2-PLANNED**
 
-它值得长期保留并持续变强，但它是基础设施，不应该为了“把审计工具做到无限复杂”而抢走 Long Gate、AI-Ques 等主项目的时间。
+它已经足够承担公开项目总控与结构化审计基础设施；接下来应更多用于 **dogfood 其他仓库**，而不是继续抢占 Long Gate、AI-Ques 等主项目的时间。
