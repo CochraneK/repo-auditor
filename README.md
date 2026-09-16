@@ -2,7 +2,7 @@
 
 # repo-auditor
 
-**Public GitHub 工作台 · 把“我有哪些仓库”变成“我现在该推进什么”。**
+**Evidence-backed Repository Audit + Remediation Agent · 审、改、再审。**
 
 <p>
   <img alt="Public only" src="https://img.shields.io/badge/scope-public%20repositories-2F80ED">
@@ -48,6 +48,7 @@ GitHub Pages 源码位于 `docs/`，线上入口：
 | **Repository jump** | 一键进入对应公开仓库 |
 | **Publication / IP gate** | 审计时明确给出 Public / Private / split 的发布建议，提醒专利披露、Background IP、单位/客户请求与权属不确定性 |
 | **Multi-dimensional quality** | 9 个独立工程质量维度各自 0–5 分；不合并成单一质量总分，也不与 Priority 混淆 |
+| **GO remediation** | 对安全、可逆的 `auto-fix` finding 自动 branch → 修复 → 测试 → re-audit → PR；只在 owner-choice / external-blocked 时停 |
 
 数据源：
 
@@ -94,6 +95,22 @@ python scripts/collect_repo_evidence.py CochraneK/long-gate
 ```
 
 详见 [Audit Rubric](AUDIT_RUBRIC.md) 和 [audits/](audits/README.md)。
+
+## GO Agent
+
+repo-auditor 默认不是“只给建议”的 reviewer。Owner 授权 GO mode 后，它会持续执行：
+
+```text
+Audit → classify findings → remediate auto-fix → test → re-audit → merge
+```
+
+查看当前可自动整改项：
+
+```bash
+python scripts/remediation_queue.py
+```
+
+`LICENSE / IP / visibility / delete/archive / destructive history rewrite / material cost` 等仍属于 owner choice，不会为了审计变绿自动决定。完整行为边界见 [AGENTS.md](AGENTS.md) 与 [POLICY.md](POLICY.md)。
 
 ## Public / Private 边界
 
