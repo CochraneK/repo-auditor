@@ -409,6 +409,46 @@ class FreshnessTests(unittest.TestCase):
 
         self.assertEqual(result[0]["state"], "stale")
 
+    def test_inaccessible_repository_is_unknown_not_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "x.json").write_text(
+                json.dumps({
+                    "repository": "CochraneK/x",
+                    "audit_date": "2026-09-16",
+                    "audited_commit": "a" * 40,
+                }),
+                encoding="utf-8",
+            )
+            with mock.patch.object(
+                af,
+                "default_head",
+                side_effect=RuntimeError("GitHub API 404"),
+            ):
+                result = af.check(root)
+
+        self.assertEqual(result[0]["state"], "unknown")
+        self.assertIn("404", result[0]["error"])
+
+    def test_authenticated_404_retries_anonymous_public_api(self):
+        error = urllib.error.HTTPError(
+            "https://api.github.com/demo",
+            404,
+            "Not Found",
+            hdrs=None,
+            fp=io.BytesIO(b'{"message":"Not Found"}'),
+        )
+        with mock.patch.dict(af.os.environ, {"GITHUB_TOKEN": "scoped-token"}), mock.patch.object(
+            af,
+            "_request",
+            side_effect=[error, {"ok": True}],
+        ) as request:
+            result = af.request_json("/demo")
+
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(request.call_args_list[0].args, ("/demo", "scoped-token"))
+        self.assertEqual(request.call_args_list[1].args, ("/demo", None))
+
     def test_empty_compare_is_fail_closed_when_sha_moved(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
