@@ -1,7 +1,7 @@
 # repo-auditor 自审 · 2026-09-17
 
 > 审计对象：`CochraneK/repo-auditor`  
-> 审计基线：`871d701e68b8a8535a791c9c3eae19e4c59a9b5e`  
+> 审计基线：`fb2f8a16799e33cfc7737c0e6cd23c7ce6b09337`  
 > Portfolio：**CONTINUE · 65 · P2-PLANNED**
 
 ## 结论
@@ -32,6 +32,7 @@ repo-auditor 已经可以按“**审 → 改 → 测 → 再审**”的 Agent �
 ## 已验证
 
 - Portfolio Audit CI：**PASS**
+- GitHub Pages deployment：**PASS**
 - Python compile：**PASS**
 - deterministic tests：**43/43 PASS**
 - Visual UX static audit：**PASS**
