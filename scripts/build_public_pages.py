@@ -4,7 +4,7 @@ from __future__ import annotations
 import json, os, shutil, urllib.error, urllib.request
 from pathlib import Path
 from typing import Any, Callable
-ROOT=Path(__file__).resolve().parents[1]; REGISTRY=ROOT/"portfolio"/"registry.json"; AUDITS=ROOT/"audits"; OUT=ROOT/"docs"/"data"; API="https://api.github.com"
+ROOT=Path(__file__).resolve().parents[1]; REGISTRY=ROOT/"portfolio"/"registry.json"; TODOS=ROOT/"portfolio"/"todos.json"; AUDITS=ROOT/"audits"; OUT=ROOT/"docs"/"data"; API="https://api.github.com"
 class PublicBundleError(ValueError): pass
 def _load(path: Path)->dict[str,Any]:
     data=json.loads(path.read_text(encoding="utf-8"))
@@ -22,7 +22,20 @@ def live_visibility(repository:str)->str:
     except (urllib.error.URLError,TimeoutError) as exc:
         raise PublicBundleError(f"Cannot verify live visibility for {repository}; refusing publication") from exc
     return "private" if bool(payload.get("private")) else "public"
-def build(registry_path:Path=REGISTRY,audits_dir:Path=AUDITS,out_dir:Path=OUT,visibility_resolver:Callable[[str],str]|None=None)->dict[str,Any]:
+def _safe_todos(todos_path:Path, public_names:set[str])->dict[str,Any]:
+    todos=_load(todos_path); items=todos.get("items")
+    if not isinstance(items,list): raise PublicBundleError("todos.items must be a list")
+    allowed_status={"TODO","DOING","BLOCKED","DECISION","DONE"}; allowed_priority={"P0","P1","P2","P3"}
+    seen=set()
+    for item in items:
+        if not isinstance(item,dict) or not item.get("id") or not item.get("title"): raise PublicBundleError("Every public todo needs id and title")
+        if item["id"] in seen: raise PublicBundleError(f"Duplicate todo id: {item['id']}")
+        seen.add(item["id"])
+        if item.get("status") not in allowed_status or item.get("priority") not in allowed_priority: raise PublicBundleError(f"Invalid todo state: {item['id']}")
+        repo=item.get("repo")
+        if repo and repo not in public_names: raise PublicBundleError(f"Todo references a repository outside the verified public registry: {item['id']}")
+    return todos
+def build(registry_path:Path=REGISTRY,audits_dir:Path=AUDITS,out_dir:Path=OUT,visibility_resolver:Callable[[str],str]|None=None,todos_path:Path|None=None)->dict[str,Any]:
     registry=_load(registry_path); repos=registry.get("repositories")
     if not isinstance(repos,list): raise PublicBundleError("registry.repositories must be a list")
     resolver=visibility_resolver
@@ -50,8 +63,14 @@ def build(registry_path:Path=REGISTRY,audits_dir:Path=AUDITS,out_dir:Path=OUT,vi
         shutil.copyfile(sidecar,out_audits/sidecar.name); copied.append(sidecar.name)
     out_dir.mkdir(parents=True,exist_ok=True)
     (out_dir/"registry.json").write_text(json.dumps(public_registry,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    manifest={"schema_version":2,"scope":"public-pages-bundle","repository_count":len(safe),"live_visibility_exclusions":excluded,"audit_sidecars":sorted(copied),"private_repository_metadata_included":False,"visibility_policy":"live-github-fail-closed"}
+    source_todos=todos_path or (TODOS if registry_path.resolve()==REGISTRY.resolve() else None)
+    todo_count=0
+    if source_todos and source_todos.is_file():
+        public_todos=_safe_todos(source_todos,{str(r["name"]) for r in safe})
+        (out_dir/"todos.json").write_text(json.dumps(public_todos,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+        todo_count=len(public_todos["items"])
+    manifest={"schema_version":3,"scope":"public-pages-bundle","repository_count":len(safe),"todo_count":todo_count,"live_visibility_exclusions":excluded,"audit_sidecars":sorted(copied),"private_repository_metadata_included":False,"visibility_policy":"live-github-fail-closed"}
     (out_dir/"manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8"); return manifest
 def main()->int:
-    m=build(); print(f"Public Pages bundle OK: {m['repository_count']} repositories, {m['live_visibility_exclusions']} stale/private records excluded"); return 0
+    m=build(); print(f"Public Pages bundle OK: {m['repository_count']} repositories, {m['todo_count']} todos, {m['live_visibility_exclusions']} stale/private records excluded"); return 0
 if __name__=="__main__": raise SystemExit(main())
