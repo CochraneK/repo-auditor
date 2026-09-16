@@ -2,7 +2,7 @@
   "schema_version": 1,
   "repository": "CochraneK/repo-auditor",
   "audit_date": "2026-09-16",
-  "audited_commit": "69affc0de2c31f767f26cee17de3bfd19a0fbd47",
+  "audited_commit": "cbc436ec25a880d1327566e68c0241bbd79f1ee8",
   "markdown": "audits/repo-auditor-2026-09-16.md",
   "decision": {
     "work_status": "CONTINUE",
@@ -25,7 +25,8 @@
     "Audit freshness is exact-SHA by default and only permits explicit, per-audit metadata-only current-equivalent exceptions.",
     "Evidence collector and freshness behavior have deterministic fixture tests in CI.",
     "docs/ is the single canonical Pages source and the retired bootstrap archive has been removed.",
-    "Long Gate audit is dogfooding the structured audit and remediation workflow."
+    "Long Gate audit is dogfooding the structured audit and remediation workflow.",
+    "GO mode exposes a deterministic remediation queue of open auto-fix findings and keeps owner-choice/external-blocked findings out of automatic mutation."
   ],
   "findings": [
     {
@@ -130,7 +131,7 @@
   },
   "remediation_recheck": {
     "date": "2026-09-16",
-    "audited_commit": "69affc0de2c31f767f26cee17de3bfd19a0fbd47",
+    "audited_commit": "cbc436ec25a880d1327566e68c0241bbd79f1ee8",
     "portfolio_audit": "pass",
     "pages": "pass",
     "resolved_findings": [
@@ -145,7 +146,8 @@
     ],
     "publication_ip_gate": "pass",
     "multidimensional_quality_scoring": "pass",
-    "go_remediation_agent": "pass"
+    "go_remediation_agent": "pass",
+    "auto_fix_queue": "pass"
   },
   "publication_gate": {
     "current_visibility": "public",
