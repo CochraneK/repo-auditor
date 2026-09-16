@@ -16,7 +16,10 @@ jobs:
       - run: python -m py_compile scripts/*.py
       - run: python -m unittest discover -s tests -v
       - run: python scripts/visual_ux_audit.py docs/index.html --json --fail-on-findings
-      - name: Validate source registry against live GitHub visibility
+      - name: Sanitize stale public source records in workspace
+        env: { GITHUB_TOKEN: "${{ github.token }}" }
+        run: python scripts/sanitize_public_registry.py
+      - name: Validate sanitized registry
         env: { GITHUB_TOKEN: "${{ github.token }}" }
         run: python scripts/audit_registry.py
       - env: { GITHUB_TOKEN: "${{ github.token }}" }
@@ -35,12 +38,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - env: { GITHUB_TOKEN: "${{ github.token }}" }
-        run: python scripts/build_public_pages.py
-      - run: |
-          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits; then exit 0; fi
+      - name: Sanitize source registry and rebuild public bundle
+        env: { GITHUB_TOKEN: "${{ github.token }}" }
+        run: |
+          python scripts/sanitize_public_registry.py
+          python scripts/build_public_pages.py
+      - name: Persist privacy-safe source and bundle drift
+        run: |
+          if git diff --quiet -- portfolio/registry.json docs/data/registry.json docs/data/manifest.json docs/data/audits; then exit 0; fi
           git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/data/registry.json docs/data/manifest.json docs/data/audits; git commit -m 'chore: sync privacy-safe Pages bundle [skip ci]'; git push
+          git add portfolio/registry.json docs/data/registry.json docs/data/manifest.json docs/data/audits
+          git commit -m 'chore: sync privacy-safe portfolio state [skip ci]'; git push
   private-portfolio-scan:
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
