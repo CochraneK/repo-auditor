@@ -135,5 +135,61 @@
       "Future genuinely new technical mechanisms may warrant patent/ownership review before they are merged into the public tree.",
       "Keep the existing public/background code stable while developing patent-sensitive or organization-specific extensions privately until reviewed."
     ]
+  },
+  "quality_dimensions": {
+    "purpose_scope": {
+      "score": 5,
+      "evidence": [
+        "README and supporting docs clearly define local-first privacy scope, threat boundaries, and explicit non-claims."
+      ]
+    },
+    "correctness": {
+      "score": 4,
+      "evidence": [
+        "58 tests passed and six quality gates were green; a real multi-gigabyte GGUF execution was not part of this audit."
+      ]
+    },
+    "security_privacy": {
+      "score": 5,
+      "evidence": [
+        "Raw/network capability separation, fail-closed egress, deployment-contract tests, and Model Vault boundary tests are executable rather than documentation-only."
+      ]
+    },
+    "supply_chain": {
+      "score": 5,
+      "evidence": [
+        "Observed third-party GitHub Actions are pinned to full commit SHAs; curated models pin upstream revisions and SHA-256 values."
+      ]
+    },
+    "reproducibility": {
+      "score": 3,
+      "evidence": [
+        "Clean wheel smoke installation exists, but CI/development transitive dependency resolution is not locked."
+      ]
+    },
+    "release_engineering": {
+      "score": 3,
+      "evidence": [
+        "Build artifacts and release-readiness checks exist, but release attestation/signing and a mature publication policy are still open."
+      ]
+    },
+    "documentation_onboarding": {
+      "score": 5,
+      "evidence": [
+        "README, Chinese README, threat model, security policy, contributing guide, citation, changelog, roadmap, safe demo, and model setup guidance are present."
+      ]
+    },
+    "maintainability": {
+      "score": 4,
+      "evidence": [
+        "Architecture, tests, workflows, and security documentation are well aligned; the repository remains pre-1.0 with some release/reproducibility debt."
+      ]
+    },
+    "community_surface": {
+      "score": 3,
+      "evidence": [
+        "License, contribution/security/citation surfaces exist, but GitHub description/homepage/topics are still empty and branch protection was not verifiable."
+      ]
+    }
   }
 }
