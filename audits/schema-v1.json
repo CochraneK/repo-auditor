@@ -11,20 +11,75 @@
     "markdown",
     "decision",
     "quality_gates",
+    "publication_gate",
     "findings",
     "limitations",
     "recheck_triggers"
   ],
   "properties": {
-    "schema_version": {"const": 1},
-    "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
-    "audit_date": {"type": "string", "format": "date"},
-    "audited_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-    "markdown": {"type": "string"},
-    "decision": {"type": "object"},
-    "quality_gates": {"type": "object"},
-    "findings": {"type": "array"},
-    "limitations": {"type": "array"},
-    "recheck_triggers": {"type": "array"}
+    "schema_version": {
+      "const": 1
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "audit_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "audited_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "markdown": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "object"
+    },
+    "quality_gates": {
+      "type": "object"
+    },
+    "findings": {
+      "type": "array"
+    },
+    "limitations": {
+      "type": "array"
+    },
+    "recheck_triggers": {
+      "type": "array"
+    },
+    "publication_gate": {
+      "type": "object",
+      "required": [
+        "current_visibility",
+        "recommendation",
+        "reasons"
+      ],
+      "properties": {
+        "current_visibility": {
+          "enum": [
+            "public",
+            "private"
+          ]
+        },
+        "recommendation": {
+          "enum": [
+            "public-ok",
+            "review-before-public",
+            "keep-private",
+            "split-public-private"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
   }
 }
