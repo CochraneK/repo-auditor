@@ -1,577 +1,208 @@
 (() => {
-  const DATA_URL = "./data/registry.json";
-  const REPO_BASE = "https://github.com/CochraneK/";
-  const AUDIT_RAW_BASE = "./data/";
-  const AUDIT_REPORT_BASE = "./data/";
-  const GITHUB_API_BASE = "https://api.github.com/repos/CochraneK/";
-  const BAND_LABELS = {
-    "P0-NOW": "P0 · NOW",
-    "P1-NEXT": "P1 · NEXT",
-    "P2-PLANNED": "P2 · PLANNED",
-    "P3-LATER": "P3 · LATER",
-    "P4-LOW": "P4 · LOW",
-    "STOP": "DON'T TOUCH"
+  const DATA_URL="./portfolio/registry.json";
+  const REPO_BASE="https://github.com/CochraneK/";
+  const BANDS={
+    "P0-NOW":{label:"P0",name:"Now",color:"#6e77ff"},
+    "P1-NEXT":{label:"P1",name:"Next",color:"#61c997"},
+    "P2-PLANNED":{label:"P2",name:"Planned",color:"#d8a34d"},
+    "P3-LATER":{label:"P3",name:"Later",color:"#7b8798"},
+    "P4-LOW":{label:"P4",name:"Low",color:"#5f6874"},
+    "STOP":{label:"—",name:"Don't touch",color:"#4c545e"}
   };
-  const BOARD_ORDER = ["P0-NOW","P1-NEXT","P2-PLANNED","P3-LATER","P4-LOW","STOP"];
-  const QUALITY_LABELS = {
-    purpose_scope: "Purpose",
-    correctness: "Correctness",
-    security_privacy: "Security",
-    supply_chain: "Supply chain",
-    reproducibility: "Reproducibility",
-    release_engineering: "Release",
-    documentation_onboarding: "Docs",
-    maintainability: "Maintainability",
-    community_surface: "Community"
+  const WORKSTREAMS={
+    "Research":{color:"#8c7cf0",repos:["AI-Ques","ARIS-GCA-Bees","neuropharm","psy-exp","VA_emotion"]},
+    "Work tools":{color:"#48a9a6",repos:["FLP-Webui","RVC_factor","Voice-compare","Voicemod_Portrait"]},
+    "Products":{color:"#5f90db",repos:["ai-uni","anydoor","cris","persona-test","scientist-calendar","we-read","NewsMail","yihot"]},
+    "Creative":{color:"#c77b58",repos:["changan","gray-walker","Ji-Sui-Le","red-map","survival-game-generator","Animal-Age"]},
+    "Skills":{color:"#b69b4a",repos:["dsh-gate-game-plugin","emperor-skill","fake_type","mao-skill","ming","pudding-skill","repo-auditor"]},
+    "Legacy":{color:"#77808d",repos:["NaoDao_code","Submit-forms-automatically","wechat-article-analysis"]}
+  };
+  const VIEWS={
+    focus:{title:"Focus",desc:"现在最值得投入时间的仓库。"},
+    all:{title:"All repositories",desc:"全部 Public 仓库，按你的当前管理判断组织。"},
+    later:{title:"Later",desc:"确定还会做，但现在不应该占据注意力。"},
+    stopped:{title:"Don't touch",desc:"当前不需要继续投入；这不等于删除或归档。"}
   };
 
-  const $ = id => document.getElementById(id);
-  let data = null;
-  let currentView = localStorage.getItem("repo-auditor-view") || "cards";
+  const $=id=>document.getElementById(id);
+  let data=null,currentView="focus",statusFilter="all",selectedWorkstream="all";
 
-  function esc(value = "") {
-    return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+  const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const repoUrl=(name)=>REPO_BASE+encodeURIComponent(name);
+  const byScore=(a,b)=>b.priority_score-a.priority_score||a.name.localeCompare(b.name);
+  const byRecent=(a,b)=>String(b.last_commit_date||"").localeCompare(String(a.last_commit_date||""))||byScore(a,b);
+  const date=v=>new Date(v+"T00:00:00Z");
+  function ageDays(v){if(!v||!data?.snapshot_date)return null;return Math.max(0,Math.round((date(data.snapshot_date)-date(v))/86400000))}
+  function age(v){const d=ageDays(v);if(d===null)return"—";if(d===0)return"today";if(d===1)return"1d ago";if(d<30)return d+"d ago";if(d<365)return Math.round(d/30)+"mo ago";return(d/365).toFixed(1)+"y ago"}
+  function workstreamOf(name){
+    for(const [key,val] of Object.entries(WORKSTREAMS))if(val.repos.includes(name))return key;
+    return "Skills";
+  }
+  function workstreamColor(name){return WORKSTREAMS[workstreamOf(name)]?.color||"#77808d"}
+
+  function setTheme(theme){
+    const guard=document.createElement("style");guard.textContent="*,*::before,*::after{transition:none!important}";
+    document.head.appendChild(guard);
+    document.documentElement.dataset.theme=theme;
+    localStorage.setItem("repo-workspace-theme",theme);
+    void document.documentElement.offsetHeight;
+    requestAnimationFrame(()=>guard.remove());
+  }
+  function initTheme(){
+    const saved=localStorage.getItem("repo-workspace-theme");
+    const light=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches;
+    setTheme(saved||(light?"light":"dark"));
   }
 
-  function repoUrl(name, suffix = "") {
-    return REPO_BASE + encodeURIComponent(name) + suffix;
+  function renderSummary(repos){
+    const active=repos.filter(r=>r.work_status==="CONTINUE");
+    $("repoCount").textContent=repos.length;
+    $("nowCount").textContent=repos.filter(r=>r.priority_band==="P0-NOW").length;
+    $("continueCount").textContent=active.length;
+    $("stopCount").textContent=repos.filter(r=>r.work_status==="STOP").length;
+    $("avgScore").textContent=active.length?Math.round(active.reduce((s,r)=>s+r.priority_score,0)/active.length):0;
+    $("allNavCount").textContent=repos.length;
+    $("focusNavCount").textContent=repos.filter(r=>r.priority_score>=70&&r.work_status==="CONTINUE").length;
+    $("laterNavCount").textContent=repos.filter(r=>["P2-PLANNED","P3-LATER","P4-LOW"].includes(r.priority_band)).length;
+    $("stopNavCount").textContent=repos.filter(r=>r.work_status==="STOP").length;
+    $("snapshotDate").textContent="Snapshot · "+(data.snapshot_date||"");
   }
 
-  function scoreSort(a, b) {
-    return (b.priority_score - a.priority_score) || a.name.localeCompare(b.name);
+  function repoRow(r){
+    const band=BANDS[r.priority_band]||BANDS.STOP;
+    const ws=workstreamOf(r.name);
+    return `<a class="repo-row" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
+      <span class="priority-cell">
+        <i class="priority-mark" style="--priority-color:${band.color}"></i>
+        <span class="score">${r.priority_score}</span>
+      </span>
+      <span class="repo-main">
+        <span class="repo-name">${esc(r.name)}</span>
+        <span class="repo-note">${esc(r.reason||"No note")}</span>
+      </span>
+      <span class="workstream"><i class="dot" style="--workstream-color:${workstreamColor(r.name)}"></i>${esc(ws)}</span>
+      <span class="commit-age">${esc(age(r.last_commit_date))}</span>
+      <span class="row-arrow">›</span>
+    </a>`;
   }
 
-  function recentSort(a, b) {
-    return String(b.last_commit_date || "").localeCompare(String(a.last_commit_date || "")) || scoreSort(a,b);
+  function renderFocus(repos){
+    const focus=repos.filter(r=>r.work_status==="CONTINUE").sort(byScore).slice(0,8);
+    $("focusList").innerHTML=focus.map(repoRow).join("");
+    $("focusCountText").textContent=focus.length+" repositories";
   }
 
-  function dateToUtc(value) {
-    return new Date(value + "T00:00:00Z");
+  function renderSignals(repos){
+    const items=repos
+      .filter(r=>r.work_status==="CONTINUE")
+      .map(r=>({...r,_age:ageDays(r.last_commit_date)||0}))
+      .filter(r=>(r.priority_score>=70&&r._age>=30)||(r.priority_score>=50&&r._age>=90))
+      .sort((a,b)=>b.priority_score-a.priority_score||b._age-a._age)
+      .slice(0,5);
+    $("signalsList").innerHTML=items.length?items.map(r=>`<div class="signal">
+      <div class="signal-top"><strong>${esc(r.name)}</strong><span class="signal-score">${r.priority_score}</span></div>
+      <p>High priority · last commit ${esc(age(r.last_commit_date))}</p>
+    </div>`).join(""):'<div class="signal"><strong>No stale high-priority work</strong><p>Priority and recent activity currently align.</p></div>';
   }
 
-  function ageDays(value) {
-    if (!value || !data?.snapshot_date) return null;
-    return Math.max(0, Math.round((dateToUtc(data.snapshot_date) - dateToUtc(value)) / 86400000));
-  }
-
-  function ageLabel(value) {
-    const days = ageDays(value);
-    if (days === null) return "无提交日期";
-    if (days === 0) return "今天";
-    if (days === 1) return "1 天前";
-    if (days < 30) return days + " 天前";
-    if (days < 365) return Math.round(days / 30) + " 个月前";
-    return (days / 365).toFixed(1) + " 年前";
-  }
-
-  function setTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("repo-auditor-theme", theme);
-  }
-
-  function initTheme() {
-    const saved = localStorage.getItem("repo-auditor-theme");
-    if (saved) return setTheme(saved);
-    const light = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-    setTheme(light ? "light" : "dark");
-  }
-
-  function assertPublicOnly(repos) {
-    const leaked = repos.filter(r => r.visibility !== "public");
-    if (leaked.length) throw new Error("Public registry contains non-public repository records.");
-  }
-
-  function badgeClass(band) {
-    if (band === "STOP") return "stop";
-    if (band === "P0-NOW") return "now";
-    return "";
-  }
-
-  function auditReportUrl(repo) {
-    return repo.latest_audit ? AUDIT_REPORT_BASE + repo.latest_audit.replace(/\.md$/i, ".json") : "";
-  }
-
-  function qualityChip(repo) {
-    const dims = repo._audit?.qualityDimensions;
-    if (!dims || typeof dims !== "object") return "";
-    const rows = Object.entries(QUALITY_LABELS).map(([key, label]) => {
-      const score = dims[key]?.score;
-      const value = Number.isInteger(score) ? score + "/5" : "—";
-      return label + " " + value;
-    });
-    const scored = Object.values(dims).filter(item => Number.isInteger(item?.score)).length;
-    const title = "Quality dimensions (no total score): " + rows.join(" · ");
-    return `<span class="badge" title="${esc(title)}">Quality · ${scored}D</span>`;
-  }
-
-  function auditChip(repo) {
-    if (!repo.latest_audit) return "";
-    const audit = repo._audit;
-    if (!audit) return '<span class="badge audit unknown">Audit · loading</span>';
-    const displayState = audit.state === "current-equivalent" ? "current" : audit.state;
-    const label =
-      audit.state === "current" ? "Current" :
-      audit.state === "current-equivalent" ? "Current*" :
-      audit.state === "stale" ? "Stale" : "Unknown";
-    const title = audit.error
-      ? audit.error
-      : audit.state === "current-equivalent"
-        ? `Audit ${audit.auditDate || "—"} · baseline ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)} · only explicitly ignored audit/portfolio metadata changed`
-        : `Audit ${audit.auditDate || "—"} · audited ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)}`;
-    return `<span class="badge audit ${esc(displayState)}" title="${esc(title)}">Audit · ${label} · ${audit.openP0} P0 · ${audit.openP1} P1</span>`;
-  }
-
-  function auditQuickLink(repo) {
-    return repo.latest_audit
-      ? `<a class="quick-link" href="${auditReportUrl(repo)}" target="_blank" rel="noreferrer">Audit ↗</a>`
-      : "";
-  }
-
-  function auditIgnorePatterns(sidecar) {
-    const value = sidecar?.freshness?.ignore_paths;
-    return Array.isArray(value) ? value.filter(item => typeof item === "string" && item.trim()) : [];
-  }
-
-  function pathMatchesIgnore(path, pattern) {
-    if (pattern.endsWith("/**")) {
-      const prefix = pattern.slice(0, -3);
-      return path === prefix || path.startsWith(prefix + "/");
-    }
-    return path === pattern;
-  }
-
-  async function metadataAwareAuditState(repoName, auditedCommit, headCommit, patterns) {
-    if (auditedCommit === headCommit) return "current";
-    if (!patterns.length) return "stale";
-
-    const url =
-      GITHUB_API_BASE + encodeURIComponent(repoName) +
-      "/compare/" + encodeURIComponent(auditedCommit) + "..." + encodeURIComponent(headCommit);
-    const response = await fetch(url, {
-      cache: "no-store",
-      headers: { Accept: "application/vnd.github+json" }
-    });
-    if (!response.ok) throw new Error("GitHub compare HTTP " + response.status);
-    const comparison = await response.json();
-    const files = Array.isArray(comparison?.files)
-      ? comparison.files.map(item => item?.filename).filter(Boolean)
-      : [];
-
-    if (!files.length) return "stale";
-    return files.every(path => patterns.some(pattern => pathMatchesIgnore(path, pattern)))
-      ? "current-equivalent"
-      : "stale";
-  }
-
-  async function loadAuditStatus(repo) {
-    if (!repo.latest_audit) return;
-    try {
-      const sidecarPath = repo.latest_audit.replace(/\.md$/i, ".json");
-      const [auditResponse, headResponse] = await Promise.all([
-        fetch(AUDIT_RAW_BASE + sidecarPath + "?t=" + Date.now(), { cache: "no-store" }),
-        fetch(GITHUB_API_BASE + encodeURIComponent(repo.name) + "/commits?per_page=1", {
-          cache: "no-store",
-          headers: { Accept: "application/vnd.github+json" }
-        })
-      ]);
-      if (!auditResponse.ok) throw new Error("audit sidecar HTTP " + auditResponse.status);
-      if (!headResponse.ok) throw new Error("GitHub HEAD HTTP " + headResponse.status);
-
-      const sidecar = await auditResponse.json();
-      const commits = await headResponse.json();
-      const auditedCommit = sidecar.audited_commit || "";
-      const headCommit = Array.isArray(commits) && commits[0]?.sha ? commits[0].sha : "";
-      if (!auditedCommit) throw new Error("Audit sidecar has no audited_commit");
-      if (!headCommit) throw new Error("Could not resolve repository HEAD");
-
-      const patterns = auditIgnorePatterns(sidecar);
-      const state = await metadataAwareAuditState(repo.name, auditedCommit, headCommit, patterns);
-      const open = (sidecar.findings || []).filter(f => f.status === "open");
-      repo._audit = {
-        state,
-        auditDate: sidecar.audit_date || "",
-        auditedCommit,
-        headCommit,
-        openP0: open.filter(f => f.severity === "P0").length,
-        openP1: open.filter(f => f.severity === "P1").length,
-        qualityDimensions: sidecar.quality_dimensions || null
-      };
-    } catch (error) {
-      repo._audit = {
-        state: "unknown",
-        auditDate: "",
-        auditedCommit: "",
-        headCommit: "",
-        openP0: 0,
-        openP1: 0,
-        qualityDimensions: null,
-        error: String(error?.message || error)
-      };
-    }
-  }
-
-  async function enrichAuditStatuses(repos) {
-    await Promise.all(repos.filter(r => r.latest_audit).map(loadAuditStatus));
-  }
-
-  function renderHero(repos) {
-    const top = repos.filter(r => r.work_status === "CONTINUE").sort(scoreSort)[0];
-    $("snapshotText").textContent = "Snapshot · " + (data.snapshot_date || "—");
-    if (!top) {
-      $("heroFocus").innerHTML = '<div class="hero-focus-card"><p>暂无 CONTINUE 项目。</p></div>';
-      return;
-    }
-    $("heroFocus").innerHTML = `
-      <div class="hero-focus-card">
-        <div class="hero-focus-top">
-          <div>
-            <div class="hero-mini-label">CURRENT #1</div>
-            <div class="hero-score">${top.priority_score}</div>
-          </div>
-          <span class="badge ${badgeClass(top.priority_band)}">${esc(BAND_LABELS[top.priority_band])}</span>
-        </div>
-        <h3>${esc(top.name)}</h3>
-        <p>${esc(top.reason || "暂无备注")}</p>
-        <div class="hero-actions">
-          <a class="button primary" href="${repoUrl(top.name)}" target="_blank" rel="noreferrer">打开仓库 ↗</a>
-          <a class="button secondary" href="${repoUrl(top.name, "/issues")}" target="_blank" rel="noreferrer">Issues</a>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderMetrics(repos) {
-    const active = repos.filter(r => r.work_status === "CONTINUE");
-    const avg = active.length ? Math.round(active.reduce((sum,r) => sum + r.priority_score, 0) / active.length) : 0;
-    $("totalCount").textContent = repos.length;
-    $("nowCount").textContent = repos.filter(r => r.priority_band === "P0-NOW").length;
-    $("continueCount").textContent = active.length;
-    $("stopCount").textContent = repos.filter(r => r.work_status === "STOP").length;
-    $("avgScore").textContent = avg;
-  }
-
-  function renderDistribution(repos) {
-    const max = Math.max(1, ...BOARD_ORDER.map(b => repos.filter(r => r.priority_band === b).length));
-    $("priorityDistribution").innerHTML = BOARD_ORDER.map(band => {
-      const count = repos.filter(r => r.priority_band === band).length;
-      const pct = Math.max(3, Math.round(count / max * 100));
-      return `
-        <div class="distribution-row">
-          <span class="distribution-label">${esc(BAND_LABELS[band])}</span>
-          <span class="distribution-track"><span class="distribution-bar" style="width:${pct}%"></span></span>
-          <span class="distribution-count">${count}</span>
-        </div>
-      `;
+  function renderDistribution(repos){
+    const order=["P0-NOW","P1-NEXT","P2-PLANNED","P3-LATER","P4-LOW","STOP"];
+    const max=Math.max(1,...order.map(k=>repos.filter(r=>r.priority_band===k).length));
+    $("distribution").innerHTML=order.map(k=>{
+      const count=repos.filter(r=>r.priority_band===k).length;
+      return `<div class="dist-row"><span class="dist-label">${BANDS[k].label} · ${BANDS[k].name}</span><span class="dist-track"><i class="dist-bar" style="width:${Math.max(4,count/max*100)}%;background:${BANDS[k].color}"></i></span><span class="dist-count">${count}</span></div>`;
     }).join("");
   }
 
-  function renderRecent(repos) {
-    const recent = [...repos].sort(recentSort).slice(0, 7);
-    $("recentActivity").innerHTML = recent.map(r => `
-      <div class="recent-item">
-        <div class="recent-main">
-          <div class="recent-name">${esc(r.name)}</div>
-          <div class="recent-sub">${esc(BAND_LABELS[r.priority_band])} · ${r.work_status}</div>
-        </div>
-        <div class="recent-date">${esc(ageLabel(r.last_commit_date))}</div>
-      </div>
-    `).join("");
-  }
-
-  function renderFocus(repos) {
-    const focus = repos.filter(r => r.work_status === "CONTINUE").sort(scoreSort).slice(0, 8);
-    $("focusGrid").innerHTML = focus.map((r, i) => `
-      <a class="focus-card" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
-        <span class="focus-rank">FOCUS #${i + 1}</span>
-        <div class="focus-score">${r.priority_score}</div>
-        <div class="focus-name">${esc(r.name)}</div>
-        <p class="focus-reason">${esc(r.reason || "暂无备注")}</p>
-        <div class="badges">
-          <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
-          <span class="badge">commit · ${esc(ageLabel(r.last_commit_date))}</span>
-          ${auditChip(r)}
-          ${qualityChip(r)}
-        </div>
-      </a>
-    `).join("");
-  }
-
-  function getAttention(repos) {
-    return repos
-      .filter(r => r.work_status === "CONTINUE")
-      .map(r => ({...r, _age: ageDays(r.last_commit_date) ?? 0}))
-      .filter(r => (r.priority_score >= 70 && r._age >= 30) || (r.priority_score >= 50 && r._age >= 90))
-      .sort((a,b) => b.priority_score - a.priority_score || b._age - a._age)
-      .slice(0, 8);
-  }
-
-  function renderAttention(repos) {
-    const items = getAttention(repos);
-    if (!items.length) {
-      $("attentionGrid").innerHTML = '<article class="attention-card"><strong>目前没有明显积压。</strong><p>高优先级项目的提交节奏和计划基本一致。</p></article>';
-      return;
-    }
-    $("attentionGrid").innerHTML = items.map(r => `
-      <article class="attention-card">
-        <div class="attention-head">
-          <span class="attention-title">${esc(r.name)}</span>
-          <span class="attention-score">${r.priority_score} pts</span>
-        </div>
-        <p>${esc(r.reason || "暂无备注")}</p>
-        <div class="attention-meta">
-          <span>${esc(BAND_LABELS[r.priority_band])}</span>
-          <span>·</span>
-          <span>最近提交 ${esc(ageLabel(r.last_commit_date))}</span>
-          <span>·</span>
-          <a href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">打开 ↗</a>
-        </div>
-      </article>
-    `).join("");
-  }
-
-  function renderBoard(repos) {
-    $("priorityBoard").innerHTML = BOARD_ORDER.map(band => {
-      const items = repos.filter(r => r.priority_band === band).sort(scoreSort);
-      return `
-        <section class="board-column">
-          <div class="board-head">
-            <span class="board-title">${esc(BAND_LABELS[band])}</span>
-            <span class="board-count">${items.length}</span>
-          </div>
-          <div class="board-list">
-            ${items.map(r => `
-              <a class="board-card" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
-                <div class="board-card-top">
-                  <span class="board-card-name">${esc(r.name)}</span>
-                  <span class="board-card-score">${r.priority_score}</span>
-                </div>
-                <p>${esc(r.reason || "暂无备注")}</p>
-              </a>
-            `).join("") || '<p class="recent-sub">暂无项目</p>'}
-          </div>
-        </section>
-      `;
+  function renderWorkstreamNav(repos){
+    $("workstreamNav").innerHTML=Object.entries(WORKSTREAMS).map(([name,meta])=>{
+      const count=repos.filter(r=>workstreamOf(r.name)===name).length;
+      return `<button class="workstream-button" type="button" data-workstream="${esc(name)}">
+        <i class="workstream-dot" style="--dot:${meta.color}"></i><span>${esc(name)}</span><span class="workstream-count">${count}</span>
+      </button>`;
     }).join("");
-  }
-
-  function getFilteredRepos() {
-    const repos = data.repositories || [];
-    const q = $("searchInput").value.trim().toLowerCase();
-    const status = $("statusFilter").value;
-    const priority = $("priorityFilter").value;
-    const sort = $("sortFilter").value;
-
-    const filtered = repos.filter(r => {
-      const haystack = (r.name + " " + (r.reason || "")).toLowerCase();
-      if (q && !haystack.includes(q)) return false;
-      if (status !== "all" && r.work_status !== status) return false;
-      if (priority !== "all" && r.priority_band !== priority) return false;
-      return true;
-    });
-
-    if (sort === "recent") return filtered.sort(recentSort);
-    if (sort === "name") return filtered.sort((a,b) => a.name.localeCompare(b.name));
-    return filtered.sort(scoreSort);
-  }
-
-  function renderRepoCards(repos) {
-    $("repoCards").innerHTML = repos.map(r => `
-      <article class="repo-card">
-        <div class="repo-card-top">
-          <div>
-            <div class="repo-score">${r.priority_score}</div>
-            <div class="badges">
-              <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
-              <span class="badge ${r.work_status === "STOP" ? "stop" : "public"}">${esc(r.work_status)}</span>
-              ${auditChip(r)}
-          ${qualityChip(r)}
-            </div>
-          </div>
-          <span class="badge public">public</span>
-        </div>
-        <div class="repo-name">${esc(r.name)}</div>
-        <p class="repo-reason">${esc(r.reason || "暂无备注")}</p>
-        <div class="repo-bottom">
-          <span class="repo-date">Last commit · ${esc(ageLabel(r.last_commit_date))}</span>
-          <div class="quick-links">
-            <a class="quick-link" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">Code ↗</a>
-            <a class="quick-link" href="${repoUrl(r.name, "/issues")}" target="_blank" rel="noreferrer">Issues</a>
-            <a class="quick-link" href="${repoUrl(r.name, "/actions")}" target="_blank" rel="noreferrer">Actions</a>
-            ${auditQuickLink(r)}
-          </div>
-        </div>
-      </article>
-    `).join("");
-  }
-
-  function renderRepoTable(repos) {
-    $("repoRows").innerHTML = repos.map(r => `
-      <tr>
-        <td class="table-score">${r.priority_score}</td>
-        <td>
-          <a class="table-repo" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a>
-          <div class="table-audit">${auditChip(r)} ${qualityChip(r)}</div>
-        </td>
-        <td><span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span></td>
-        <td><span class="${r.work_status === "STOP" ? "status-stop" : "status-continue"}">${esc(r.work_status)}</span></td>
-        <td class="table-note">${esc(r.reason || "—")}</td>
-        <td>${esc(r.last_commit_date || "—")}<div class="recent-sub">${esc(ageLabel(r.last_commit_date))}</div></td>
-        <td><a class="quick-link" href="${repoUrl(r.name, "/actions")}" target="_blank" rel="noreferrer">Actions ↗</a></td>
-      </tr>
-    `).join("");
-  }
-
-  function applyView() {
-    const cards = currentView === "cards";
-    $("repoCards").classList.toggle("hidden", !cards);
-    $("tableWrap").classList.toggle("hidden", cards);
-    $("cardViewButton").classList.toggle("active", cards);
-    $("tableViewButton").classList.toggle("active", !cards);
-  }
-
-  function renderRepositories() {
-    const repos = getFilteredRepos();
-    renderRepoCards(repos);
-    renderRepoTable(repos);
-    $("resultCount").textContent = "显示 " + repos.length + " / " + (data.repositories || []).length + " 个公开项目";
-    applyView();
-  }
-
-  function openCommandPalette() {
-    $("commandPalette").classList.remove("hidden");
-    $("commandInput").value = "";
-    renderCommandResults("");
-    requestAnimationFrame(() => $("commandInput").focus());
-  }
-
-  function closeCommandPalette() {
-    $("commandPalette").classList.add("hidden");
-  }
-
-  function renderCommandResults(query) {
-    const q = query.trim().toLowerCase();
-    const repos = (data?.repositories || [])
-      .filter(r => !q || (r.name + " " + (r.reason || "")).toLowerCase().includes(q))
-      .sort(scoreSort)
-      .slice(0, 12);
-
-    $("commandResults").innerHTML = repos.map(r => `
-      <a class="command-result" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
-        <span class="command-result-score">${r.priority_score}</span>
-        <span>
-          <strong>${esc(r.name)}</strong>
-          <span>${esc(r.reason || "暂无备注")}</span>
-        </span>
-        <span class="command-result-band">${esc(BAND_LABELS[r.priority_band])}</span>
-      </a>
-    `).join("") || '<div class="recent-sub" style="padding:18px">没有匹配的项目。</div>';
-  }
-
-  function initNavigation() {
-    const links = [...document.querySelectorAll(".nav-item")];
-    const sections = links
-      .map(link => document.getElementById(link.dataset.section))
-      .filter(Boolean);
-
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(entries => {
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible) return;
-        links.forEach(l => l.classList.toggle("active", l.dataset.section === visible.target.id));
-      }, { rootMargin: "-18% 0px -68% 0px", threshold: [0,.1,.3] });
-      sections.forEach(s => observer.observe(s));
-    }
-
-    links.forEach(link => link.addEventListener("click", () => {
-      $("sidebar").classList.remove("open");
+    $("workstreamFilter").innerHTML='<option value="all">All workstreams</option>'+Object.keys(WORKSTREAMS).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");
+    document.querySelectorAll(".workstream-button").forEach(btn=>btn.addEventListener("click",()=>{
+      selectedWorkstream=btn.dataset.workstream;
+      $("workstreamFilter").value=selectedWorkstream;
+      switchView("all");
+      renderPortfolio();
     }));
   }
 
-  function wireEvents() {
-    ["searchInput","statusFilter","priorityFilter","sortFilter"].forEach(id => {
-      $(id).addEventListener(id === "searchInput" ? "input" : "change", renderRepositories);
-    });
-
-    $("clearFilters").addEventListener("click", () => {
-      $("searchInput").value = "";
-      $("statusFilter").value = "all";
-      $("priorityFilter").value = "all";
-      $("sortFilter").value = "priority";
-      renderRepositories();
-    });
-
-    $("cardViewButton").addEventListener("click", () => {
-      currentView = "cards";
-      localStorage.setItem("repo-auditor-view", currentView);
-      applyView();
-    });
-    $("tableViewButton").addEventListener("click", () => {
-      currentView = "table";
-      localStorage.setItem("repo-auditor-view", currentView);
-      applyView();
-    });
-
-    $("themeToggle").addEventListener("click", () => {
-      const current = document.documentElement.dataset.theme || "dark";
-      setTheme(current === "dark" ? "light" : "dark");
-    });
-
-    $("sidebarToggle").addEventListener("click", () => $("sidebar").classList.toggle("open"));
-
-    $("commandButton").addEventListener("click", openCommandPalette);
-    $("commandInput").addEventListener("input", e => renderCommandResults(e.target.value));
-    $("commandPalette").addEventListener("click", e => {
-      if (e.target === $("commandPalette")) closeCommandPalette();
-    });
-
-    document.addEventListener("keydown", e => {
-      const tag = document.activeElement?.tagName?.toLowerCase();
-      const typing = tag === "input" || tag === "textarea" || tag === "select";
-      if (e.key === "/" && !typing && $("commandPalette").classList.contains("hidden")) {
-        e.preventDefault();
-        openCommandPalette();
-      }
-      if (e.key === "Escape") closeCommandPalette();
-    });
+  function viewBaseRows(){
+    const repos=data.repositories||[];
+    if(currentView==="later")return repos.filter(r=>["P2-PLANNED","P3-LATER","P4-LOW"].includes(r.priority_band));
+    if(currentView==="stopped")return repos.filter(r=>r.work_status==="STOP");
+    return repos;
   }
 
-  async function load() {
-    initTheme();
-    try {
-      const response = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      data = await response.json();
+  function portfolioRows(){
+    const q=$("searchInput").value.trim().toLowerCase();
+    const priority=$("priorityFilter").value;
+    const sort=$("sortFilter").value;
+    const ws=$("workstreamFilter").value;
+    let rows=viewBaseRows().filter(r=>{
+      const hay=(r.name+" "+(r.reason||"")+" "+workstreamOf(r.name)).toLowerCase();
+      return (!q||hay.includes(q))
+        &&(statusFilter==="all"||r.work_status===statusFilter)
+        &&(priority==="all"||r.priority_band===priority)
+        &&(ws==="all"||workstreamOf(r.name)===ws);
+    });
+    if(sort==="recent")rows.sort(byRecent);
+    else if(sort==="name")rows.sort((a,b)=>a.name.localeCompare(b.name));
+    else rows.sort(byScore);
+    return rows;
+  }
 
-      const repos = data.repositories || [];
-      assertPublicOnly(repos);
-      await enrichAuditStatuses(repos);
+  function renderPortfolio(){
+    if(!data)return;
+    const rows=portfolioRows();
+    $("portfolioList").innerHTML=rows.map(repoRow).join("");
+    $("resultCount").textContent=rows.length+" / "+viewBaseRows().length+" repositories";
+  }
 
-      renderHero(repos);
-      renderMetrics(repos);
-      renderDistribution(repos);
-      renderRecent(repos);
-      renderFocus(repos);
-      renderAttention(repos);
-      renderBoard(repos);
-      renderRepositories();
-      renderCommandResults("");
+  function switchView(view){
+    currentView=view;
+    document.querySelectorAll(".nav-item").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.view===view));
+    $("currentViewLabel").textContent=VIEWS[view].title;
+    $("viewTitle").textContent=VIEWS[view].title;
+    $("viewDescription").textContent=VIEWS[view].desc;
+    const focus=view==="focus";
+    $("focusLayout").classList.toggle("hidden",!focus);
+    $("portfolioPanel").classList.toggle("hidden",focus);
+    if(!focus)renderPortfolio();
+  }
 
-      $("loading").classList.add("hidden");
-      $("app").classList.remove("hidden");
+  function wire(){
+    document.querySelectorAll(".nav-item").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.view)));
+    document.querySelectorAll(".segmented button").forEach(btn=>btn.addEventListener("click",()=>{
+      statusFilter=btn.dataset.status;
+      document.querySelectorAll(".segmented button").forEach(b=>b.classList.toggle("is-active",b===btn));
+      renderPortfolio();
+    }));
+    ["searchInput","workstreamFilter","priorityFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",renderPortfolio));
+    $("clearFilters").addEventListener("click",()=>{
+      $("searchInput").value="";$("workstreamFilter").value="all";$("priorityFilter").value="all";$("sortFilter").value="priority";
+      statusFilter="all";
+      document.querySelectorAll(".segmented button").forEach((b,i)=>b.classList.toggle("is-active",i===0));
+      renderPortfolio();
+    });
+    $("themeToggle").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+  }
 
-      wireEvents();
-      initNavigation();
-    } catch (error) {
-      $("loading").classList.add("hidden");
-      $("error").classList.remove("hidden");
-      $("error").innerHTML = "工作台暂时无法读取公开总控数据。<br><small>" + esc(error.message) + "</small>";
+  async function load(){
+    initTheme();wire();
+    try{
+      const res=await fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"});
+      if(!res.ok)throw new Error("HTTP "+res.status);
+      data=await res.json();
+      if((data.repositories||[]).some(r=>r.visibility!=="public"))throw new Error("Public registry contains non-public repositories");
+      renderSummary(data.repositories);renderFocus(data.repositories);renderSignals(data.repositories);renderDistribution(data.repositories);renderWorkstreamNav(data.repositories);
+      $("loading").remove();
+    }catch(err){
+      $("loading").textContent="Could not load portfolio: "+err.message;
+      $("loading").style.color="var(--red)";
     }
   }
 

@@ -18,6 +18,9 @@ on:
       - "scripts/remediation_queue.py"
       - "tests/**"
       - "docs/**"
+      - "index.html"
+      - "app.js"
+      - "styles.css"
       - ".github/workflows/portfolio-audit.yml"
   pull_request:
     paths:
@@ -34,6 +37,9 @@ on:
       - "scripts/remediation_queue.py"
       - "tests/**"
       - "docs/**"
+      - "index.html"
+      - "app.js"
+      - "styles.css"
       - ".github/workflows/portfolio-audit.yml"
   schedule:
     - cron: "17 1 1 * *"
@@ -65,4 +71,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/audit_freshness.py
       - name: Validate Pages JavaScript syntax
-        run: node --check docs/app.js
+        run: |
+          node --check docs/app.js
+          node --check app.js

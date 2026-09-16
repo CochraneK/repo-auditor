@@ -2,282 +2,174 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#0a0d15">
-  <meta name="description" content="CochraneK Public GitHub Repository Control Center">
-  <title>Repository Control Center · CochraneK</title>
+  <meta name="theme-color" content="#0d0f12">
+  <meta name="description" content="CochraneK public repository workspace">
+  <title>Repository Workspace · CochraneK</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div class="ambient ambient-a"></div>
-  <div class="ambient ambient-b"></div>
+  <a class="skip-link" href="#content">跳到主要内容</a>
 
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark">CK</div>
-        <div>
-          <strong>Repo Control</strong>
-          <span>Public Snapshot</span>
+  <div class="app">
+    <aside class="sidebar" aria-label="工作台导航">
+      <div class="identity">
+        <span class="avatar">CK</span>
+        <div class="identity-copy">
+          <strong>CochraneK</strong>
+          <span>Repository workspace</span>
         </div>
       </div>
 
-      <nav class="nav">
-        <a href="#overview" class="nav-item active" data-section="overview"><span>⌂</span>总览</a>
-        <a href="#spotlight" class="nav-item" data-section="spotlight"><span>✦</span>主打项目</a>
-        <a href="#focus" class="nav-item" data-section="focus"><span>◎</span>当前主线</a>
-        <a href="#board" class="nav-item" data-section="board"><span>▦</span>优先级地图</a>
-        <a href="#repositories" class="nav-item" data-section="repositories"><span>◫</span>全部仓库</a>
+      <nav class="nav" aria-label="仓库视图">
+        <button class="nav-item is-active" type="button" data-view="focus">
+          <span class="nav-icon">⌁</span><span>Focus</span><span id="focusNavCount" class="nav-count">0</span>
+        </button>
+        <button class="nav-item" type="button" data-view="all">
+          <span class="nav-icon">□</span><span>All repositories</span><span id="allNavCount" class="nav-count">0</span>
+        </button>
+        <button class="nav-item" type="button" data-view="later">
+          <span class="nav-icon">○</span><span>Later</span><span id="laterNavCount" class="nav-count">0</span>
+        </button>
+        <button class="nav-item" type="button" data-view="stopped">
+          <span class="nav-icon">—</span><span>Don't touch</span><span id="stopNavCount" class="nav-count">0</span>
+        </button>
       </nav>
+
+      <div class="sidebar-section">
+        <p class="sidebar-label">Workstreams</p>
+        <div id="workstreamNav" class="workstream-nav"></div>
+      </div>
 
       <div class="sidebar-spacer"></div>
 
-      <div class="privacy-note">
-        <div class="privacy-icon">●</div>
-        <div>
-          <strong>Public only</strong>
-          <p>Private 仓库不会加载到这个公开页面。</p>
-        </div>
-      </div>
-
-      <div class="sidebar-links">
-        <a href="https://github.com/CochraneK" target="_blank" rel="noreferrer">GitHub Profile ↗</a>
-        <a href="https://github.com/CochraneK/repo-auditor" target="_blank" rel="noreferrer">Control Repo ↗</a>
+      <div class="sidebar-meta">
+        <span><i class="status-dot"></i> Public only</span>
+        <a href="https://github.com/CochraneK/repo-auditor" target="_blank" rel="noreferrer">Open control repo ↗</a>
       </div>
     </aside>
 
-    <div class="main-shell">
+    <section class="workspace">
       <header class="topbar">
-        <button id="sidebarToggle" class="icon-button mobile-only" aria-label="打开导航">☰</button>
-        <div class="topbar-title">
-          <span class="status-dot"></span>
-          <span>Repository Control Center · Public Snapshot</span>
+        <div class="breadcrumbs">
+          <span>Repositories</span><span>/</span><strong id="currentViewLabel">Focus</strong>
         </div>
-        <div class="topbar-actions">
-          <button id="commandButton" class="command-button" title="搜索项目">
-            <span>⌕</span><span>搜索仓库</span><kbd>/</kbd>
-          </button>
-          <button id="themeToggle" class="icon-button" type="button" aria-label="切换主题">◐</button>
 
+        <div class="topbar-actions">
+          <label class="quick-search">
+            <span aria-hidden="true">⌕</span>
+            <span class="sr-only">搜索仓库</span>
+            <input id="searchInput" type="search" placeholder="Search repositories…" autocomplete="off">
+          </label>
+          <button id="themeToggle" class="icon-btn" type="button" aria-label="切换主题">◐</button>
+          <a class="icon-btn" href="https://github.com/CochraneK/repo-auditor/edit/main/portfolio/registry.json" target="_blank" rel="noreferrer" aria-label="编辑总控数据">✎</a>
         </div>
       </header>
 
-      <main>
-        <section id="loading" class="loading-card">
-          <span class="spinner"></span>
-          <span>正在读取公开项目总控…</span>
+      <main id="content">
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">PUBLIC WORKSPACE</p>
+            <h1 id="viewTitle">Focus</h1>
+            <p id="viewDescription">现在最值得投入时间的仓库。</p>
+          </div>
+          <div class="snapshot">
+            <span class="snapshot-dot"></span>
+            <span id="snapshotDate">Snapshot</span>
+          </div>
+        </div>
+
+        <section id="summary" class="summary" aria-label="仓库统计">
+          <div><span>Public</span><strong id="repoCount">0</strong></div>
+          <div><span>Now</span><strong id="nowCount">0</strong></div>
+          <div><span>Continue</span><strong id="continueCount">0</strong></div>
+          <div><span>Don't touch</span><strong id="stopCount">0</strong></div>
+          <div><span>Average priority</span><strong id="avgScore">0</strong></div>
         </section>
-        <section id="error" class="error-card hidden"></section>
 
-        <div id="app" class="hidden">
-          <section id="overview" class="page-section hero-section">
-            <div class="hero-v2">
-              <div class="hero-left">
-                <div class="hero-kicker">
-                  <span class="live-pill">LIVE</span>
-                  <span id="snapshotText">Portfolio snapshot</span>
-                </div>
-
-                <h1>不是仓库清单。<br><span>是你的公开项目驾驶舱。</span></h1>
-                <p class="hero-desc">33 个 Public repo 按「现在做什么、之后做什么、先别碰什么」重新组织。高优先级直接浮到前台，成熟项目自动沉到底层。</p>
-
-                <div class="hero-actions">
-                  <a href="#spotlight" class="button primary">看主打项目</a>
-                  <a href="#repositories" class="button secondary">浏览全部仓库</a>
-                </div>
-
-                <div class="hero-stats-inline">
-                  <div><strong id="heroRepoCount">0</strong><span>Public repos</span></div>
-                  <div><strong id="heroNowCount">0</strong><span>P0 now</span></div>
-                  <div><strong id="heroActiveCount">0</strong><span>Continue</span></div>
-                </div>
+        <div id="focusLayout" class="focus-layout">
+          <section class="panel main-panel">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">CURRENT QUEUE</p>
+                <h2>What deserves attention now</h2>
               </div>
-
-              <div class="hero-right">
-                <div class="orbit-card">
-                  <div class="orbit-ring ring-1"></div>
-                  <div class="orbit-ring ring-2"></div>
-                  <div class="orbit-ring ring-3"></div>
-                  <div class="orbit-core">
-                    <span class="orbit-label">CURRENT #1</span>
-                    <strong id="orbitScore">0</strong>
-                    <span id="orbitName">—</span>
-                  </div>
-                  <span class="orbit-node node-a"></span>
-                  <span class="orbit-node node-b"></span>
-                  <span class="orbit-node node-c"></span>
-                </div>
-              </div>
+              <span class="muted" id="focusCountText"></span>
             </div>
 
-            <div id="categoryRibbon" class="category-ribbon"></div>
-
-            <div class="metrics-grid">
-              <article class="metric-card">
-                <span class="metric-label">PUBLIC REPOS</span>
-                <strong id="totalCount">0</strong>
-                <small>公开仓库总数</small>
-              </article>
-              <article class="metric-card metric-hot">
-                <span class="metric-label">P0 · NOW</span>
-                <strong id="nowCount">0</strong>
-                <small>这几天 / 下周明确要做</small>
-              </article>
-              <article class="metric-card">
-                <span class="metric-label">CONTINUE</span>
-                <strong id="continueCount">0</strong>
-                <small>未来仍会继续投入</small>
-              </article>
-              <article class="metric-card">
-                <span class="metric-label">DON'T TOUCH</span>
-                <strong id="stopCount">0</strong>
-                <small>当前无需投入</small>
-              </article>
-              <article class="metric-card">
-                <span class="metric-label">AVG PRIORITY</span>
-                <strong id="avgScore">0</strong>
-                <small>继续项目平均分</small>
-              </article>
+            <div class="list-head" aria-hidden="true">
+              <span>Priority</span><span>Repository</span><span>Workstream</span><span>Last commit</span><span></span>
             </div>
+            <div id="focusList" class="repo-list"></div>
           </section>
 
-          <section id="spotlight" class="page-section">
-            <div class="section-header">
-              <div>
-                <span class="section-kicker">SPOTLIGHT</span>
-                <h2>当前主打项目</h2>
-                <p>把最重要的三个项目放大看，不让它们淹没在仓库列表里。</p>
-              </div>
-            </div>
-            <div id="spotlightGrid" class="spotlight-grid"></div>
-          </section>
-
-          <section id="focus" class="page-section">
-            <div class="section-header">
-              <div>
-                <span class="section-kicker">FOCUS QUEUE</span>
-                <h2>当前主线</h2>
-                <p>按“现在该不该花时间”排序，而不是按 star、代码量或成熟度排序。</p>
-              </div>
-              <span class="section-note">Top 8 by priority</span>
-            </div>
-            <div id="focusGrid" class="focus-grid"></div>
-
-            <div class="attention-wrap">
-              <div class="section-header compact">
+          <aside class="side-column">
+            <section class="panel compact-panel">
+              <div class="panel-head">
                 <div>
-                  <span class="section-kicker">ATTENTION</span>
-                  <h3>需要关注</h3>
+                  <p class="panel-kicker">SIGNALS</p>
+                  <h2>Needs attention</h2>
                 </div>
               </div>
-              <div id="attentionGrid" class="attention-grid"></div>
-            </div>
-          </section>
+              <div id="signalsList" class="signals-list"></div>
+            </section>
 
-          <section id="board" class="page-section">
-            <div class="section-header">
-              <div>
-                <span class="section-kicker">PRIORITY MAP</span>
-                <h2>优先级地图</h2>
-                <p>从 NOW 到 DON'T TOUCH，把所有公开仓库放到一条视觉轨道上。</p>
+            <section class="panel compact-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="panel-kicker">DISTRIBUTION</p>
+                  <h2>Priority bands</h2>
+                </div>
               </div>
-            </div>
-            <div id="priorityMap" class="priority-map"></div>
-          </section>
+              <div id="distribution" class="distribution"></div>
+            </section>
+          </aside>
+        </div>
 
-          <section id="repositories" class="page-section">
-            <div class="section-header repository-header">
-              <div>
-                <span class="section-kicker">ALL PUBLIC REPOSITORIES</span>
-                <h2>全部公开仓库</h2>
-                <p>卡片视图默认优先；表格只在需要快速扫描时使用。</p>
-              </div>
-              <div class="view-switcher" aria-label="切换视图">
-                <button id="cardViewButton" class="view-button active" type="button">▦ 卡片</button>
-                <button id="tableViewButton" class="view-button" type="button">☷ 表格</button>
-              </div>
+        <section id="portfolioPanel" class="panel portfolio-panel hidden">
+          <div class="portfolio-toolbar">
+            <div class="segmented" role="group" aria-label="状态筛选">
+              <button type="button" class="is-active" data-status="all">All</button>
+              <button type="button" data-status="CONTINUE">Continue</button>
+              <button type="button" data-status="STOP">Don't touch</button>
             </div>
 
-            <div class="filter-bar">
-              <label class="search-box">
-                <span>⌕</span>
-                <input id="searchInput" type="search" placeholder="搜索仓库名、类型或备注…" autocomplete="off">
-                <kbd>/</kbd>
-              </label>
-              <select id="categoryFilter" aria-label="类型筛选">
-                <option value="all">全部类型</option>
+            <div class="selects">
+              <select id="workstreamFilter" aria-label="按工作流筛选">
+                <option value="all">All workstreams</option>
               </select>
-              <select id="statusFilter" aria-label="状态筛选">
-                <option value="all">全部状态</option>
-                <option value="CONTINUE">CONTINUE</option>
-                <option value="STOP">DON'T TOUCH</option>
-              </select>
-              <select id="priorityFilter" aria-label="优先级筛选">
-                <option value="all">全部优先级</option>
-                <option value="P0-NOW">P0 · NOW</option>
-                <option value="P1-NEXT">P1 · NEXT</option>
-                <option value="P2-PLANNED">P2 · PLANNED</option>
-                <option value="P3-LATER">P3 · LATER</option>
-                <option value="P4-LOW">P4 · LOW</option>
-                <option value="STOP">DON'T TOUCH</option>
+              <select id="priorityFilter" aria-label="按优先级筛选">
+                <option value="all">All priorities</option>
+                <option value="P0-NOW">P0 · Now</option>
+                <option value="P1-NEXT">P1 · Next</option>
+                <option value="P2-PLANNED">P2 · Planned</option>
+                <option value="P3-LATER">P3 · Later</option>
+                <option value="P4-LOW">P4 · Low</option>
+                <option value="STOP">Don't touch</option>
               </select>
               <select id="sortFilter" aria-label="排序方式">
-                <option value="priority">按优先级</option>
-                <option value="recent">按最近提交</option>
-                <option value="name">按名称</option>
+                <option value="priority">Priority</option>
+                <option value="recent">Recent commit</option>
+                <option value="name">Name</option>
               </select>
             </div>
+          </div>
 
-            <div class="repo-meta-row">
-              <span id="resultCount">显示 0 个项目</span>
-              <button id="clearFilters" class="text-button" type="button">清除筛选</button>
-            </div>
-
-            <div id="repoCards" class="repo-grid"></div>
-
-            <div id="tableWrap" class="table-wrap hidden">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Score</th>
-                    <th>Repository</th>
-                    <th>Type</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Current note</th>
-                    <th>Last commit</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="repoRows"></tbody>
-              </table>
-            </div>
-          </section>
-        </div>
+          <div class="list-head portfolio-head" aria-hidden="true">
+            <span>Priority</span><span>Repository</span><span>Workstream</span><span>Last commit</span><span></span>
+          </div>
+          <div id="portfolioList" class="repo-list"></div>
+          <div class="portfolio-footer">
+            <span id="resultCount" role="status" aria-live="polite"></span>
+            <button id="clearFilters" type="button">Reset filters</button>
+          </div>
+        </section>
       </main>
-
-      <footer>
-        <span>repo-auditor · public-only workspace</span>
-        <span>•</span>
-        <span>Data: portfolio/registry.json</span>
-        <span>•</span>
-        <span>STOP is advisory only</span>
-      </footer>
-    </div>
+    </section>
   </div>
 
-  <div id="commandPalette" class="command-overlay hidden" role="dialog" aria-modal="true">
-    <div class="command-panel">
-      <div class="command-search">
-        <span>⌕</span>
-        <input id="commandInput" type="search" placeholder="输入仓库名、类型或备注…" autocomplete="off">
-        <kbd>Esc</kbd>
-      </div>
-      <div id="commandResults" class="command-results"></div>
-    </div>
-  </div>
-
+  <div id="loading" class="loading" role="status">Loading public repositories…</div>
   <script src="./app.js" defer></script>
 </body>
 </html>
