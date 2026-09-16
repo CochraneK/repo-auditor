@@ -1,6 +1,9 @@
 (() => {
   const DATA_URL = "https://raw.githubusercontent.com/CochraneK/repo-auditor/main/portfolio/registry.json";
   const REPO_BASE = "https://github.com/CochraneK/";
+  const AUDIT_RAW_BASE = "https://raw.githubusercontent.com/CochraneK/repo-auditor/main/";
+  const AUDIT_REPORT_BASE = "https://github.com/CochraneK/repo-auditor/blob/main/";
+  const GITHUB_API_BASE = "https://api.github.com/repos/CochraneK/";
   const BAND_LABELS = {
     "P0-NOW": "P0 · NOW",
     "P1-NEXT": "P1 · NEXT",
@@ -78,6 +81,72 @@
     return "";
   }
 
+  function auditReportUrl(repo) {
+    return repo.latest_audit ? AUDIT_REPORT_BASE + repo.latest_audit : "";
+  }
+
+  function auditChip(repo) {
+    if (!repo.latest_audit) return "";
+    const audit = repo._audit;
+    if (!audit) return '<span class="badge audit unknown">Audit · loading</span>';
+    const label = audit.state === "current" ? "Current" : audit.state === "stale" ? "Stale" : "Unknown";
+    const title = audit.error
+      ? audit.error
+      : `Audit ${audit.auditDate || "—"} · audited ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)}`;
+    return `<span class="badge audit ${esc(audit.state)}" title="${esc(title)}">Audit · ${label} · ${audit.openP0} P0 · ${audit.openP1} P1</span>`;
+  }
+
+  function auditQuickLink(repo) {
+    return repo.latest_audit
+      ? `<a class="quick-link" href="${auditReportUrl(repo)}" target="_blank" rel="noreferrer">Audit ↗</a>`
+      : "";
+  }
+
+  async function loadAuditStatus(repo) {
+    if (!repo.latest_audit) return;
+    try {
+      const sidecarPath = repo.latest_audit.replace(/\.md$/i, ".json");
+      const [auditResponse, headResponse] = await Promise.all([
+        fetch(AUDIT_RAW_BASE + sidecarPath + "?t=" + Date.now(), { cache: "no-store" }),
+        fetch(GITHUB_API_BASE + encodeURIComponent(repo.name) + "/commits?per_page=1", {
+          cache: "no-store",
+          headers: { Accept: "application/vnd.github+json" }
+        })
+      ]);
+      if (!auditResponse.ok) throw new Error("audit sidecar HTTP " + auditResponse.status);
+      if (!headResponse.ok) throw new Error("GitHub HEAD HTTP " + headResponse.status);
+
+      const sidecar = await auditResponse.json();
+      const commits = await headResponse.json();
+      const headCommit = Array.isArray(commits) && commits[0]?.sha ? commits[0].sha : "";
+      if (!headCommit) throw new Error("Could not resolve repository HEAD");
+
+      const open = (sidecar.findings || []).filter(f => f.status === "open");
+      repo._audit = {
+        state: sidecar.audited_commit === headCommit ? "current" : "stale",
+        auditDate: sidecar.audit_date || "",
+        auditedCommit: sidecar.audited_commit || "",
+        headCommit,
+        openP0: open.filter(f => f.severity === "P0").length,
+        openP1: open.filter(f => f.severity === "P1").length
+      };
+    } catch (error) {
+      repo._audit = {
+        state: "unknown",
+        auditDate: "",
+        auditedCommit: "",
+        headCommit: "",
+        openP0: 0,
+        openP1: 0,
+        error: String(error?.message || error)
+      };
+    }
+  }
+
+  async function enrichAuditStatuses(repos) {
+    await Promise.all(repos.filter(r => r.latest_audit).map(loadAuditStatus));
+  }
+
   function renderHero(repos) {
     const top = repos.filter(r => r.work_status === "CONTINUE").sort(scoreSort)[0];
     $("snapshotText").textContent = "Snapshot · " + (data.snapshot_date || "—");
@@ -153,6 +222,7 @@
         <div class="badges">
           <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
           <span class="badge">commit · ${esc(ageLabel(r.last_commit_date))}</span>
+          ${auditChip(r)}
         </div>
       </a>
     `).join("");
@@ -245,6 +315,7 @@
             <div class="badges">
               <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
               <span class="badge ${r.work_status === "STOP" ? "stop" : "public"}">${esc(r.work_status)}</span>
+              ${auditChip(r)}
             </div>
           </div>
           <span class="badge public">public</span>
@@ -257,6 +328,7 @@
             <a class="quick-link" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">Code ↗</a>
             <a class="quick-link" href="${repoUrl(r.name, "/issues")}" target="_blank" rel="noreferrer">Issues</a>
             <a class="quick-link" href="${repoUrl(r.name, "/actions")}" target="_blank" rel="noreferrer">Actions</a>
+            ${auditQuickLink(r)}
           </div>
         </div>
       </article>
@@ -267,7 +339,10 @@
     $("repoRows").innerHTML = repos.map(r => `
       <tr>
         <td class="table-score">${r.priority_score}</td>
-        <td><a class="table-repo" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a></td>
+        <td>
+          <a class="table-repo" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a>
+          <div class="table-audit">${auditChip(r)}</div>
+        </td>
         <td><span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span></td>
         <td><span class="${r.work_status === "STOP" ? "status-stop" : "status-continue"}">${esc(r.work_status)}</span></td>
         <td class="table-note">${esc(r.reason || "—")}</td>
@@ -402,6 +477,7 @@
 
       const repos = data.repositories || [];
       assertPublicOnly(repos);
+      await enrichAuditStatuses(repos);
 
       renderHero(repos);
       renderMetrics(repos);
