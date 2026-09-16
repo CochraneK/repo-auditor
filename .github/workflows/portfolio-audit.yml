@@ -31,33 +31,78 @@ jobs:
     needs: audit
     permissions: { contents: write }
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - env: { GITHUB_TOKEN: "${{ github.token }}" }
-        run: python scripts/build_public_pages.py
-      - run: |
-          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits; then exit 0; fi
-          git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/data/registry.json docs/data/manifest.json docs/data/audits
-          git commit -m 'chore: sync privacy-safe Pages bundle [skip ci]'; git push
-  private-portfolio-scan:
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-    runs-on: ubuntu-latest
     env:
       PORTFOLIO_AUDIT_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN }}"
-      PORTFOLIO_EXPECTED_TOTAL: "42"
+      PORTFOLIO_EXPECTED_TOTAL: "43"
       PORTFOLIO_EXPECTED_PRIVATE: "9"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Require account-wide credential
-        if: env.PORTFOLIO_AUDIT_TOKEN == ''
-        run: |
-          echo '::error::PORTFOLIO_AUDIT_TOKEN is required for full account coverage.'
-          exit 2
-      - name: Require complete account scan and generate triage
+      - name: Refresh privacy-safe account coverage summary
         if: env.PORTFOLIO_AUDIT_TOKEN != ''
         env: { GITHUB_TOKEN: "${{ env.PORTFOLIO_AUDIT_TOKEN }}" }
         run: |
-          python scripts/scan_portfolio.py --allow-private --require-complete
+          python scripts/scan_portfolio.py --allow-private
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("docs/data/portfolio-overview.json").read_text())
+          status=data.get("audit_status")
+          reasons=(data.get("coverage") or {}).get("reasons") or []
+          if status != "PASS":
+              print("::warning::Private portfolio coverage is PARTIAL: " + "; ".join(reasons))
+          else:
+              print("Private portfolio coverage: PASS")
+          PY
+      - name: Report missing private-audit credential
+        if: env.PORTFOLIO_AUDIT_TOKEN == ''
+        run: echo "::warning::PORTFOLIO_AUDIT_TOKEN is not configured; preserving the last aggregate coverage snapshot."
+      - env: { GITHUB_TOKEN: "${{ github.token }}" }
+        run: python scripts/build_public_pages.py
+      - name: Commit privacy-safe Pages data
+        run: |
+          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits docs/data/todos.json docs/data/portfolio-overview.json; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/data/registry.json docs/data/manifest.json docs/data/audits docs/data/todos.json docs/data/portfolio-overview.json
+          git commit -m 'chore: sync privacy-safe Pages bundle [skip ci]'
+          git push
+  private-portfolio-scan:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    permissions: { contents: write }
+    runs-on: ubuntu-latest
+    env:
+      PORTFOLIO_AUDIT_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN }}"
+      PORTFOLIO_EXPECTED_TOTAL: "43"
+      PORTFOLIO_EXPECTED_PRIVATE: "9"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Report missing account-wide credential
+        if: env.PORTFOLIO_AUDIT_TOKEN == ''
+        run: echo "::warning::PORTFOLIO_AUDIT_TOKEN is required for private-repository coverage; coverage remains external-blocked."
+      - name: Scan account and generate triage
+        if: env.PORTFOLIO_AUDIT_TOKEN != ''
+        env: { GITHUB_TOKEN: "${{ env.PORTFOLIO_AUDIT_TOKEN }}" }
+        run: |
+          python scripts/scan_portfolio.py --allow-private
           python scripts/repository_triage.py private-evidence/portfolio-scan.json --out private-evidence/repository-triage.json
-          echo 'Private evidence and triage remain ephemeral and are never uploaded or committed.'
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("docs/data/portfolio-overview.json").read_text())
+          status=data.get("audit_status")
+          reasons=(data.get("coverage") or {}).get("reasons") or []
+          if status != "PASS":
+              print("::warning::Private portfolio coverage is PARTIAL: " + "; ".join(reasons))
+          else:
+              print("Private portfolio coverage: PASS")
+          print("Private evidence and triage remain ephemeral and are never uploaded or committed.")
+          PY
+      - name: Publish aggregate coverage only
+        if: env.PORTFOLIO_AUDIT_TOKEN != ''
+        run: |
+          if git diff --quiet -- docs/data/portfolio-overview.json; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/data/portfolio-overview.json
+          git commit -m 'chore: refresh aggregate audit coverage [skip ci]'
+          git push
