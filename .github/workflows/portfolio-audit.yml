@@ -25,6 +25,7 @@ jobs:
         run: python scripts/audit_freshness.py
       - run: node --check docs/app.js
       - run: python scripts/scan_portfolio.py --help
+      - run: python scripts/repository_triage.py --help
   sync-public-pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: audit
@@ -55,4 +56,7 @@ jobs:
       - name: Scan all owned repositories and require complete coverage
         if: env.PORTFOLIO_AUDIT_TOKEN != ''
         env: { GITHUB_TOKEN: "${{ env.PORTFOLIO_AUDIT_TOKEN }}" }
-        run: python scripts/scan_portfolio.py --allow-private --require-complete
+        run: |
+          python scripts/scan_portfolio.py --allow-private --require-complete
+          python scripts/repository_triage.py private-evidence/portfolio-scan.json --out private-evidence/repository-triage.json
+          echo 'Private evidence and triage remain ephemeral and are never uploaded or committed.'
