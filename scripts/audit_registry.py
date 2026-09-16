@@ -5,29 +5,26 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; REGISTRY=ROOT/'portfolio'/'registry.json'
 STATUS={'CONTINUE','STOP'}; BANDS={'P0-NOW','P1-NEXT','P2-PLANNED','P3-LATER','P4-LOW','STOP'}
 REQUIRED={'name','visibility','work_status','priority_score','priority_band','reason','last_commit_date'}
-
 def expected_band(score,status):
-    if status=='STOP': return 'STOP'
+    if status=='STOP':return 'STOP'
     if score>=90:return 'P0-NOW'
     if score>=70:return 'P1-NEXT'
     if score>=50:return 'P2-PLANNED'
     if score>=20:return 'P3-LATER'
     return 'P4-LOW'
-
 def live_visibility(owner,name,token):
     headers={'Accept':'application/vnd.github+json','User-Agent':'repo-auditor'}
-    if token: headers['Authorization']=f'Bearer {token}'
+    if token:headers['Authorization']=f'Bearer {token}'
     req=urllib.request.Request(f'https://api.github.com/repos/{owner}/{name}',headers=headers)
     try:
-        with urllib.request.urlopen(req,timeout=15) as r: return 'private' if json.load(r).get('private') else 'public'
+        with urllib.request.urlopen(req,timeout=15) as r:return 'private' if json.load(r).get('private') else 'public'
     except urllib.error.HTTPError as e:
         if e.code==404:return 'non-public'
         raise
-
 def validate(data,token=None):
-    repos=data.get('repositories',[]); errors=[]; owner=data.get('owner','')
+    repos=data.get('repositories',[]);errors=[];owner=data.get('owner','')
     if data.get('scope')!='public-workbench':errors.append('registry scope must be public-workbench')
-    names=[r.get('name') for r in repos]; dupes=sorted(n for n,c in Counter(names).items() if c>1)
+    names=[r.get('name') for r in repos];dupes=sorted(n for n,c in Counter(names).items() if c>1)
     if dupes:errors.append(f'duplicate repository names: {dupes}')
     for i,repo in enumerate(repos):
         missing=REQUIRED-repo.keys()
@@ -46,9 +43,8 @@ def validate(data,token=None):
             if status=='CONTINUE' and score<=0:errors.append(f'{name}: CONTINUE must have score > 0')
             if band!=expected_band(score,status):errors.append(f'{name}: band {band} does not match score/status; expected {expected_band(score,status)}')
     return errors
-
 def main():
-    data=json.loads(REGISTRY.read_text(encoding='utf-8')); errors=validate(data,os.environ.get('GITHUB_TOKEN'))
+    data=json.loads(REGISTRY.read_text(encoding='utf-8'));errors=validate(data,os.environ.get('GITHUB_TOKEN'))
     if errors:
         for e in errors:print('ERROR:',e,file=sys.stderr)
         return 1
