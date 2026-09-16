@@ -13,11 +13,17 @@ audits/<repo>-YYYY-MM-DD.md
 audits/<repo>-YYYY-MM-DD.json
 ```
 
-The JSON sidecar records the exact audited commit, CI evidence, findings, limitations, and re-audit triggers. CI validates the sidecar with:
+The JSON sidecar records the exact audited commit, CI evidence, a publication/IP gate, findings, limitations, and re-audit triggers. CI validates the sidecar with:
 
 ```bash
 python scripts/audit_reports.py
 ```
+
+## Publication / IP gate
+
+Every new structured audit must explicitly record whether the repository is currently Public/Private and one recommendation: `public-ok`, `review-before-public`, `keep-private`, or `split-public-private`.
+
+The gate is deliberately conservative. Potential patent value, employer/client/PI-requested work, background IP, confidential input, or unclear ownership should trigger review before new material is published. Keep personal contracts, employer names, private repository names, and other sensitive facts out of this public audit layer; record only the abstract trigger.
 
 ## Evidence collection
 
