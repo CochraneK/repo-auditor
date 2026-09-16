@@ -2,7 +2,7 @@
 
 **Evidence-backed Repository Audit + Remediation Agent · 审、改、再审。**
 
-[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md)
+[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md) · [Audit Maturity](AUDIT_MATURITY.md)
 
 ## 它做什么
 
@@ -13,13 +13,9 @@ Inventory → Evidence Scan → Deterministic Triage → Structured/Semantic Aud
          → GO Remediation → Test → Re-audit → Publish safe summary
 ```
 
-这里刻意区分三种结果，避免“跑完了”被误解为“审完了”：
+它刻意区分结果层级，避免“workflow 跑完”被误解为“仓库审完”：Evidence scan 只代表证据采集；Deterministic triage 只代表可重复的工程 finding；Structured / semantic audit 才覆盖项目目标、研究语境、UX、架构与 owner context。完整 assurance 分级见 [AUDIT_MATURITY.md](AUDIT_MATURITY.md)。
 
-- **Evidence scan**：README、LICENSE、workflow、CI、Actions pinning、文件结构等可观测证据。
-- **Deterministic triage**：把高置信工程信号转成 finding codes；它不是完整语义审核。
-- **Structured / semantic audit**：结合产品目标、研究语境、UX、架构与 owner context 的深审报告。
-
-只有覆盖完整时，account-wide scan 才允许标记 `PASS`；缺少 Private inventory 或存在 collection failure 时必须 `PARTIAL`/失败关闭。
+只有请求的 inventory 覆盖完整时，account-wide scan 才允许标记 `PASS`；缺少 Private inventory 或存在 collection failure 时必须 `PARTIAL` / fail closed。
 
 ## 审计层
 
@@ -34,9 +30,9 @@ Inventory → Evidence Scan → Deterministic Triage → Structured/Semantic Aud
 
 ## Public / Private 边界
 
-Private evidence 只写入 `private-evidence/`（gitignored / ephemeral）。Public Pages **禁止**出现 Private 仓库名称、URL、SHA、备注、代码证据和具体 findings，只能显示匿名聚合覆盖信息。
+Private evidence 只写入 `private-evidence/`（gitignored / ephemeral）。Public Pages **禁止**出现 Private 仓库名称、URL、SHA、备注、代码证据和具体 findings，只能显示匿名聚合覆盖信息。Public source registry 会在 CI 中用 live GitHub visibility 自动清洗，避免 stale public record 泄露已经转为 Private 的仓库。
 
-当前完整账户扫描要求：
+完整账户扫描示例：
 
 ```bash
 GITHUB_TOKEN=... \
@@ -45,7 +41,7 @@ PORTFOLIO_EXPECTED_PRIVATE=9 \
 python scripts/scan_portfolio.py --allow-private --require-complete
 ```
 
-随后可生成 deterministic triage：
+随后生成 deterministic triage：
 
 ```bash
 python scripts/repository_triage.py private-evidence/portfolio-scan.json \
@@ -60,9 +56,9 @@ python scripts/visual_ux_audit.py docs/index.html --json --fail-on-findings
 
 用户实际发现的可泛化 UI bug 应转化为 regression rule/test。当前是 deterministic static 层；浏览器多 viewport、runtime overflow measurement、screenshots 与 AI visual review 属于后续 runtime/semantic 层，不能把静态规则冒充完整视觉测试。
 
-## Priority ≠ Quality
+## Priority ≠ Quality ≠ Coverage
 
-Priority 只表示投入时序；工程质量是独立多维评分。STOP 也不代表“质量差”。Pages 与报告必须保持这三个概念分离：**priority / quality / audit coverage**。
+Priority 只表示投入时序；Quality 是独立多维工程质量；Coverage 表示审计做到哪一层、覆盖了多少仓库。STOP 也不代表“质量差”。
 
 ## GO 边界
 
@@ -72,7 +68,7 @@ Priority 只表示投入时序；工程质量是独立多维评分。STOP 也不
 
 - `portfolio/registry.json` — Public portfolio source
 - `audits/` — Public-safe structured audits only
-- `scripts/` — Audit/triage/remediation tooling
+- `scripts/` — Audit / triage / remediation tooling
 - `tests/` — Regression contracts
 - `docs/` — **唯一 GitHub Pages source**
 - `private-evidence/` — gitignored authenticated evidence
