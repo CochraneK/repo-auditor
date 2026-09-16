@@ -14,6 +14,8 @@ STATUSES = {"open", "fixed", "accepted", "not-applicable"}
 WORK = {"CONTINUE", "STOP"}
 BANDS = {"P0-NOW", "P1-NEXT", "P2-PLANNED", "P3-LATER", "P4-LOW", "STOP"}
 GATES = {"pass", "fail", "unknown", "in-progress"}
+PUBLICATION_RECOMMENDATIONS = {"public-ok", "review-before-public", "keep-private", "split-public-private"}
+VISIBILITIES = {"public", "private"}
 
 
 def expected_band(score: int, status: str) -> str:
@@ -45,6 +47,7 @@ def validate(path: Path) -> list[str]:
         "markdown",
         "decision",
         "quality_gates",
+        "publication_gate",
         "findings",
         "limitations",
         "recheck_triggers",
@@ -96,6 +99,23 @@ def validate(path: Path) -> list[str]:
         for gate, state in gates.items():
             if state not in GATES:
                 errors.append(f"{path.name}: gate {gate} has invalid state {state}")
+
+    publication_gate = data["publication_gate"]
+    if not isinstance(publication_gate, dict):
+        errors.append(f"{path.name}: publication_gate must be an object")
+    else:
+        for key in ("current_visibility", "recommendation", "reasons"):
+            if key not in publication_gate:
+                errors.append(f"{path.name}: publication_gate missing {key}")
+        visibility = publication_gate.get("current_visibility")
+        recommendation = publication_gate.get("recommendation")
+        reasons = publication_gate.get("reasons")
+        if visibility not in VISIBILITIES:
+            errors.append(f"{path.name}: invalid publication visibility {visibility}")
+        if recommendation not in PUBLICATION_RECOMMENDATIONS:
+            errors.append(f"{path.name}: invalid publication recommendation {recommendation}")
+        if not isinstance(reasons, list) or not reasons:
+            errors.append(f"{path.name}: publication_gate reasons must be a non-empty list")
 
     findings = data["findings"]
     if not isinstance(findings, list):
