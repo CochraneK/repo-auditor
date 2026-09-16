@@ -15,9 +15,11 @@ def expected_band(score,status):
     return 'P4-LOW'
 
 def live_visibility(owner,name,token):
-    req=urllib.request.Request(f'https://api.github.com/repos/{owner}/{name}',headers={'Accept':'application/vnd.github+json','Authorization':f'Bearer {token}','User-Agent':'repo-auditor'})
+    headers={'Accept':'application/vnd.github+json','User-Agent':'repo-auditor'}
+    if token: headers['Authorization']=f'Bearer {token}'
+    req=urllib.request.Request(f'https://api.github.com/repos/{owner}/{name}',headers=headers)
     try:
-        with urllib.request.urlopen(req,timeout=15) as r: return json.load(r).get('visibility','public')
+        with urllib.request.urlopen(req,timeout=15) as r: return 'private' if json.load(r).get('private') else 'public'
     except urllib.error.HTTPError as e:
         if e.code==404:return 'non-public'
         raise
@@ -50,5 +52,5 @@ def main():
     if errors:
         for e in errors:print('ERROR:',e,file=sys.stderr)
         return 1
-    repos=data.get('repositories',[]);print(f'Public portfolio OK: {len(repos)} repositories');return 0
+    print(f"Public portfolio OK: {len(data.get('repositories',[]))} repositories");return 0
 if __name__=='__main__':raise SystemExit(main())
