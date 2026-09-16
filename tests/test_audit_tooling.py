@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import audit_freshness as af
 import collect_repo_evidence as cre
+import publication_gate as pg
 
 
 class CollectorTests(unittest.TestCase):
@@ -76,6 +77,26 @@ class CollectorTests(unittest.TestCase):
         with mock.patch.object(cre.urllib.request, "urlopen", side_effect=error):
             with self.assertRaisesRegex(RuntimeError, "GitHub API 403"):
                 cre.request_json("/demo")
+
+
+class PublicationGateTests(unittest.TestCase):
+    def test_private_patent_candidate_requires_review(self):
+        result = pg.evaluate(current_visibility="private", patent_candidate=True)
+        self.assertEqual(result.recommendation, "review-before-public")
+
+    def test_existing_public_background_can_split_new_work(self):
+        result = pg.evaluate(
+            current_visibility="public",
+            patent_candidate=True,
+            employer_or_client_requested=True,
+            background_ip_exists=True,
+        )
+        self.assertEqual(result.recommendation, "split-public-private")
+        self.assertTrue(any("background IP" in reason for reason in result.reasons))
+
+    def test_unclear_ownership_fails_closed_private(self):
+        result = pg.evaluate(current_visibility="private", ownership_unclear=True)
+        self.assertEqual(result.recommendation, "keep-private")
 
 
 class FreshnessTests(unittest.TestCase):
