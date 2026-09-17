@@ -76,6 +76,25 @@ Priority score is never a project quality score.
 
 The evidence collector refuses private repositories by default. Authenticated private collection requires explicit `--allow-private`; public Pages export still refuses every non-public record.
 
+### Branch governance / change control
+
+`CI green` 不能自动等价为 `merge gate enforced`。审计必须检查默认分支治理，并把结果写入 `branch_governance` evidence：
+
+- default branch 是否 `protected=true`；
+- PR-before-merge 是否强制；
+- required status checks 是否真正强制；
+- force-push / branch deletion 是否允许；
+- admin/bypass 是否受约束；
+- ruleset / branch-protection 细节是否因权限不足而无法验证。
+
+规则：
+
+- `protected=false` 是已验证的治理缺口，不得因为 CI 当前是绿色而降格成“安全”。
+- `protected=true` 但细节 API 无权限读取时，必须记录 `unverified`，不能默认视为通过。
+- 有 workflow 但没有 required check enforcement 时，CI 只能记为 advisory control。
+- 对成熟、公开、安全敏感或承担 release 的仓库，默认分支可绕过 CI 通常应形成 P1 finding；早期原型可按证据降到 P2。
+- owner 尚未批准目标 merge policy 时，设置 branch protection/ruleset 为 `owner-choice`；owner 已明确批准具体策略后，如果当前连接拥有 administration 写权限，可转为 `auto-fix`；若缺权限则为 `external-blocked`，并输出精确剩余人工操作。
+
 
 ## GO remediation mode
 
