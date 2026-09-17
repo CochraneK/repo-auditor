@@ -2,23 +2,25 @@
 
 **Evidence-backed Repository Audit + Remediation Agent · 审、改、再审。**
 
-[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md)
+[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md) · [AI Semantic Review](AI_SEMANTIC_REVIEW.md)
 
 ## 定位
 
 `repo-auditor` 是 GitHub portfolio 的审计控制面：Public + 授权 Private 仓库进入统一扫描，Public Pages 只输出公开仓库详情和隐私安全的聚合统计。它不是只给建议的 reviewer；GO mode 的目标闭环是：
 
 ```text
-Audit → classify → auto-fix safe findings → test → re-audit → merge
+Audit → classify → AI semantic review → auto-fix safe findings → test → re-audit → merge
 ```
 
 ## 审计层
 
 - **Repository evidence**：commit SHA、CI、workflows、工程结构与 freshness。
+- **Deterministic triage**：把高置信、可重复的工程问题变成稳定规则。
 - **9-dimensional quality**：独立维度 0–5，不压成误导性的单一质量总分。
 - **Publication / IP gate**：识别公开披露、潜在专利、Background IP、保密和权属边界。
 - **Privacy gate**：live GitHub visibility fail-closed；Private 名称、URL、SHA、备注、代码证据和 findings 不进入公开 Pages。
 - **Visual & UX audit**：检查 text overflow、缺少 line clamp、长字符串 wrapping、卡片高度、severity 层级、raw loading/error copy 等高置信 UI regression；这些 finding 可进入 GO auto-fix。
+- **AI Semantic Review (L4)**：可选的语义审计层，理解项目目标、架构、产品/科研逻辑、UX、测试有效性、README 声明与实现偏差，以及 deterministic auditor 尚未覆盖的问题。通过 OpenAI-compatible API 接入 OpenAI、FreeLLMAPI、OpenRouter-compatible/local gateways 等 provider；详见 [AI_SEMANTIC_REVIEW.md](AI_SEMANTIC_REVIEW.md)。
 - **Portfolio control plane**：NOW / NEXT / LATER / STOP、Priority、结构化审计和 account-wide aggregate。
 
 Visual UX 本地检查：
@@ -27,7 +29,17 @@ Visual UX 本地检查：
 python scripts/visual_ux_audit.py docs/index.html --json --fail-on-findings
 ```
 
-CI 会执行同一检查。用户实际发现的 UI bug 应转化为 regression rule/test，而不是只做一次性 CSS 修补。
+AI Semantic Review 示例：
+
+```bash
+AI_REVIEW_BASE_URL=http://localhost:3001/v1 \
+AI_REVIEW_API_KEY=... \
+AI_REVIEW_MODEL=auto \
+python scripts/semantic_review.py private-evidence/repository-evidence.json \
+  --out private-evidence/semantic-review.json
+```
+
+CI 会执行 deterministic 检查。用户或 AI 实际发现的可泛化 bug 应转化为 regression rule/test，而不是只做一次性修补。
 
 > 当前 Visual & UX audit 的 deterministic 层负责高置信静态规则。浏览器多 viewport、运行时 overflow measurement 与 screenshot/AI visual review 是下一层能力，不应把静态规则冒充完整视觉测试。
 
@@ -39,7 +51,7 @@ Private evidence 仅在显式授权时采集：
 GITHUB_TOKEN=... python scripts/collect_repo_evidence.py owner/private-repo --allow-private --out private-evidence/private-repo.json
 ```
 
-`private-evidence/` 被 gitignore。公开 bundle 在生成时再次查询 live visibility；不可验证时 fail closed。Pages 运行时只读取 `docs/data/` 的隐私安全快照。
+`private-evidence/` 被 gitignore。公开 bundle 在生成时再次查询 live visibility；不可验证时 fail closed。Pages 运行时只读取 `docs/data/` 的隐私安全快照。Private repository evidence 只有在 owner 明确授权对应 AI provider 时才允许发送到 L4 reviewer。
 
 ## Audit Coverage ≠ CI status
 
@@ -48,6 +60,7 @@ Account-wide Private 扫描属于独立的 **Audit Coverage**。如果 Actions c
 - 工程 CI：验证 repo-auditor 自己的代码、schema、Pages privacy boundary 与 deterministic checks。
 - Audit Coverage：说明当前凭据实际覆盖了多少账户仓库。
 - `PARTIAL` 可以和工程 CI 绿色同时存在；这表示“工具正常，但外部授权覆盖不足”。
+- L4 AI review 不得把不完整的 L0/L1 inventory 提升成 PASS。
 - Pages 只允许展示聚合覆盖数量与状态，永不发布 Private 仓库名称、URL、SHA、备注、代码证据或 findings。
 
 ## Structured audits
@@ -71,7 +84,7 @@ Priority 只表示“现在是否值得投入时间”：P0 NOW、P1 NEXT、P2 P
 
 ## GO 边界
 
-安全、可逆、低风险 finding 可以自动整改并重审。`LICENSE / IP / visibility / delete/archive / destructive history rewrite / material cost` 等 owner-choice 不自动决定。完整边界见 [AGENTS.md](AGENTS.md) 与 [POLICY.md](POLICY.md)。
+安全、可逆、低风险 finding 可以自动整改并重审。`LICENSE / IP / visibility / delete/archive / destructive history rewrite / material cost` 等 owner-choice 不自动决定。AI findings 同样服从这个边界。完整边界见 [AGENTS.md](AGENTS.md) 与 [POLICY.md](POLICY.md)。
 
 ## Pages
 
