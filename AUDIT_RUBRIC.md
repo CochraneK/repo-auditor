@@ -71,6 +71,41 @@ Rules:
 9. **Community surface** — Security reporting, contribution guidance, issues/templates, citation, and repository metadata.
 10. **IP provenance & publication (gate, not scored)** — Is Public/Private a deliberate decision given prior disclosure, possible patent value, background IP, employer/client/PI requests, confidential inputs, and ownership uncertainty?
 
+## Repository governance / change-control control
+
+Branch governance is a **cross-cutting audit control**, not an additional scored dimension in schema v1. It contributes evidence to security/privacy, release engineering, and maintainability.
+
+A repository having CI workflows is not enough. The audit must distinguish:
+
+- **CI exists** — checks can run;
+- **CI is enforced** — protected branch/ruleset policy prevents changes from bypassing the required checks.
+
+For the default branch, collect or explicitly mark unverified:
+
+- whether the branch reports `protected=true`;
+- whether pull requests are required before merge;
+- whether required status checks are configured;
+- whether force pushes and branch deletion are allowed;
+- whether administrator/bypass behavior is constrained;
+- applicable repository/organization rulesets when the API permits inspection;
+- any permission limitation that prevents detailed verification.
+
+Interpretation rules:
+
+- A mature, public, security-sensitive, or release-bearing repository with green CI but an unprotected default branch should normally receive a **P1 governance finding** because the quality gates are advisory rather than enforced.
+- An early personal prototype may receive P2 instead, but the report must still say that checks are bypassable.
+- `protected=true` with inaccessible protection details is **not a pass**. Record the control as partially verified, add the permission gap to `limitations`, and use `external-blocked` where current credentials cannot inspect or modify the policy.
+- A ruleset merely existing is not enough; evidence should show that the relevant default branch is actually governed.
+- Do not infer “required PR” or “required checks” from workflow files alone.
+
+Remediation semantics:
+
+- Before the owner has selected a target merge policy, changing branch governance is `owner-choice` because it can intentionally alter who may merge and under what conditions.
+- After an explicit policy is approved (for example: “main requires PR + named CI checks, blocks force pushes/deletion”), applying that exact reversible configuration may become `auto-fix` when the active connector has repository-administration write permission.
+- If the policy is approved but the current connector lacks administration permission, classify the remediation as `external-blocked` and emit the exact remaining UI/API action rather than claiming it was fixed.
+
+The evidence collector exposes this under `branch_governance`. A verified `protected=false` is decisive evidence and should not be softened merely because current CI is green.
+
 ## Publication / IP disclosure gate
 
 Every structured audit must record a `publication_gate`. This is a conservative release check, **not** a legal opinion, patentability decision, or ownership adjudication.
@@ -130,7 +165,7 @@ High-impact owner choices must remain visible as open findings rather than being
 - Distinguish a documented claim from an executable invariant.
 - Do not call a benchmark pass a security/privacy certification.
 - Record the audited commit. A report without a baseline SHA becomes stale silently.
-- Re-audit when security boundaries, dependency/model supply chains, release workflows, or core architecture materially change.
+- Re-audit when security boundaries, dependency/model supply chains, release workflows, repository governance, or core architecture materially change.
 
 
 ## Freshness semantics
@@ -151,4 +186,4 @@ A sidecar may declare:
 }
 ```
 
-This exception is fail-closed and per-audit. If HEAD moved, every changed file must match an explicit ignore path; otherwise the audit is stale. Do not ignore source code, CI/workflow files, release configuration, security policy, or user-facing product code merely to keep an audit green.
+This exception is fail-closed and per-audit. If HEAD moved, every changed file must match an explicit ignore path; otherwise the audit is stale. Do not ignore source code, CI/workflow files, release configuration, security policy, repository governance, or user-facing product code merely to keep an audit green.

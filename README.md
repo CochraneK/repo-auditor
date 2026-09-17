@@ -16,10 +16,19 @@ Audit → classify → auto-fix safe findings → test → re-audit → merge
 
 - **Repository evidence**：commit SHA、CI、workflows、工程结构与 freshness。
 - **9-dimensional quality**：独立维度 0–5，不压成误导性的单一质量总分。
+- **Branch governance / change control**：区分“CI 会运行”和“CI 被强制执行”；检查默认分支 protection/ruleset、PR-before-merge、required checks、force-push/deletion 与权限可验证性。权限不足必须 `external-blocked`，不能把 unknown 当 pass。
 - **Publication / IP gate**：识别公开披露、潜在专利、Background IP、保密和权属边界。
 - **Privacy gate**：live GitHub visibility fail-closed；Private 名称、URL、SHA、备注、代码证据和 findings 不进入公开 Pages。
 - **Visual & UX audit**：检查 text overflow、缺少 line clamp、长字符串 wrapping、卡片高度、severity 层级、raw loading/error copy 等高置信 UI regression；这些 finding 可进入 GO auto-fix。
 - **Portfolio control plane**：NOW / NEXT / LATER / STOP、Priority、结构化审计和 account-wide aggregate。
+
+Branch governance 的核心原则：
+
+```text
+workflow exists ≠ merge gate enforced
+```
+
+默认分支若 `protected=false`，即使所有 CI 当前全绿，也应明确记录为可绕过的 advisory control。owner 已批准具体保护策略但当前连接缺少 Administration 权限时，审计保留 `external-blocked` 并给出精确剩余人工操作。
 
 Visual UX 本地检查：
 
@@ -71,7 +80,7 @@ Priority 只表示“现在是否值得投入时间”：P0 NOW、P1 NEXT、P2 P
 
 ## GO 边界
 
-安全、可逆、低风险 finding 可以自动整改并重审。`LICENSE / IP / visibility / delete/archive / destructive history rewrite / material cost` 等 owner-choice 不自动决定。完整边界见 [AGENTS.md](AGENTS.md) 与 [POLICY.md](POLICY.md)。
+安全、可逆、低风险 finding 可以自动整改并重审。`LICENSE / IP / visibility / delete/archive / destructive history rewrite / material cost` 等 owner-choice 不自动决定。Branch protection/ruleset 在 owner 尚未批准目标 policy 时也属于 owner-choice；批准后若缺 Administration 权限则是 external-blocked。完整边界见 [AGENTS.md](AGENTS.md) 与 [POLICY.md](POLICY.md)。
 
 ## Pages
 
