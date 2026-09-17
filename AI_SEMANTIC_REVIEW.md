@@ -15,13 +15,57 @@ python scripts/semantic_review.py private-evidence/repository-evidence.json --ou
 
 Never commit provider keys or private evidence.
 
-## Free / aggregate gateways
+## Provider presets
+
+The implementation is provider-neutral; the following providers are first-class documented presets rather than separate code paths.
+
+### OpenAI
+
+```bash
+AI_REVIEW_BASE_URL="https://api.openai.com/v1"
+AI_REVIEW_API_KEY="$OPENAI_API_KEY"
+AI_REVIEW_MODEL="<model>"
+```
+
+### DeepSeek
+
+DeepSeek's official API is OpenAI-compatible. Use its official base URL and a currently supported model name from DeepSeek's API documentation.
+
+```bash
+AI_REVIEW_BASE_URL="https://api.deepseek.com"
+AI_REVIEW_API_KEY="$DEEPSEEK_API_KEY"
+AI_REVIEW_MODEL="deepseek-flash"
+```
+
+`deepseek-v4-pro` can be selected for deeper reviews. Do not bake model aliases permanently into audit logic: provider model names and availability change.
+
+### GLM / Zhipu BigModel
+
+GLM is supported through Zhipu BigModel's OpenAI-compatible API. Keep the endpoint/model configurable because GLM model generations and aliases change over time.
+
+```bash
+AI_REVIEW_BASE_URL="https://open.bigmodel.cn/api/paas/v4"
+AI_REVIEW_API_KEY="$ZHIPU_API_KEY"
+AI_REVIEW_MODEL="<current GLM model>"
+```
+
+### Free / aggregate gateways
 
 Because the transport is OpenAI-compatible, the same reviewer can target FreeLLMAPI, OpenRouter-compatible gateways, LiteLLM, LM Studio, vLLM, llama.cpp, or another compatible router by changing `AI_REVIEW_BASE_URL`, `AI_REVIEW_API_KEY`, and `AI_REVIEW_MODEL`.
 
 For a local FreeLLMAPI instance the base URL is commonly `http://localhost:3001/v1` and model `auto`. In GitHub-hosted Actions, `localhost` refers to the runner, not your home computer: run/deploy the gateway where the runner can reach it, use a self-hosted runner, or use a remote compatible endpoint.
 
 Free-tier availability, quotas, privacy terms, retention and model quality can change. `repo-auditor` therefore treats the provider as configuration rather than hard-coding a supposedly-free service.
+
+## Routing strategy
+
+A future router may choose among configured providers, but provider fallback must remain explicit and auditable. Recommended policy:
+
+- public repositories: approved free/aggregate providers may be used;
+- private repositories: only owner-approved providers or local models;
+- cheap/fast model for broad L4 screening;
+- stronger reasoning model for P0/P1 findings, low-confidence findings, architecture conflicts, or explicit deep review;
+- record provider + model in the L4 report so a finding remains reproducible/auditable.
 
 ## Safety / assurance boundary
 
