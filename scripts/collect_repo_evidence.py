@@ -83,6 +83,14 @@ def branch_governance(repo: str, branch: str, branch_data: dict[str, Any]) -> di
         },
     }
 
+    # `protected: false` is already decisive evidence from the branch endpoint.
+    # Avoid privileged API calls in this case: lack of protection is the finding.
+    if not evidence["protected"]:
+        evidence["protection_detail"] = {"status": "not-applicable", "reason": "default branch reports protected=false"}
+        evidence["rulesets"] = {"status": "not-queried", "reason": "default branch is already verified unprotected"}
+        evidence["assessment"] = "unprotected"
+        return evidence
+
     encoded_branch = urllib.parse.quote(branch, safe="")
     protection = optional_request_json(f"/repos/{repo}/branches/{encoded_branch}/protection")
     if protection["status"] == "verified":
@@ -91,7 +99,7 @@ def branch_governance(repo: str, branch: str, branch_data: dict[str, Any]) -> di
         evidence["protection_detail"] = {
             "status": "verified",
             "required_pull_request_reviews": detail.get("required_pull_request_reviews") is not None,
-            "required_status_checks": required_status is not None and bool(required_status),
+            "required_status_checks": bool(required_status),
             "required_status_check_contexts": required_status.get("contexts", []) if isinstance(required_status, dict) else [],
             "required_conversation_resolution": bool((detail.get("required_conversation_resolution") or {}).get("enabled")),
             "required_linear_history": bool((detail.get("required_linear_history") or {}).get("enabled")),
@@ -128,12 +136,11 @@ def branch_governance(repo: str, branch: str, branch_data: dict[str, Any]) -> di
             "reason": rulesets["reason"],
         }
 
-    if not evidence["protected"]:
-        evidence["assessment"] = "unprotected"
-    elif evidence["protection_detail"]["status"] == "verified":
-        evidence["assessment"] = "protected-verified"
-    else:
-        evidence["assessment"] = "protected-details-unverified"
+    evidence["assessment"] = (
+        "protected-verified"
+        if evidence["protection_detail"]["status"] == "verified"
+        else "protected-details-unverified"
+    )
     return evidence
 
 
