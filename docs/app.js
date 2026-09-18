@@ -199,7 +199,10 @@
         headCommit,
         openP0: open.filter(f => f.severity === "P0").length,
         openP1: open.filter(f => f.severity === "P1").length,
-        qualityDimensions: sidecar.quality_dimensions || null
+        openFindings: open,
+        qualityDimensions: sidecar.quality_dimensions || null,
+        publicationGate: sidecar.publication_gate || null,
+        limitations: sidecar.limitations || []
       };
     } catch (error) {
       repo._audit = {
@@ -209,7 +212,10 @@
         headCommit: "",
         openP0: 0,
         openP1: 0,
+        openFindings: [],
         qualityDimensions: null,
+        publicationGate: null,
+        limitations: [],
         error: String(error?.message || error)
       };
     }
@@ -332,6 +338,46 @@
         </div>
       </article>
     `).join("");
+  }
+
+  function renderAuditActions(repos) {
+    const audited = repos.filter(r => r._audit);
+    const stateCounts = audited.reduce((acc,r) => {
+      const state = r._audit?.state || "unknown";
+      acc[state] = (acc[state] || 0) + 1;
+      return acc;
+    }, {});
+    const open = audited.flatMap(r => (r._audit?.openFindings || []).map(f => ({repo:r, finding:f})));
+    const rank = {P0:0,P1:1,P2:2,P3:3};
+    open.sort((a,b) =>
+      (rank[a.finding.severity] ?? 9) - (rank[b.finding.severity] ?? 9) ||
+      b.repo.priority_score - a.repo.priority_score
+    );
+    $("auditActionMeta").textContent =
+      audited.length + " audited · " +
+      (stateCounts.current || 0) + " current · " +
+      (stateCounts["current-equivalent"] || 0) + " current* · " +
+      (stateCounts.stale || 0) + " stale";
+
+    const top = open.slice(0, 8);
+    $("auditActions").innerHTML = top.length ? top.map(({repo,finding}) => {
+      const remediation = finding.remediation_class || "unclassified";
+      return `
+        <article class="audit-action-card" data-severity="${esc(finding.severity || "P3")}">
+          <div class="audit-action-top">
+            <span class="audit-repo">${esc(repo.name)}</span>
+            <span class="audit-severity">${esc(finding.severity || "P3")}</span>
+          </div>
+          <strong>${esc(finding.title || "Open audit finding")}</strong>
+          <p>${esc(finding.recommendation || "No remediation note recorded.")}</p>
+          <div class="audit-action-bottom">
+            <span class="remediation">${esc(remediation)}</span>
+            <span class="audit-state">${esc(repo._audit?.state || "unknown")}</span>
+            <a href="${auditReportUrl(repo)}" target="_blank" rel="noreferrer">Evidence ↗</a>
+          </div>
+        </article>
+      `;
+    }).join("") : '<article class="audit-action-card is-clear"><strong>No open structured findings.</strong><p>Re-audit when recorded triggers fire.</p></article>';
   }
 
   function renderBoard(repos) {
@@ -559,6 +605,7 @@
       renderRecent(repos);
       renderFocus(repos);
       renderAttention(repos);
+      renderAuditActions(repos);
       renderBoard(repos);
       renderRepositories();
       renderCommandResults("");
