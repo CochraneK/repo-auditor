@@ -25,6 +25,7 @@
       <nav class="nav" aria-label="仓库视图">
         <button class="nav-item is-active" type="button" data-view="focus"><span class="nav-icon">⌁</span><span>Focus</span><span id="focusNavCount" class="nav-count">0</span></button>
         <button class="nav-item" type="button" data-view="all"><span class="nav-icon">□</span><span>All repositories</span><span id="allNavCount" class="nav-count">0</span></button>
+        <button class="nav-item" type="button" data-view="audited"><span class="nav-icon">◫</span><span>Audited</span><span id="auditedNavCount" class="nav-count">0</span></button>
         <button class="nav-item" type="button" data-view="later"><span class="nav-icon">○</span><span>Later</span><span id="laterNavCount" class="nav-count">0</span></button>
         <button class="nav-item" type="button" data-view="stopped"><span class="nav-icon">—</span><span>Don't touch</span><span id="stopNavCount" class="nav-count">0</span></button>
       </nav>
@@ -47,7 +48,7 @@
         <div class="page-head"><div><p class="eyebrow">PUBLIC WORKSPACE</p><h1 id="viewTitle">Focus</h1><p id="viewDescription">现在最值得投入时间的仓库。</p></div><div class="snapshot"><span class="snapshot-dot"></span><span id="snapshotDate">Snapshot</span></div></div>
 
         <section id="summary" class="summary" aria-label="仓库统计">
-          <div><span>Public</span><strong id="repoCount">0</strong></div><div><span>Now</span><strong id="nowCount">0</strong></div><div><span>Continue</span><strong id="continueCount">0</strong></div><div><span>Don't touch</span><strong id="stopCount">0</strong></div><div><span>Average priority</span><strong id="avgScore">0</strong></div>
+          <div><span>Public</span><strong id="repoCount">0</strong></div><div><span>Now</span><strong id="nowCount">0</strong></div><div><span>Continue</span><strong id="continueCount">0</strong></div><div><span>Audited</span><strong id="auditedCount">0</strong></div><div><span>Open P0/P1</span><strong id="criticalFindingCount">0</strong></div><div><span>Average priority</span><strong id="avgScore">0</strong></div>
         </section>
 
         <section class="panel todo-panel" aria-label="Repository TODO">
@@ -66,7 +67,11 @@
 
         <div id="focusLayout" class="focus-layout">
           <section class="panel main-panel"><div class="panel-head"><div><p class="panel-kicker">CURRENT QUEUE</p><h2>What deserves attention now</h2></div><span class="muted" id="focusCountText"></span></div><div class="list-head" aria-hidden="true"><span>Priority</span><span>Repository</span><span>Workstream</span><span>Last commit</span><span></span></div><div id="focusList" class="repo-list"></div></section>
-          <aside class="side-column"><section class="panel compact-panel"><div class="panel-head"><div><p class="panel-kicker">SIGNALS</p><h2>Needs attention</h2></div></div><div id="signalsList" class="signals-list"></div></section><section class="panel compact-panel"><div class="panel-head"><div><p class="panel-kicker">DISTRIBUTION</p><h2>Priority bands</h2></div></div><div id="distribution" class="distribution"></div></section></aside>
+          <aside class="side-column">
+            <section class="panel compact-panel"><div class="panel-head"><div><p class="panel-kicker">SIGNALS</p><h2>Needs attention</h2></div></div><div id="signalsList" class="signals-list"></div></section>
+            <section class="panel compact-panel audit-lens-panel"><div class="panel-head"><div><p class="panel-kicker">AUDIT LENS</p><h2>Evidence-backed next actions</h2></div><span id="auditCoverageText" class="muted"></span></div><div id="auditLens" class="audit-lens"></div></section>
+            <section class="panel compact-panel"><div class="panel-head"><div><p class="panel-kicker">DISTRIBUTION</p><h2>Priority bands</h2></div></div><div id="distribution" class="distribution"></div></section>
+          </aside>
         </div>
 
         <section id="portfolioPanel" class="panel portfolio-panel hidden">
