@@ -2,11 +2,11 @@
   "schema_version": 2,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-17T19:05:16.437912+00:00",
+  "generated_at": "2026-09-18T07:50:00.379252+00:00",
   "audit_status": "PARTIAL",
   "inventory": {
-    "observed_total": 35,
-    "public": 35,
+    "observed_total": 36,
+    "public": 36,
     "private": 0,
     "scan_failures": 0,
     "expected_total": 43,
@@ -19,13 +19,13 @@
       "authenticated inventory is smaller than expected inventory",
       "private repository coverage is below expected inventory"
     ],
-    "evidence_collected": 35,
-    "readme_present": 34,
-    "license_present": 9,
-    "security_policy_present": 5,
-    "repositories_with_workflows": 18,
-    "repositories_with_unpinned_actions": 13,
-    "head_ci_green": 22
+    "evidence_collected": 36,
+    "readme_present": 35,
+    "license_present": 10,
+    "security_policy_present": 6,
+    "repositories_with_workflows": 20,
+    "repositories_with_unpinned_actions": 15,
+    "head_ci_green": 23
   },
   "privacy": {
     "private_details_location": "private-evidence/portfolio-scan.json (gitignored; never Pages)",
