@@ -933,3 +933,60 @@ footer {
 .table-audit {
   margin-top: 6px;
 }
+
+
+/* Audit action queue — shared control-plane grammar with ARIS4C,
+   kept in repo-auditor's diagnostic/graphite visual identity. */
+.audit-actions-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.audit-action-card{
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  background:var(--panel);
+  overflow:hidden;
+}
+.audit-action-card::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:3px;
+  background:var(--muted-2);
+}
+.audit-action-card[data-severity="P0"]::before{background:var(--red)}
+.audit-action-card[data-severity="P1"]::before{background:var(--amber)}
+.audit-action-card[data-severity="P2"]::before{background:var(--accent)}
+.audit-action-card[data-severity="P3"]::before{background:var(--muted-2)}
+.audit-action-card.is-clear::before{background:var(--green)}
+.audit-action-top,.audit-action-bottom{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.audit-action-top{justify-content:space-between;margin-bottom:10px}
+.audit-repo{color:var(--muted);font-size:11px;font-weight:800}
+.audit-severity{
+  min-width:29px;text-align:center;
+  border:1px solid var(--line);border-radius:999px;
+  padding:3px 7px;font-size:9px;font-weight:900;
+}
+.audit-action-card[data-severity="P0"] .audit-severity{color:var(--red)}
+.audit-action-card[data-severity="P1"] .audit-severity{color:var(--amber)}
+.audit-action-card[data-severity="P2"] .audit-severity{color:var(--accent)}
+.audit-action-card strong{display:block;font-size:13px;line-height:1.35}
+.audit-action-card p{margin:7px 0 13px;color:var(--muted);font-size:11px;line-height:1.55}
+.audit-action-bottom{color:var(--muted-2);font-size:9px}
+.audit-action-bottom a{margin-left:auto;color:var(--accent);text-decoration:none;font-weight:800}
+.remediation{
+  padding:3px 7px;border-radius:999px;
+  background:var(--panel-soft);border:1px solid var(--line);
+  color:var(--accent-2);font-weight:850;text-transform:uppercase;letter-spacing:.055em;
+}
+.audit-state{font-variant-numeric:tabular-nums}
+.section-meta{color:var(--muted);font-size:10px}
+@media(max-width:800px){.audit-actions-grid{grid-template-columns:1fr}}
