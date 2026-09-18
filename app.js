@@ -20,12 +20,14 @@
   const VIEWS={
     focus:{title:"Focus",desc:"现在最值得投入时间的仓库。"},
     all:{title:"All repositories",desc:"全部 Public 仓库，按你的当前管理判断组织。"},
+    audited:{title:"Audited",desc:"已有结构化审计证据的仓库；优先看开放 findings、remediation class 与下一项证据动作。"},
     later:{title:"Later",desc:"确定还会做，但现在不应该占据注意力。"},
     stopped:{title:"Don't touch",desc:"当前不需要继续投入；这不等于删除或归档。"}
   };
 
   const $=id=>document.getElementById(id);
   let data=null,currentView="focus",statusFilter="all",selectedWorkstream="all";
+  const auditMap=new Map();
 
   const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   const repoUrl=(name)=>REPO_BASE+encodeURIComponent(name);
@@ -54,15 +56,23 @@
     setTheme(saved||(light?"light":"dark"));
   }
 
+  function openFindings(audit){
+    return (audit?.findings||[]).filter(f=>f.status==="open");
+  }
+
   function renderSummary(repos){
     const active=repos.filter(r=>r.work_status==="CONTINUE");
+    const audits=[...auditMap.values()];
+    const critical=audits.flatMap(openFindings).filter(f=>["P0","P1"].includes(f.severity)).length;
     $("repoCount").textContent=repos.length;
     $("nowCount").textContent=repos.filter(r=>r.priority_band==="P0-NOW").length;
     $("continueCount").textContent=active.length;
-    $("stopCount").textContent=repos.filter(r=>r.work_status==="STOP").length;
+    $("auditedCount").textContent=audits.length;
+    $("criticalFindingCount").textContent=critical;
     $("avgScore").textContent=active.length?Math.round(active.reduce((s,r)=>s+r.priority_score,0)/active.length):0;
     $("allNavCount").textContent=repos.length;
     $("focusNavCount").textContent=repos.filter(r=>r.priority_score>=70&&r.work_status==="CONTINUE").length;
+    $("auditedNavCount").textContent=audits.length;
     $("laterNavCount").textContent=repos.filter(r=>["P2-PLANNED","P3-LATER","P4-LOW"].includes(r.priority_band)).length;
     $("stopNavCount").textContent=repos.filter(r=>r.work_status==="STOP").length;
     $("snapshotDate").textContent="Snapshot · "+(data.snapshot_date||"");
@@ -71,13 +81,16 @@
   function repoRow(r){
     const band=BANDS[r.priority_band]||BANDS.STOP;
     const ws=workstreamOf(r.name);
+    const audit=auditMap.get(r.name);
+    const open=audit?openFindings(audit):[];
+    const auditBadge=audit?`<span class="audit-badge"><i></i> audited · ${open.length} open</span>`:"";
     return `<a class="repo-row" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
       <span class="priority-cell">
         <i class="priority-mark" style="--priority-color:${band.color}"></i>
         <span class="score">${r.priority_score}</span>
       </span>
       <span class="repo-main">
-        <span class="repo-name">${esc(r.name)}</span>
+        <span class="repo-name">${esc(r.name)} ${auditBadge}</span>
         <span class="repo-note">${esc(r.reason||"No note")}</span>
       </span>
       <span class="workstream"><i class="dot" style="--workstream-color:${workstreamColor(r.name)}"></i>${esc(ws)}</span>
@@ -103,6 +116,45 @@
       <div class="signal-top"><strong>${esc(r.name)}</strong><span class="signal-score">${r.priority_score}</span></div>
       <p>High priority · last commit ${esc(age(r.last_commit_date))}</p>
     </div>`).join(""):'<div class="signal"><strong>No stale high-priority work</strong><p>Priority and recent activity currently align.</p></div>';
+  }
+
+  function renderAuditLens(){
+    const audited=[...auditMap.entries()].map(([name,audit])=>({name,audit,open:openFindings(audit)}));
+    $("auditCoverageText").textContent=audited.length+" audited";
+    const items=audited
+      .map(x=>{
+        const first=x.open.find(f=>["P0","P1"].includes(f.severity))||x.open[0];
+        return {...x,first};
+      })
+      .sort((a,b)=>{
+        const rank={P0:0,P1:1,P2:2,P3:3};
+        return (rank[a.first?.severity]??9)-(rank[b.first?.severity]??9);
+      })
+      .slice(0,5);
+    $("auditLens").innerHTML=items.length?items.map(({name,audit,open,first})=>{
+      const rem=first?.remediation_class||"evidence-current";
+      const severity=first?.severity||"PASS";
+      const action=first?.recommendation||"No open finding; re-audit on the recorded trigger.";
+      const title=first?.title||"No open findings";
+      return `<div class="audit-item">
+        <div class="audit-item-top"><strong>${esc(name)}</strong><span class="severity severity-${esc(severity.toLowerCase())}">${esc(severity)}</span></div>
+        <p class="audit-finding">${esc(title)}</p>
+        <div class="audit-action"><span>${esc(rem)}</span>${esc(action)}</div>
+      </div>`;
+    }).join(""):'<div class="audit-empty">No structured audits are linked from the public registry.</div>';
+  }
+
+  async function loadAudits(repos){
+    const targets=repos.filter(r=>r.latest_audit).map(async r=>{
+      const jsonPath=r.latest_audit.replace(/\.md$/i,".json");
+      try{
+        const res=await fetch("./"+jsonPath+"?t="+Date.now(),{cache:"no-store"});
+        if(!res.ok)return;
+        const audit=await res.json();
+        auditMap.set(r.name,audit);
+      }catch(_err){}
+    });
+    await Promise.all(targets);
   }
 
   function renderDistribution(repos){
@@ -132,6 +184,7 @@
 
   function viewBaseRows(){
     const repos=data.repositories||[];
+    if(currentView==="audited")return repos.filter(r=>auditMap.has(r.name));
     if(currentView==="later")return repos.filter(r=>["P2-PLANNED","P3-LATER","P4-LOW"].includes(r.priority_band));
     if(currentView==="stopped")return repos.filter(r=>r.work_status==="STOP");
     return repos;
@@ -198,7 +251,8 @@
       if(!res.ok)throw new Error("HTTP "+res.status);
       data=await res.json();
       if((data.repositories||[]).some(r=>r.visibility!=="public"))throw new Error("Public registry contains non-public repositories");
-      renderSummary(data.repositories);renderFocus(data.repositories);renderSignals(data.repositories);renderDistribution(data.repositories);renderWorkstreamNav(data.repositories);
+      await loadAudits(data.repositories);
+      renderSummary(data.repositories);renderFocus(data.repositories);renderSignals(data.repositories);renderAuditLens();renderDistribution(data.repositories);renderWorkstreamNav(data.repositories);
       $("loading").remove();
     }catch(err){
       $("loading").textContent="Could not load portfolio: "+err.message;
