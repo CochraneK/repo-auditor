@@ -18,6 +18,9 @@ from typing import Any
 API = "https://api.github.com"
 PINNED_REF = re.compile(r"^[0-9a-f]{40}$")
 USES = re.compile(r"^\s*-?\s*uses:\s*([^\s#]+)", re.MULTILINE)
+QUICK_START = re.compile(r"(?im)^#{1,4}\s*(quick\s*start|getting\s*started|快速开始|开始使用|安装|运行)")
+VALIDATION = re.compile(r"(?i)(pytest|python\s+-m\s+unittest|npm\s+(?:run\s+)?test|pnpm\s+test|yarn\s+test|cargo\s+test|go\s+test|make\s+test|visual_ux_audit\.py|audit_reports\.py)")
+VISUAL = re.compile(r"(?i)(```mermaid|!\[[^\]]*\]\([^\)]+\)|<img\b)")
 
 
 def request_json(path: str) -> Any:
@@ -51,6 +54,14 @@ def content_text(repo: str, path: str, ref: str) -> str:
     if not isinstance(content, str):
         return ""
     return base64.b64decode(content).decode("utf-8", errors="replace")
+
+
+def optional_content_text(repo: str, path: str, ref: str) -> str:
+    """Best-effort supplemental text evidence; absence must not abort core collection."""
+    try:
+        return content_text(repo, path, ref)
+    except Exception:
+        return ""
 
 
 def action_refs(repo: str, paths: list[str], ref: str) -> dict[str, Any]:
@@ -164,9 +175,48 @@ def collect(repo: str, allow_private: bool = False) -> dict[str, Any]:
         if name in head_runs:
             continue
         head_runs[name] = {"status": run.get("status"), "conclusion": run.get("conclusion"), "html_url": run.get("html_url")}
-    common = ["README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "CITATION.cff", "CHANGELOG.md", "ROADMAP.md"]
+    common = ["README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "CITATION.cff", "CHANGELOG.md", "ROADMAP.md", "AGENTS.md", "HANDOFF.md", "STATUS.md", "DECISIONS.md"]
     lock_names = {"uv.lock", "poetry.lock", "Pipfile.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "Cargo.lock"}
     lockfiles = [path for path in paths if Path(path).name in lock_names]
+    architecture_docs = [
+        path for path in paths
+        if path.lower() in {"architecture.md", "docs/architecture.md", "docs/architecture/index.md"}
+        or (path.lower().startswith("docs/") and ("architect" in path.lower() or "design" in path.lower()))
+    ]
+    handoff_candidates = ["HANDOFF.md", "handoff/AGENT_HANDOFF.md", "handoff/README.md"]
+    handoff_entry = next((path for path in handoff_candidates if path in paths), None)
+    status_present = "STATUS.md" in paths or "handoff/STATUS.md" in paths
+    decisions_present = "DECISIONS.md" in paths or "handoff/DECISIONS.md" in paths
+    continuity_files = {
+        "README.md": "handoff/README.md" in paths,
+        "STATUS.md": "handoff/STATUS.md" in paths,
+        "TODO.md": "handoff/TODO.md" in paths,
+        "DECISIONS.md": "handoff/DECISIONS.md" in paths,
+        "CONTEXT.md": "handoff/CONTEXT.md" in paths,
+        "CHATLOG.md": "handoff/CHATLOG.md" in paths,
+        "AGENT_HANDOFF.md": "handoff/AGENT_HANDOFF.md" in paths,
+        "SESSION_LOG.md": "handoff/SESSION_LOG.md" in paths,
+    }
+    readme_text = optional_content_text(repo, "README.md", sha) if "README.md" in paths else ""
+    agent_text = optional_content_text(repo, "AGENTS.md", sha) if "AGENTS.md" in paths else ""
+    handoff_text = optional_content_text(repo, handoff_entry, sha) if handoff_entry else ""
+    validation_documented = bool(VALIDATION.search("\n".join((readme_text, agent_text, handoff_text))))
+    ai_readiness_files = {
+        "AGENTS.md": "AGENTS.md" in paths,
+        "HANDOFF.md": handoff_entry is not None,
+        "STATUS.md": status_present,
+        "DECISIONS.md": decisions_present,
+        "handoff_entry": handoff_entry,
+        "continuity_package": continuity_files,
+        "continuity_full": all(continuity_files.values()),
+        "architecture_docs": architecture_docs,
+        "validation_documented": validation_documented,
+    }
+    readme_quality = {
+        "has_quick_start": bool(QUICK_START.search(readme_text)),
+        "has_visual": bool(VISUAL.search(readme_text)),
+        "has_architecture_section": bool(re.search(r"(?im)^#{1,4}\s*(architecture|架构|系统设计|how it works)", readme_text)),
+    }
     return {
         "schema_version": 1,
         "collected_at": datetime.now(timezone.utc).isoformat(),
@@ -177,6 +227,8 @@ def collect(repo: str, allow_private: bool = False) -> dict[str, Any]:
         "head_sha": sha,
         "metadata": {"description": metadata.get("description"), "homepage": metadata.get("homepage"), "topics": metadata.get("topics", []), "license": (metadata.get("license") or {}).get("spdx_id"), "has_issues": metadata.get("has_issues"), "has_discussions": metadata.get("has_discussions")},
         "common_files": {name: name in paths for name in common},
+        "ai_readiness_files": ai_readiness_files,
+        "readme_quality": readme_quality,
         "lockfiles": lockfiles,
         "workflows": workflows,
         "head_workflow_runs": head_runs,

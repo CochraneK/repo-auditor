@@ -1,12 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "AI Readiness Finding",
+  "title": "repo-auditor deterministic AI readiness report",
   "type": "object",
-  "required": ["score", "findings", "evidence"],
+  "required": ["schema_version", "scope", "readiness_score", "readiness_state", "continuity_profile", "checks", "findings"],
   "properties": {
-    "score": {"type": "number", "minimum": 0, "maximum": 100},
+    "schema_version": {"const": 1},
+    "scope": {"const": "deterministic-ai-readiness"},
+    "repository": {"type": ["string", "null"]},
+    "readiness_score": {"type": "integer", "minimum": 0, "maximum": 100},
+    "readiness_state": {"enum": ["AI_READY", "PARTIAL", "NOT_READY"]},
+    "checks": {"type": "object"},
     "findings": {"type": "array"},
-    "evidence": {"type": "array"},
-    "remediation": {"type": "array"}
-  }
+    "note": {"type": "string"}
+  },
+  "additionalProperties": false
 }

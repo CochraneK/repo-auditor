@@ -2,9 +2,9 @@ name: Portfolio Audit
 on:
   workflow_dispatch:
   push:
-    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "scripts/**", "tests/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
+    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "AGENTS.md", "HANDOFF.md", "STATUS.md", "DECISIONS.md", "AI_SEMANTIC_REVIEW.md", "scripts/**", "tests/**", "schemas/**", "skills/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
   pull_request:
-    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "scripts/**", "tests/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
+    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "AGENTS.md", "HANDOFF.md", "STATUS.md", "DECISIONS.md", "AI_SEMANTIC_REVIEW.md", "scripts/**", "tests/**", "schemas/**", "skills/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
   schedule:
     - cron: "17 1 1 * *"
 permissions: { contents: read }
@@ -26,6 +26,9 @@ jobs:
       - run: node --check docs/app.js
       - run: python scripts/scan_portfolio.py --help
       - run: python scripts/repository_triage.py --help
+      - run: python scripts/ai_readiness.py --help
+      - run: python scripts/semantic_review.py --help
+      - run: python scripts/scaffold_handoff.py --help
   sync-public-pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: audit

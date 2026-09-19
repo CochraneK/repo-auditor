@@ -2,62 +2,151 @@
 
 **Evidence-backed Repository Audit + Remediation Agent · 审、改、再审。**
 
-[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md)
+[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md) · [Architecture](docs/architecture.md) · [AI Semantic Review](AI_SEMANTIC_REVIEW.md)
 
 ## 定位
 
-`repo-auditor` 是 GitHub portfolio 的审计控制面：Public + 授权 Private 仓库进入统一扫描，Public Pages 只输出公开仓库详情和隐私安全的聚合统计。它不是只给建议的 reviewer；GO mode 的目标闭环是：
+`repo-auditor` 是 CochraneK GitHub portfolio 的审计控制面。它不仅发现问题，还把安全、可逆的 finding 推进到修复、验证和再审。
+
+```mermaid
+flowchart LR
+  A[Inventory] --> B[Evidence]
+  B --> C[Deterministic Audit]
+  C --> D[Runtime / Visual]
+  D --> E[Optional Semantic Review]
+  E --> F[Remediation]
+  F --> G[Reviewer]
+  G --> H[Re-audit]
+  H --> I[Merge / Watch / Human Boundary]
+  H --> J[Meta-learning]
+  J --> C
+```
+
+GO mode 的目标闭环：
 
 ```text
-Audit → classify → auto-fix safe findings → test → re-audit → merge
+Audit → classify → semantic review when useful → auto-fix safe findings → test → re-audit → merge
+```
+
+## Quick Start
+
+先验证 repo-auditor 自身：
+
+```bash
+python -m py_compile scripts/*.py
+python -m unittest discover -s tests -v
+python scripts/visual_ux_audit.py docs/index.html --json --fail-on-findings
+python scripts/audit_registry.py
+```
+
+采集单仓证据：
+
+```bash
+GITHUB_TOKEN=... \
+python scripts/collect_repo_evidence.py CochraneK/repo-auditor \
+  --out private-evidence/repo-auditor.json
+```
+
+检查 AI readiness：
+
+```bash
+python scripts/ai_readiness.py private-evidence/repo-auditor.json
 ```
 
 ## 审计层
 
-- **Repository evidence**：commit SHA、CI、workflows、工程结构与 freshness。
-- **9-dimensional quality**：独立维度 0–5，不压成误导性的单一质量总分。
-- **Branch governance / change control**：区分“CI 会运行”和“CI 被强制执行”；检查默认分支 protection/ruleset、PR-before-merge、required checks、force-push/deletion 与权限可验证性。权限不足必须 `external-blocked`，不能把 unknown 当 pass。
-- **Publication / IP gate**：识别公开披露、潜在专利、Background IP、保密和权属边界。
-- **Privacy gate**：live GitHub visibility fail-closed；Private 名称、URL、SHA、备注、代码证据和 findings 不进入公开 Pages。
-- **Visual & UX audit**：检查 text overflow、缺少 line clamp、长字符串 wrapping、卡片高度、severity 层级、raw loading/error copy 等高置信 UI regression；这些 finding 可进入 GO auto-fix。
-- **Portfolio control plane**：NOW / NEXT / LATER / STOP、Priority、结构化审计和 account-wide aggregate。
+- **L0 Inventory** — 仓库进入控制面。
+- **L1 Evidence** — commit、CI、workflow、工程结构与治理证据。
+- **L2 Deterministic triage** — 高置信、可重复的工程问题。
+- **L3 Runtime / visual / structured audit** — 运行时与结构化报告。
+- **L4 AI Semantic Review** — 项目目标、架构、产品/科研逻辑、UX、测试有效性与 deterministic auditor 漏项。
+- **L5 Remediation** — 安全 finding 已修复、测试、再审。
+- **L6 AI Readiness** — README、AGENTS、HANDOFF、STATUS、DECISIONS、architecture、validation path 与 README onboarding。
+- **L7 Self-improving** — 人/AI 发现的可泛化漏项转成 rule、test、skill 或 routing policy。
 
-Branch governance 的核心原则：
+完整成熟度定义见 [AUDIT_MATURITY.md](AUDIT_MATURITY.md)。
+
+## AI-native handoff
+
+重要仓库应尽量具备：
+
+```text
+README.md
+AGENTS.md
+HANDOFF.md
+STATUS.md
+DECISIONS.md
+docs/architecture.md
+```
+
+它们不是形式文件，而是让不同 Agent 在不依赖聊天历史的情况下继续工作的 durable context。repo-auditor 会把缺失项纳入 AI-readiness finding。
+
+## AI Semantic Review
+
+`scripts/semantic_review.py` 使用统一 OpenAI-compatible transport，目前支持 provider preset：
+
+- `deepseek`
+- `glm`
+- `freellmapi`
+- `custom`
+
+DeepSeek / GLM 的具体 model 名称不永久硬编码，调用时通过 `--model` 或 `AI_REVIEW_MODEL` 指定，以避免 provider alias 漂移。
+
+详见 [AI_SEMANTIC_REVIEW.md](AI_SEMANTIC_REVIEW.md)。
+
+## Public / Private 边界
+
+Private evidence 只有在显式授权时采集：
+
+```bash
+GITHUB_TOKEN=... \
+python scripts/collect_repo_evidence.py owner/private-repo \
+  --allow-private \
+  --out private-evidence/private-repo.json
+```
+
+`private-evidence/` 被 gitignore。
+
+对于 AI review：
+
+```text
+Public evidence  → approved external/local provider
+Private evidence → local provider by default
+Private evidence → external provider only with explicit authorization
+```
+
+Public Pages 只允许公开仓库详情和 privacy-safe aggregates。Private 仓库名称、URL、SHA、备注、代码证据和 findings 不进入 Pages。
+
+## Audit Coverage ≠ CI status
+
+这几类状态必须分开：
+
+- **Engineering CI** — repo-auditor 自己是否通过测试。
+- **Audit Coverage** — 当前凭据实际覆盖多少账户仓库。
+- **Quality** — 工程质量的独立维度。
+- **Priority** — 是否值得现在投入。
+- **AI Readiness** — 下一位 Agent 能否可靠接手。
+- **Semantic Review** — 是否完成上下文感知 L4 审查。
+
+因此，CI 可以绿色而 Audit Coverage 仍为 `PARTIAL / external-blocked`。
+
+## Branch governance
+
+核心原则：
 
 ```text
 workflow exists ≠ merge gate enforced
 ```
 
-默认分支若 `protected=false`，即使所有 CI 当前全绿，也应明确记录为可绕过的 advisory control。owner 已批准具体保护策略但当前连接缺少 Administration 权限时，审计保留 `external-blocked` 并给出精确剩余人工操作。
+默认分支若 `protected=false`，即使 CI 当前全绿，也只能说明当前运行成功，不代表 merge gate 被强制执行。权限不足时必须记录为 `external-blocked`，不能把 unknown 写成 pass。
 
-Visual UX 本地检查：
+## Visual & UX audit
 
 ```bash
 python scripts/visual_ux_audit.py docs/index.html --json --fail-on-findings
 ```
 
-CI 会执行同一检查。用户实际发现的 UI bug 应转化为 regression rule/test，而不是只做一次性 CSS 修补。
-
-> 当前 Visual & UX audit 的 deterministic 层负责高置信静态规则。浏览器多 viewport、运行时 overflow measurement 与 screenshot/AI visual review 是下一层能力，不应把静态规则冒充完整视觉测试。
-
-## Public / Private 边界
-
-Private evidence 仅在显式授权时采集：
-
-```bash
-GITHUB_TOKEN=... python scripts/collect_repo_evidence.py owner/private-repo --allow-private --out private-evidence/private-repo.json
-```
-
-`private-evidence/` 被 gitignore。公开 bundle 在生成时再次查询 live visibility；不可验证时 fail closed。Pages 运行时只读取 `docs/data/` 的隐私安全快照。
-
-## Audit Coverage ≠ CI status
-
-Account-wide Private 扫描属于独立的 **Audit Coverage**。如果 Actions credential 无法看到全部 Private repositories，控制面应显示 `PARTIAL / external-blocked`，而不是把代码工程 CI 伪装成失败或伪装成完整覆盖。
-
-- 工程 CI：验证 repo-auditor 自己的代码、schema、Pages privacy boundary 与 deterministic checks。
-- Audit Coverage：说明当前凭据实际覆盖了多少账户仓库。
-- `PARTIAL` 可以和工程 CI 绿色同时存在；这表示“工具正常，但外部授权覆盖不足”。
-- Pages 只允许展示聚合覆盖数量与状态，永不发布 Private 仓库名称、URL、SHA、备注、代码证据或 findings。
+当前 deterministic 层负责高置信静态规则。多 viewport、运行时 overflow measurement 与 screenshot/AI visual review 属于更高层能力，不应混称为已完成。
 
 ## Structured audits
 
@@ -66,24 +155,29 @@ audits/<repo>-YYYY-MM-DD.md
 audits/<repo>-YYYY-MM-DD.json
 ```
 
-校验与队列：
-
 ```bash
 python scripts/audit_reports.py
 python scripts/remediation_queue.py
 python scripts/audit_freshness.py
 ```
 
-## Priority ≠ Quality
-
-Priority 只表示“现在是否值得投入时间”：P0 NOW、P1 NEXT、P2 PLANNED、P3 LATER、P4 LOW、STOP。工程质量使用独立多维评分。Pages 也必须明确标注 Priority，避免用户把大数字误认为质量总分。
-
 ## GO 边界
 
-安全、可逆、低风险 finding 可以自动整改并重审。`LICENSE / IP / visibility / delete/archive / destructive history rewrite / material cost` 等 owner-choice 不自动决定。Branch protection/ruleset 在 owner 尚未批准目标 policy 时也属于 owner-choice；批准后若缺 Administration 权限则是 external-blocked。完整边界见 [AGENTS.md](AGENTS.md) 与 [POLICY.md](POLICY.md)。
+安全、可逆、低风险 finding 可以自动整改并重审。
+
+以下保持 owner-choice / human boundary：
+
+- LICENSE / IP / visibility
+- delete / archive
+- destructive history rewrite
+- confidential or patent-sensitive publication
+- material external cost
+- high-impact permission/admin changes without prior authorization
+
+完整边界见 [AGENTS.md](AGENTS.md)、[POLICY.md](POLICY.md) 和 [DECISIONS.md](DECISIONS.md)。
 
 ## Pages
 
 Portfolio Command Center: https://cochranek.github.io/repo-auditor/
 
-源码在 `docs/`。Public Pages 是展示层，不是 private control plane；任何新功能都必须保持这个边界。
+源码在 `docs/`。Public Pages 是展示层，不是 private control plane。

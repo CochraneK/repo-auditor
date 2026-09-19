@@ -1,5 +1,6 @@
 (() => {
   const DATA_URL = "./data/registry.json";
+  const OVERVIEW_URL = "./data/portfolio-overview.json";
   const REPO_BASE = "https://github.com/CochraneK/";
   const AUDIT_RAW_BASE = "./data/";
   const AUDIT_REPORT_BASE = "./data/";
@@ -27,6 +28,7 @@
 
   const $ = id => document.getElementById(id);
   let data = null;
+  let overview = null;
   let currentView = localStorage.getItem("repo-auditor-view") || "cards";
 
   function esc(value = "") {
@@ -259,6 +261,30 @@
     $("continueCount").textContent = active.length;
     $("stopCount").textContent = repos.filter(r => r.work_status === "STOP").length;
     $("avgScore").textContent = avg;
+  }
+
+  function renderAIReadiness() {
+    const el = $("aiReadinessStrip");
+    if (!el) return;
+    const coverage = overview?.coverage || {};
+    const inventory = overview?.inventory || {};
+    const value = key => Number.isInteger(coverage[key]) ? coverage[key] : "—";
+    const status = overview?.audit_status || "UNAVAILABLE";
+    const scanned = Number.isInteger(coverage.evidence_collected) ? coverage.evidence_collected : "—";
+    const expected = Number.isInteger(inventory.expected_total) ? inventory.expected_total : "—";
+    el.innerHTML = `
+      <div class="ai-readiness-copy">
+        <span class="section-kicker">AI READINESS</span>
+        <strong>Agent handoff coverage</strong>
+        <span>Coverage · ${esc(status)} · ${scanned}/${expected} observed/expected</span>
+      </div>
+      <div class="ai-readiness-metrics">
+        <span><b>${value("ai_ready")}</b> AI-ready</span>
+        <span><b>${value("agents_present")}</b> AGENTS</span>
+        <span><b>${value("handoff_present")}</b> HANDOFF</span>
+        <span><b>${value("continuity_full")}</b> full continuity</span>
+      </div>
+    `;
   }
 
   function renderDistribution(repos) {
@@ -591,9 +617,15 @@
   async function load() {
     initTheme();
     try {
-      const response = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
+      const [response, overviewValue] = await Promise.all([
+        fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" }),
+        fetch(OVERVIEW_URL + "?t=" + Date.now(), { cache: "no-store" })
+          .then(r => r.ok ? r.json() : null)
+          .catch(() => null)
+      ]);
       if (!response.ok) throw new Error("HTTP " + response.status);
       data = await response.json();
+      overview = overviewValue;
 
       const repos = data.repositories || [];
       assertPublicOnly(repos);
@@ -601,6 +633,7 @@
 
       renderHero(repos);
       renderMetrics(repos);
+      renderAIReadiness();
       renderDistribution(repos);
       renderRecent(repos);
       renderFocus(repos);

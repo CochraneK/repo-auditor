@@ -10,6 +10,14 @@ def findings(r):
     if not r.get('security_policy'):add('GOV-SECURITY-MISSING','P3','No SECURITY.md detected.')
     if r.get('workflow_count',0)>0 and not r.get('head_ci_green'):add('CI-HEAD-NOT-GREEN','P1','HEAD workflow evidence is not fully green.')
     if r.get('unpinned_action_refs',0)>0:add('SUPPLY-ACTION-UNPINNED','P1',f"{r['unpinned_action_refs']} unpinned GitHub Action reference(s) detected.")
+    if r.get('readme') and not r.get('readme_quickstart',False):add('DOC-README-QUICKSTART-MISSING','P2','README does not expose a deterministic quick-start path.')
+    if r.get('readme') and not r.get('readme_visual',False):add('DOC-README-VISUAL-MISSING','P3','README lacks a Mermaid diagram or meaningful visual.')
+    if not r.get('agents',False):add('AI-AGENTS-MISSING','P2','AGENTS.md was not detected.')
+    if not r.get('handoff',False):add('AI-HANDOFF-MISSING','P2','HANDOFF.md was not detected.')
+    if not r.get('status_file',False):add('AI-STATUS-MISSING','P3','STATUS.md was not detected.')
+    if not r.get('decisions',False):add('AI-DECISIONS-MISSING','P3','DECISIONS.md was not detected.')
+    if not r.get('architecture_doc',False):add('AI-ARCHITECTURE-MISSING','P2','Architecture documentation was not detected.')
+    if not r.get('validation_documented',False):add('AI-VALIDATION-MISSING','P2','Validation commands were not detected in README/AGENTS/HANDOFF.')
     return out
 def triage(report):
     rows=[]
