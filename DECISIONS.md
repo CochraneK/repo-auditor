@@ -19,3 +19,10 @@ Use separate responsibilities for exploration/evidence, building, reviewing and 
 
 ## Learning loop
 Generalizable human/AI findings should become deterministic rules plus regression tests. Context-dependent judgments stay in semantic review.
+
+
+## Generated public progress surfaces
+
+README status visuals and `PROGRESS_REPORT.md` are derived from the public registry plus privacy-safe account aggregate. They must not become a manually maintained second source of truth.
+
+The progress report separates operating priority, repository quality, audit coverage, AI readiness, and semantic review. Generated visuals may summarize only privacy-safe aggregates.
