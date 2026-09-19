@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "repo-auditor agent workflow",
+  "type": "object",
+  "required": ["explorer", "builder", "reviewer", "judge"],
+  "properties": {
+    "explorer": {"type": "object", "required": ["evidence"], "properties": {"evidence": {"type": "array"}}},
+    "builder": {"type": "object", "required": ["changes"], "properties": {"changes": {"type": "array"}}},
+    "reviewer": {"type": "object", "required": ["findings"], "properties": {"findings": {"type": "array"}}},
+    "judge": {
+      "type": "object",
+      "required": ["decision"],
+      "properties": {"decision": {"enum": ["merge", "revise", "watch", "human-boundary"]}}
+    }
+  },
+  "additionalProperties": false
+}
