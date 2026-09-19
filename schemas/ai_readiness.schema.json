@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "repo-auditor deterministic AI readiness report",
   "type": "object",
-  "required": ["schema_version", "scope", "readiness_score", "readiness_state", "checks", "findings"],
+  "required": ["schema_version", "scope", "readiness_score", "readiness_state", "continuity_profile", "checks", "findings"],
   "properties": {
     "schema_version": {"const": 1},
     "scope": {"const": "deterministic-ai-readiness"},
