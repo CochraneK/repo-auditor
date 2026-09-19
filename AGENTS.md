@@ -105,3 +105,26 @@ repo-auditor must dogfood this policy on itself. Changes to its audit/remediatio
 - routing tests when routing logic changes;
 - Pages syntax validation when UI is touched;
 - a re-baselined self-audit after merge.
+
+
+## Canonical identity
+
+Repository-facing owner identity is **CochraneK**. New or edited public repository content must not reintroduce legacy personal-name variants. Run:
+
+```bash
+python scripts/identity_audit.py . --fail-on-findings
+```
+
+The one pre-existing personal-site repository may use the explicit audit exemption; do not generalize that exemption to other repositories.
+
+
+## Meta-learning
+
+Context-aware AI findings are not automatically promoted into deterministic policy. For a repeatable finding:
+
+1. create a regression candidate;
+2. test that it generalizes and has acceptable false-positive cost;
+3. encode it as a rule/test/skill only after evidence;
+4. keep context-dependent judgments in L4 semantic review.
+
+Never publish candidates derived from Private repository evidence into the public meta registry without an explicit public-safe review.
