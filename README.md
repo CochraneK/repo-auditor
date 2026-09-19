@@ -2,7 +2,7 @@
 
 **Evidence-backed Repository Audit + Remediation Agent · 审、改、再审。**
 
-[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md)
+[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md) · [Architecture](docs/architecture.md) · [AI Semantic Review](AI_SEMANTIC_REVIEW.md)
 
 ## 定位
 
@@ -22,7 +22,7 @@ Audit → classify → auto-fix safe findings → test → re-audit → merge
 - **Visual & UX audit**：检查 text overflow、缺少 line clamp、长字符串 wrapping、卡片高度、severity 层级、raw loading/error copy 等高置信 UI regression；这些 finding 可进入 GO auto-fix。
 - **Portfolio control plane**：NOW / NEXT / LATER / STOP、Priority、结构化审计和 account-wide aggregate。
 
-Branch governance 的核心原则：
+## Architecture\n\n```mermaid\nflowchart LR\n  A[Inventory] --> B[Evidence]\n  B --> C[Deterministic Audit]\n  C --> D[Runtime / Visual]\n  D --> E[Optional Semantic Review]\n  E --> F[Remediation]\n  F --> G[Reviewer]\n  G --> H[Re-audit]\n  H --> I[Merge / Watch / Human Boundary]\n  H --> J[Meta-learning]\n  J --> C\n```\n\nBranch governance 的核心原则：
 
 ```text
 workflow exists ≠ merge gate enforced
