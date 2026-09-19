@@ -14,6 +14,9 @@ Evolve repo-auditor from a deterministic repository scanner into an AI-native au
 2. Surface privacy-safe AI-readiness aggregates on Pages.
 3. Convert repeatable L4 findings into deterministic rules and tests.
 4. Re-audit repo-auditor after each merged remediation.
+5. Build a portfolio migration planner that turns AI-readiness gaps into bounded per-repository handoff/README upgrade batches.
+6. Replace the temporary hard-coded account inventory expectation with a verified privacy-safe coverage baseline.
+7. Add browser/screenshot runtime visual review without overstating static UX assurance.
 
 ## Validation
 Run:
