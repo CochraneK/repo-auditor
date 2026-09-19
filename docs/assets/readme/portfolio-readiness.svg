@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="470" viewBox="0 0 1600 470" role="img">
+<title>Portfolio readiness</title>
+<rect width="1600" height="470" rx="30" fill="#08111f"/>
+<style>text{font-family:Inter,"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif}.title{fill:#f8fafc;font-size:48px;font-weight:800}.sub{fill:#9fb2ca;font-size:20px}.label{fill:#9fb2ca;font-size:15px;font-weight:700}.metric{fill:#f8fafc;font-size:42px;font-weight:850}.box{fill:#0f1d31;stroke:#274260;stroke-width:2}.small{fill:#9fb2ca;font-size:14px}</style>
+<text x="64" y="62" fill="#7c8cff" font-size="19" font-weight="850">CochraneK · REPO AUDITOR</text>
+<text x="64" y="126" class="title">Portfolio readiness</text>
+<text x="64" y="164" class="sub">Audit coverage and agent-continuity signals stay separate from repository quality</text>
+<rect x="65" y="220" width="255" height="135" rx="22" class="box"/><text x="87" y="275" class="metric">36/43</text><text x="87" y="315" class="label">Observed</text>
+<rect x="365" y="220" width="255" height="135" rx="22" class="box"/><text x="387" y="275" class="metric">2</text><text x="387" y="315" class="label">AI-ready</text>
+<rect x="665" y="220" width="255" height="135" rx="22" class="box"/><text x="687" y="275" class="metric">8</text><text x="687" y="315" class="label">AGENTS</text>
+<rect x="965" y="220" width="255" height="135" rx="22" class="box"/><text x="987" y="275" class="metric">3</text><text x="987" y="315" class="label">Handoff</text>
+<rect x="1265" y="220" width="255" height="135" rx="22" class="box"/><text x="1287" y="275" class="metric">1</text><text x="1287" y="315" class="label">Full continuity</text>
+<circle cx="78" cy="410" r="9" fill="#f5b85c"/>
+<text x="100" y="416" class="small">Audit Coverage · PARTIAL · generated from privacy-safe aggregate only</text>
+</svg>

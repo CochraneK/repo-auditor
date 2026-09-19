@@ -32,6 +32,8 @@ jobs:
       - run: python scripts/scaffold_handoff.py --help
       - run: python scripts/meta_learning.py --help
       - run: python scripts/identity_audit.py --help
+      - run: python scripts/build_readme_assets.py --out-dir /tmp/repo-auditor-readme-assets
+      - run: python scripts/progress_report.py --out /tmp/PROGRESS_REPORT.md
   sync-public-pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: audit
@@ -64,12 +66,16 @@ jobs:
         run: echo "::warning::PORTFOLIO_AUDIT_TOKEN is not configured; preserving the last aggregate coverage snapshot."
       - env: { GITHUB_TOKEN: "${{ github.token }}" }
         run: python scripts/build_public_pages.py
+      - name: Refresh generated public progress surfaces
+        run: |
+          python scripts/build_readme_assets.py
+          python scripts/progress_report.py
       - name: Commit privacy-safe Pages data
         run: |
-          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits docs/data/todos.json docs/data/portfolio-overview.json; then exit 0; fi
+          if git diff --quiet -- docs/data/registry.json docs/data/manifest.json docs/data/audits docs/data/todos.json docs/data/portfolio-overview.json docs/assets/readme PROGRESS_REPORT.md; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/data/registry.json docs/data/manifest.json docs/data/audits docs/data/todos.json docs/data/portfolio-overview.json
+          git add docs/data/registry.json docs/data/manifest.json docs/data/audits docs/data/todos.json docs/data/portfolio-overview.json docs/assets/readme PROGRESS_REPORT.md
           git commit -m 'chore: sync privacy-safe Pages bundle [skip ci]'
           git push
   private-portfolio-scan:
@@ -106,9 +112,11 @@ jobs:
       - name: Publish aggregate coverage only
         if: env.PORTFOLIO_AUDIT_TOKEN != ''
         run: |
-          if git diff --quiet -- docs/data/portfolio-overview.json; then exit 0; fi
+          python scripts/build_readme_assets.py
+          python scripts/progress_report.py
+          if git diff --quiet -- docs/data/portfolio-overview.json docs/assets/readme PROGRESS_REPORT.md; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/data/portfolio-overview.json
+          git add docs/data/portfolio-overview.json docs/assets/readme PROGRESS_REPORT.md
           git commit -m 'chore: refresh aggregate audit coverage [skip ci]'
           git push
