@@ -42,7 +42,7 @@ def assess(evidence: dict[str, Any]) -> dict[str, Any]:
         "continuity_full": bool(ai_files.get("continuity_full")),
     }
 
-    score = sum(WEIGHTS[name] for name, ok in checks.items() if ok)
+    score = sum(weight for name, weight in WEIGHTS.items() if checks.get(name))
     findings: list[dict[str, Any]] = []
 
     def add(code: str, severity: str, title: str, remediation: str) -> None:
