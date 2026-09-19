@@ -25,6 +25,14 @@ class ReadmeAssetTests(unittest.TestCase):
             self.assertEqual({p.name for p in paths}, {"hero.svg", "portfolio-readiness.svg"})
             self.assertTrue(all(p.read_text(encoding="utf-8").startswith("<svg") for p in paths))
 
+    def test_lower_bound_marker(self):
+        overview = {
+            "audit_status": "PARTIAL",
+            "inventory": {"observed_total": 10, "expected_total": 11, "baseline_kind": "lower-bound"},
+            "coverage": {},
+        }
+        self.assertIn("10/≥11", bra.readiness(overview))
+
 
 if __name__ == "__main__":
     unittest.main()
