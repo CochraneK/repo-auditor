@@ -56,6 +56,14 @@ def content_text(repo: str, path: str, ref: str) -> str:
     return base64.b64decode(content).decode("utf-8", errors="replace")
 
 
+def optional_content_text(repo: str, path: str, ref: str) -> str:
+    """Best-effort supplemental text evidence; absence must not abort core collection."""
+    try:
+        return content_text(repo, path, ref)
+    except Exception:
+        return ""
+
+
 def action_refs(repo: str, paths: list[str], ref: str) -> dict[str, Any]:
     refs = []
     for path in paths:
@@ -175,9 +183,9 @@ def collect(repo: str, allow_private: bool = False) -> dict[str, Any]:
         if path.lower() in {"architecture.md", "docs/architecture.md", "docs/architecture/index.md"}
         or (path.lower().startswith("docs/") and ("architect" in path.lower() or "design" in path.lower()))
     ]
-    readme_text = content_text(repo, "README.md", sha) if "README.md" in paths else ""
-    agent_text = content_text(repo, "AGENTS.md", sha) if "AGENTS.md" in paths else ""
-    handoff_text = content_text(repo, "HANDOFF.md", sha) if "HANDOFF.md" in paths else ""
+    readme_text = optional_content_text(repo, "README.md", sha) if "README.md" in paths else ""
+    agent_text = optional_content_text(repo, "AGENTS.md", sha) if "AGENTS.md" in paths else ""
+    handoff_text = optional_content_text(repo, "HANDOFF.md", sha) if "HANDOFF.md" in paths else ""
     validation_documented = bool(VALIDATION.search("\n".join((readme_text, agent_text, handoff_text))))
     ai_readiness_files = {
         "AGENTS.md": "AGENTS.md" in paths,
