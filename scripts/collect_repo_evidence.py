@@ -18,9 +18,9 @@ from typing import Any
 API = "https://api.github.com"
 PINNED_REF = re.compile(r"^[0-9a-f]{40}$")
 USES = re.compile(r"^\s*-?\s*uses:\s*([^\s#]+)", re.MULTILINE)
-QUICK_START = re.compile(r"(?im)^#{1,4}\\s*(quick\\s*start|getting\\s*started|快速开始|开始使用|安装|运行)")
-VALIDATION = re.compile(r"(?i)(pytest|python\\s+-m\\s+unittest|npm\\s+(?:run\\s+)?test|pnpm\\s+test|yarn\\s+test|cargo\\s+test|go\\s+test|make\\s+test|visual_ux_audit\\.py|audit_reports\\.py)")
-VISUAL = re.compile(r"(?i)(```mermaid|!\\[[^\\]]*\\]\\([^\\)]+\\)|<img\\b)")
+QUICK_START = re.compile(r"(?im)^#{1,4}\s*(quick\s*start|getting\s*started|快速开始|开始使用|安装|运行)")
+VALIDATION = re.compile(r"(?i)(pytest|python\s+-m\s+unittest|npm\s+(?:run\s+)?test|pnpm\s+test|yarn\s+test|cargo\s+test|go\s+test|make\s+test|visual_ux_audit\.py|audit_reports\.py)")
+VISUAL = re.compile(r"(?i)(```mermaid|!\[[^\]]*\]\([^\)]+\)|<img\b)")
 
 
 def request_json(path: str) -> Any:
@@ -178,7 +178,7 @@ def collect(repo: str, allow_private: bool = False) -> dict[str, Any]:
     readme_text = content_text(repo, "README.md", sha) if "README.md" in paths else ""
     agent_text = content_text(repo, "AGENTS.md", sha) if "AGENTS.md" in paths else ""
     handoff_text = content_text(repo, "HANDOFF.md", sha) if "HANDOFF.md" in paths else ""
-    validation_documented = bool(VALIDATION.search("\\n".join((readme_text, agent_text, handoff_text))))
+    validation_documented = bool(VALIDATION.search("\n".join((readme_text, agent_text, handoff_text))))
     ai_readiness_files = {
         "AGENTS.md": "AGENTS.md" in paths,
         "HANDOFF.md": "HANDOFF.md" in paths,
@@ -190,7 +190,7 @@ def collect(repo: str, allow_private: bool = False) -> dict[str, Any]:
     readme_quality = {
         "has_quick_start": bool(QUICK_START.search(readme_text)),
         "has_visual": bool(VISUAL.search(readme_text)),
-        "has_architecture_section": bool(re.search(r"(?im)^#{1,4}\\s*(architecture|架构|系统设计|how it works)", readme_text)),
+        "has_architecture_section": bool(re.search(r"(?im)^#{1,4}\s*(architecture|架构|系统设计|how it works)", readme_text)),
     }
     return {
         "schema_version": 1,
