@@ -282,6 +282,7 @@
         <span><b>${value("ai_ready")}</b> AI-ready</span>
         <span><b>${value("agents_present")}</b> AGENTS</span>
         <span><b>${value("handoff_present")}</b> HANDOFF</span>
+        <span><b>${value("continuity_full")}</b> full continuity</span>
       </div>
     `;
   }
