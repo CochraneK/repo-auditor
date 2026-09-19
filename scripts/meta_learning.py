@@ -20,8 +20,8 @@ def normalized_candidate(value: Any) -> dict[str, Any] | None:
         return None
     if not title:
         return None
-    fingerprint = hashlib.sha256((title.lower() + "
-" + rationale.lower()).encode("utf-8")).hexdigest()[:16]
+    fingerprint_input = title.lower() + chr(10) + rationale.lower()
+    fingerprint = hashlib.sha256(fingerprint_input.encode("utf-8")).hexdigest()[:16]
     return {
         "id": "RULE-" + fingerprint.upper(),
         "title": title,
@@ -77,8 +77,7 @@ def main() -> int:
             raise SystemExit("refusing to publish rule candidates derived from private evidence")
         registry = json.loads(args.registry.read_text(encoding="utf-8"))
         merged = merge_registry(registry, candidates)
-        args.registry.write_text(json.dumps(merged, ensure_ascii=False, indent=2) + "
-", encoding="utf-8")
+        args.registry.write_text(json.dumps(merged, ensure_ascii=False, indent=2) + chr(10), encoding="utf-8")
 
     result = {
         "schema_version": 1,
@@ -88,13 +87,12 @@ def main() -> int:
         "candidates": candidates,
         "public_registry_written": bool(args.write_public_registry),
     }
-    text = json.dumps(result, ensure_ascii=False, indent=2) + "
-"
+    output = json.dumps(result, ensure_ascii=False, indent=2) + chr(10)
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(text, encoding="utf-8")
+        args.out.write_text(output, encoding="utf-8")
     else:
-        print(text, end="")
+        print(output, end="")
     return 0
 
 
