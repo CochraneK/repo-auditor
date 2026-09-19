@@ -35,6 +35,7 @@ jobs:
       - run: python scripts/build_readme_assets.py --out-dir /tmp/repo-auditor-readme-assets
       - run: python scripts/progress_report.py --out /tmp/PROGRESS_REPORT.md
       - run: python scripts/ai_native_migration_plan.py --help
+      - run: python scripts/coverage_baseline.py --help
   sync-public-pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: audit
@@ -97,6 +98,7 @@ jobs:
           python scripts/scan_portfolio.py --allow-private
           python scripts/repository_triage.py private-evidence/portfolio-scan.json --out private-evidence/repository-triage.json
           python scripts/ai_native_migration_plan.py private-evidence/portfolio-scan.json --out private-evidence/ai-native-migration-plan.json
+          python scripts/coverage_baseline.py private-evidence/portfolio-scan.json --kind lower-bound --out private-evidence/coverage-baseline-candidate.json
           python - <<'PY'
           import json
           from pathlib import Path
