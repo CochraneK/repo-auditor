@@ -2,7 +2,7 @@
   "schema_version": 2,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-19T12:58:17.655015+00:00",
+  "generated_at": "2026-09-19T13:01:15.805135+00:00",
   "audit_status": "PARTIAL",
   "inventory": {
     "observed_total": 36,
