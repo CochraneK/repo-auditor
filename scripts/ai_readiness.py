@@ -39,6 +39,7 @@ def assess(evidence: dict[str, Any]) -> dict[str, Any]:
         "validation": bool(ai_files.get("validation_documented")),
         "readme_visual": bool(readme.get("has_visual")),
         "readme_quickstart": bool(readme.get("has_quick_start")),
+        "continuity_full": bool(ai_files.get("continuity_full")),
     }
 
     score = sum(WEIGHTS[name] for name, ok in checks.items() if ok)
@@ -85,6 +86,7 @@ def assess(evidence: dict[str, Any]) -> dict[str, Any]:
         "repository": evidence.get("repository"),
         "readiness_score": score,
         "readiness_state": state,
+        "continuity_profile": "full" if checks["continuity_full"] else ("lightweight" if checks["handoff"] else "none"),
         "checks": checks,
         "findings": findings,
         "note": "AI readiness is a handoff/onboarding measure, not a repository quality score.",
