@@ -11,6 +11,9 @@ Active — GO mode.
 - AI-readiness scoring and handoff/onboarding checks.
 - Optional L4 semantic review through configurable OpenAI-compatible providers.
 - Privacy-safe Pages control plane.
+- Canonical identity guard for repository-facing `CochraneK` naming.
+- Guarded semantic-to-deterministic meta-learning candidate pipeline.
+- Generated privacy-safe progress report and README SVG status surfaces.
 
 ## Current limitations
 - External AI semantic review is optional and not part of ordinary CI.
