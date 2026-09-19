@@ -2,7 +2,7 @@
   "schema_version": 2,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-18T07:50:00.379252+00:00",
+  "generated_at": "2026-09-19T10:40:32.324025+00:00",
   "audit_status": "PARTIAL",
   "inventory": {
     "observed_total": 36,
@@ -25,7 +25,7 @@
     "security_policy_present": 6,
     "repositories_with_workflows": 20,
     "repositories_with_unpinned_actions": 15,
-    "head_ci_green": 23
+    "head_ci_green": 21
   },
   "privacy": {
     "private_details_location": "private-evidence/portfolio-scan.json (gitignored; never Pages)",
