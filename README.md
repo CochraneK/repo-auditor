@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="./docs/assets/readme/hero.svg" width="100%" alt="repo-auditor control-plane flow">
+</p>
+
 # repo-auditor
 
 **Evidence-backed Repository Audit + Remediation Agent · 审、改、再审。**
 
-[工作台](https://cochranek.github.io/repo-auditor/) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md) · [Architecture](docs/architecture.md) · [AI Semantic Review](AI_SEMANTIC_REVIEW.md)
+[工作台](https://cochranek.github.io/repo-auditor/) · [Progress](PROGRESS_REPORT.md) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md) · [Architecture](docs/architecture.md) · [AI Semantic Review](AI_SEMANTIC_REVIEW.md)
 
 ## 定位
 
@@ -65,6 +69,14 @@ python scripts/ai_readiness.py private-evidence/repo-auditor.json
 - **L7 Self-improving** — 人/AI 发现的可泛化漏项转成 rule、test、skill 或 routing policy。
 
 完整成熟度定义见 [AUDIT_MATURITY.md](AUDIT_MATURITY.md)。
+
+## Portfolio readiness
+
+<p align="center">
+  <img src="./docs/assets/readme/portfolio-readiness.svg" width="100%" alt="repo-auditor portfolio readiness">
+</p>
+
+The image is generated from the privacy-safe aggregate rather than hand-maintained counts. The detailed snapshot is in [PROGRESS_REPORT.md](PROGRESS_REPORT.md).
 
 ## AI-native handoff
 
