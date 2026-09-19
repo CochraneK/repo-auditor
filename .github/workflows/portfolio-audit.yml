@@ -2,9 +2,9 @@ name: Portfolio Audit
 on:
   workflow_dispatch:
   push:
-    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "scripts/**", "tests/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
+    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "AGENTS.md", "HANDOFF.md", "STATUS.md", "DECISIONS.md", "AI_SEMANTIC_REVIEW.md", "scripts/**", "tests/**", "schemas/**", "skills/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
   pull_request:
-    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "scripts/**", "tests/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
+    paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "AGENTS.md", "HANDOFF.md", "STATUS.md", "DECISIONS.md", "AI_SEMANTIC_REVIEW.md", "scripts/**", "tests/**", "schemas/**", "skills/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
   schedule:
     - cron: "17 1 1 * *"
 permissions: { contents: read }
