@@ -39,6 +39,25 @@ class AIReadinessTests(unittest.TestCase):
         self.assertIn("AI-VALIDATION-MISSING", codes)
         self.assertEqual(result["readiness_state"], "NOT_READY")
 
+    def test_full_continuity_profile(self):
+        evidence = {
+            "repository": "x/y",
+            "common_files": {"README.md": True},
+            "ai_readiness_files": {
+                "AGENTS.md": True,
+                "HANDOFF.md": True,
+                "STATUS.md": True,
+                "DECISIONS.md": True,
+                "continuity_full": True,
+                "architecture_docs": ["docs/architecture.md"],
+                "validation_documented": True,
+            },
+            "readme_quality": {"has_visual": True, "has_quick_start": True},
+        }
+        result = ar.assess(evidence)
+        self.assertEqual(result["continuity_profile"], "full")
+        self.assertEqual(result["readiness_score"], 100)
+
 
 if __name__ == "__main__":
     unittest.main()
