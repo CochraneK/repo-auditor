@@ -183,15 +183,32 @@ def collect(repo: str, allow_private: bool = False) -> dict[str, Any]:
         if path.lower() in {"architecture.md", "docs/architecture.md", "docs/architecture/index.md"}
         or (path.lower().startswith("docs/") and ("architect" in path.lower() or "design" in path.lower()))
     ]
+    handoff_candidates = ["HANDOFF.md", "handoff/AGENT_HANDOFF.md", "handoff/README.md"]
+    handoff_entry = next((path for path in handoff_candidates if path in paths), None)
+    status_present = "STATUS.md" in paths or "handoff/STATUS.md" in paths
+    decisions_present = "DECISIONS.md" in paths or "handoff/DECISIONS.md" in paths
+    continuity_files = {
+        "README.md": "handoff/README.md" in paths,
+        "STATUS.md": "handoff/STATUS.md" in paths,
+        "TODO.md": "handoff/TODO.md" in paths,
+        "DECISIONS.md": "handoff/DECISIONS.md" in paths,
+        "CONTEXT.md": "handoff/CONTEXT.md" in paths,
+        "CHATLOG.md": "handoff/CHATLOG.md" in paths,
+        "AGENT_HANDOFF.md": "handoff/AGENT_HANDOFF.md" in paths,
+        "SESSION_LOG.md": "handoff/SESSION_LOG.md" in paths,
+    }
     readme_text = optional_content_text(repo, "README.md", sha) if "README.md" in paths else ""
     agent_text = optional_content_text(repo, "AGENTS.md", sha) if "AGENTS.md" in paths else ""
-    handoff_text = optional_content_text(repo, "HANDOFF.md", sha) if "HANDOFF.md" in paths else ""
+    handoff_text = optional_content_text(repo, handoff_entry, sha) if handoff_entry else ""
     validation_documented = bool(VALIDATION.search("\n".join((readme_text, agent_text, handoff_text))))
     ai_readiness_files = {
         "AGENTS.md": "AGENTS.md" in paths,
-        "HANDOFF.md": "HANDOFF.md" in paths,
-        "STATUS.md": "STATUS.md" in paths,
-        "DECISIONS.md": "DECISIONS.md" in paths,
+        "HANDOFF.md": handoff_entry is not None,
+        "STATUS.md": status_present,
+        "DECISIONS.md": decisions_present,
+        "handoff_entry": handoff_entry,
+        "continuity_package": continuity_files,
+        "continuity_full": all(continuity_files.values()),
         "architecture_docs": architecture_docs,
         "validation_documented": validation_documented,
     }
