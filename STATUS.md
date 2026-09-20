@@ -16,6 +16,7 @@ Active — GO mode.
 - Canonical identity guard for repository-facing `CochraneK` naming.
 - Guarded semantic-to-deterministic meta-learning candidate pipeline.
 - Generated privacy-safe progress report and README SVG status surfaces.
+- Per-public-repository AI-readiness map for Pages and migration tracking; Private identities remain aggregate-only.
 
 ## Current limitations
 - External AI semantic review is optional and not part of ordinary CI.
