@@ -35,3 +35,12 @@ Historical exact repository totals are not authoritative indefinitely. Normal au
 ## Portfolio migration semantics
 
 AI-readiness gaps generate a migration plan, not automatic truth-bearing documentation. Scaffolding may create missing structure, but repository-specific status, decisions, architecture and README claims must be contextualized and re-audited before they count as ready.
+
+
+## Manual semantic review
+
+External L4 review is opt-in and manual in GitHub Actions. Normal CI never calls an external model.
+
+Private repository collection permission and Private evidence disclosure to an external AI are two independent authorizations. The workflow stores full Private semantic artifacts only on the ephemeral runner and exposes aggregate-only summaries for Private targets.
+
+Provider/model provenance is recorded. Cross-provider fallback is not automatic because silent fallback would change privacy, cost and model-behavior assumptions.
