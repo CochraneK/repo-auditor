@@ -1,31 +1,33 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "scope": "privacy-preserving-account-audit-summary",
   "owner": "CochraneK",
-  "generated_at": "2026-09-20T14:47:35.713101+00:00",
+  "generated_at": "2026-09-20T17:37:03.141257+00:00",
   "audit_status": "PARTIAL",
   "inventory": {
     "observed_total": 37,
     "public": 37,
     "private": 0,
     "scan_failures": 0,
-    "expected_total": 43,
-    "expected_private": 9,
+    "expected_total": 37,
+    "expected_private": 1,
+    "baseline_kind": "lower-bound",
+    "baseline_verified_at": "2026-09-19",
     "private_names_published": false
   },
   "coverage": {
     "status": "partial",
     "reasons": [
-      "authenticated inventory is smaller than expected inventory",
-      "private repository coverage is below expected inventory"
+      "private repository coverage is below the trusted coverage baseline",
+      "trusted coverage baseline is a lower bound, not an exact verified inventory"
     ],
     "evidence_collected": 37,
     "readme_present": 36,
-    "license_present": 10,
+    "license_present": 9,
     "security_policy_present": 6,
-    "repositories_with_workflows": 20,
-    "repositories_with_unpinned_actions": 15,
-    "head_ci_green": 22,
+    "repositories_with_workflows": 21,
+    "repositories_with_unpinned_actions": 16,
+    "head_ci_green": 24,
     "ai_ready": 2,
     "agents_present": 8,
     "handoff_present": 3,

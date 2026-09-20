@@ -3,17 +3,18 @@
 > Generated from the public registry and privacy-safe account aggregate. Progress/priority is an operating signal, not a repository-quality score.
 
 - Registry snapshot: **2026-09-17**
-- Coverage snapshot: **2026-09-20T14:47:35.713101+00:00**
+- Coverage snapshot: **2026-09-20T17:37:03.141257+00:00**
 - Audit coverage: **PARTIAL**
+- Coverage baseline: **lower-bound**
 
 ## Audit coverage
 
-- Observed repositories: **37 / 43 expected**
-- Observed private repositories: **0 / 9 expected**
+- Observed repositories: **37 / ≥37 baseline**
+- Observed private repositories: **0 / ≥1 baseline**
 - Evidence packages collected: **37**
 - Coverage gaps:
-  - authenticated inventory is smaller than expected inventory
-  - private repository coverage is below expected inventory
+  - private repository coverage is below the trusted coverage baseline
+  - trusted coverage baseline is a lower bound, not an exact verified inventory
 
 ## AI-native continuity
 
@@ -46,6 +47,7 @@
 ## Next gates
 
 - Restore/verify account-wide audit coverage before treating portfolio evidence as complete.
+- Replace the lower-bound inventory baseline with an exact verified aggregate when a credential with complete owner visibility is available.
 - Expand durable agent onboarding: AGENTS, handoff, status/decisions, architecture and validation paths.
 - Reduce mutable GitHub Action references where a pinned immutable ref is appropriate.
 - Close remaining README/onboarding gaps.

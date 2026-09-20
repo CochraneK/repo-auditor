@@ -6,7 +6,7 @@
 <text x="64" y="126" class="title">Portfolio readiness</text>
 <text x="64" y="164" class="sub">Audit coverage and agent-continuity signals stay separate from repository quality</text>
 <rect x="65" y="220" width="255" height="135" rx="22" class="box"/>
-<text x="87" y="275" class="metric">37/43</text>
+<text x="87" y="275" class="metric">37/≥37</text>
 <text x="87" y="315" class="label">Observed</text>
 <rect x="365" y="220" width="255" height="135" rx="22" class="box"/>
 <text x="387" y="275" class="metric">2</text>
