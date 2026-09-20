@@ -3,7 +3,7 @@
 > Generated from the public registry and privacy-safe account aggregate. Progress/priority is an operating signal, not a repository-quality score.
 
 - Registry snapshot: **2026-09-17**
-- Coverage snapshot: **2026-09-20T17:51:32.843040+00:00**
+- Coverage snapshot: **2026-09-20T18:45:39.544017+00:00**
 - Audit coverage: **PARTIAL**
 - Coverage baseline: **lower-bound**
 
@@ -18,9 +18,9 @@
 
 ## AI-native continuity
 
-- AI-ready repositories: **5 / 37 evidenced**
-- Repositories with AGENTS instructions: **11**
-- Repositories with a handoff entry: **6**
+- AI-ready repositories: **10 / 37 evidenced**
+- Repositories with AGENTS instructions: **16**
+- Repositories with a handoff entry: **11**
 - Repositories with a full continuity package: **1**
 
 ## Public execution queue
@@ -49,11 +49,11 @@
 - **psy-exp** — AI_READY · 85/100 · missing validation, quick start
 - **AI-Ques** — AI_READY · 85/100 · missing validation, quick start
 - **ai-uni** — AI_READY · 85/100 · missing validation, quick start
-- **FLP-Webui** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
-- **RVC_factor** — NOT_READY · 25/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation
-- **VA_emotion** — NOT_READY · 25/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation
-- **Voice-compare** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
-- **Voicemod_Portrait** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
+- **FLP-Webui** — AI_READY · 90/100 · missing validation
+- **RVC_factor** — AI_READY · 100/100
+- **VA_emotion** — AI_READY · 100/100
+- **Voice-compare** — AI_READY · 95/100 · missing quick start
+- **Voicemod_Portrait** — AI_READY · 95/100 · missing quick start
 
 ## Next gates
 
