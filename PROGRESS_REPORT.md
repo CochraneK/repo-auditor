@@ -3,7 +3,7 @@
 > Generated from the public registry and privacy-safe account aggregate. Progress/priority is an operating signal, not a repository-quality score.
 
 - Registry snapshot: **2026-09-17**
-- Coverage snapshot: **2026-09-20T17:40:31.008223+00:00**
+- Coverage snapshot: **2026-09-20T17:51:32.843040+00:00**
 - Audit coverage: **PARTIAL**
 - Coverage baseline: **lower-bound**
 
@@ -18,9 +18,9 @@
 
 ## AI-native continuity
 
-- AI-ready repositories: **2 / 37 evidenced**
-- Repositories with AGENTS instructions: **8**
-- Repositories with a handoff entry: **3**
+- AI-ready repositories: **5 / 37 evidenced**
+- Repositories with AGENTS instructions: **11**
+- Repositories with a handoff entry: **6**
 - Repositories with a full continuity package: **1**
 
 ## Public execution queue
@@ -43,6 +43,17 @@
 - **VA_emotion** — P0-NOW · 93 priority
 - **Voice-compare** — P0-NOW · 93 priority
 - **Voicemod_Portrait** — P0-NOW · 93 priority
+
+## Public AI-readiness migration
+
+- **psy-exp** — AI_READY · 85/100 · missing validation, quick start
+- **AI-Ques** — AI_READY · 85/100 · missing validation, quick start
+- **ai-uni** — AI_READY · 85/100 · missing validation, quick start
+- **FLP-Webui** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
+- **RVC_factor** — NOT_READY · 25/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation
+- **VA_emotion** — NOT_READY · 25/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation
+- **Voice-compare** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
+- **Voicemod_Portrait** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
 
 ## Next gates
 
