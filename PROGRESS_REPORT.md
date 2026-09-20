@@ -3,21 +3,21 @@
 > Generated from the public registry and privacy-safe account aggregate. Progress/priority is an operating signal, not a repository-quality score.
 
 - Registry snapshot: **2026-09-17**
-- Coverage snapshot: **2026-09-19T13:06:55.873961+00:00**
+- Coverage snapshot: **2026-09-20T14:47:35.713101+00:00**
 - Audit coverage: **PARTIAL**
 
 ## Audit coverage
 
-- Observed repositories: **36 / 43 expected**
+- Observed repositories: **37 / 43 expected**
 - Observed private repositories: **0 / 9 expected**
-- Evidence packages collected: **36**
+- Evidence packages collected: **37**
 - Coverage gaps:
   - authenticated inventory is smaller than expected inventory
   - private repository coverage is below expected inventory
 
 ## AI-native continuity
 
-- AI-ready repositories: **2 / 36 evidenced**
+- AI-ready repositories: **2 / 37 evidenced**
 - Repositories with AGENTS instructions: **8**
 - Repositories with a handoff entry: **3**
 - Repositories with a full continuity package: **1**
