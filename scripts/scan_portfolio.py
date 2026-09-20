@@ -87,6 +87,28 @@ def compact_evidence(evidence: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def public_ai_readiness_record(owner: str, row: dict[str, Any]) -> dict[str, Any]:
+    prefix = owner + "/"
+    repository = str(row.get("repository") or "")
+    name = repository[len(prefix):] if repository.startswith(prefix) else repository
+    return {
+        "name": name,
+        "ai_readiness_score": int(row.get("ai_readiness_score") or 0),
+        "ai_readiness_state": row.get("ai_readiness_state") or "UNKNOWN",
+        "agents": bool(row.get("agents")),
+        "handoff": bool(row.get("handoff")),
+        "status_file": bool(row.get("status_file")),
+        "decisions": bool(row.get("decisions")),
+        "architecture_doc": bool(row.get("architecture_doc")),
+        "validation_documented": bool(row.get("validation_documented")),
+        "readme_visual": bool(row.get("readme_visual")),
+        "readme_quickstart": bool(row.get("readme_quickstart")),
+        "continuity_full": bool(row.get("continuity_full")),
+        "unpinned_action_refs": int(row.get("unpinned_action_refs") or 0),
+        "head_ci_green": bool(row.get("head_ci_green")),
+    }
+
+
 def public_summary(
     owner: str,
     records: list[dict[str, Any]],
@@ -115,7 +137,7 @@ def public_summary(
 
     complete = not reasons
     return {
-        "schema_version": 3,
+        "schema_version": 4,
         "scope": "privacy-preserving-account-audit-summary",
         "owner": owner,
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -146,6 +168,10 @@ def public_summary(
             "handoff_present": sum(bool(row.get("handoff")) for row in records),
             "continuity_full": sum(bool(row.get("continuity_full")) for row in records),
         },
+        "public_ai_readiness": [
+            public_ai_readiness_record(owner, row)
+            for row in sorted(public, key=lambda item: str(item.get("repository") or ""))
+        ],
         "privacy": {
             "private_details_location": "private-evidence/portfolio-scan.json (gitignored; never Pages)",
             "pages_contains_private_details": False,
