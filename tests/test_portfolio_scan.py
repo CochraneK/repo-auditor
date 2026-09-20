@@ -81,6 +81,43 @@ class PortfolioScanTest(unittest.TestCase):
             self.assertEqual(baseline["minimum_total"], 37)
             self.assertNotIn("repositories", baseline)
 
+    def test_public_ai_readiness_exposes_only_public_records(self):
+        public = rec("CochraneK/alpha")
+        public.update({
+            "ai_readiness_score": 90,
+            "ai_readiness_state": "AI_READY",
+            "agents": True,
+            "handoff": True,
+            "status_file": True,
+            "decisions": True,
+            "architecture_doc": True,
+            "validation_documented": True,
+            "readme_visual": True,
+            "readme_quickstart": True,
+            "continuity_full": False,
+        })
+        private = rec("CochraneK/private-secret", "private")
+        private.update({
+            "ai_readiness_score": 100,
+            "ai_readiness_state": "AI_READY",
+            "agents": True,
+            "handoff": True,
+        })
+        summary = scan.public_summary("CochraneK", [public, private], [])
+        rows = summary["public_ai_readiness"]
+        self.assertEqual([row["name"] for row in rows], ["alpha"])
+        self.assertEqual(rows[0]["ai_readiness_score"], 90)
+        self.assertTrue(rows[0]["agents"])
+        self.assertNotIn("private-secret", json.dumps(summary))
+
+    def test_public_readiness_record_contains_no_sha_or_private_metadata(self):
+        row = rec("CochraneK/alpha")
+        row.update({"head_sha": "deadbeef", "ai_readiness_score": 55, "ai_readiness_state": "PARTIAL"})
+        safe = scan.public_ai_readiness_record("CochraneK", row)
+        self.assertEqual(safe["name"], "alpha")
+        self.assertNotIn("head_sha", safe)
+        self.assertNotIn("visibility", safe)
+
 
 if __name__ == "__main__":
     unittest.main()
