@@ -134,6 +134,43 @@
       : "";
   }
 
+  function enrichAIReadiness(repos) {
+    const rows = Array.isArray(overview?.public_ai_readiness) ? overview.public_ai_readiness : [];
+    const byName = new Map(rows.map(row => [row?.name, row]));
+    repos.forEach(repo => {
+      const readiness = byName.get(repo.name);
+      if (readiness) repo._aiReadiness = readiness;
+    });
+  }
+
+  function aiReadinessChip(repo) {
+    const readiness = repo._aiReadiness;
+    if (!readiness) return "";
+    const state = readiness.ai_readiness_state || "UNKNOWN";
+    const score = Number.isInteger(readiness.ai_readiness_score) ? readiness.ai_readiness_score : "—";
+    const label =
+      state === "AI_READY" ? "Ready" :
+      state === "PARTIAL" ? "Partial" :
+      state === "NOT_READY" ? "Not ready" : "Unknown";
+    const klass =
+      state === "AI_READY" ? "ready" :
+      state === "PARTIAL" ? "partial" :
+      state === "NOT_READY" ? "not-ready" : "unknown";
+    const missing = [
+      ["AGENTS", readiness.agents],
+      ["HANDOFF", readiness.handoff],
+      ["STATUS", readiness.status_file],
+      ["DECISIONS", readiness.decisions],
+      ["architecture", readiness.architecture_doc],
+      ["validation", readiness.validation_documented],
+      ["README visual", readiness.readme_visual],
+      ["quick start", readiness.readme_quickstart]
+    ].filter(([, ok]) => !ok).map(([name]) => name);
+    const title = "AI Readiness · " + score + "/100" +
+      (missing.length ? " · missing: " + missing.join(", ") : " · core handoff checks present");
+    return `<span class="badge ai-readiness ${klass}" title="${esc(title)}">AI · ${label} · ${score}</span>`;
+  }
+
   function auditIgnorePatterns(sidecar) {
     const value = sidecar?.freshness?.ignore_paths;
     return Array.isArray(value) ? value.filter(item => typeof item === "string" && item.trim()) : [];
@@ -272,11 +309,12 @@
     const status = overview?.audit_status || "UNAVAILABLE";
     const scanned = Number.isInteger(coverage.evidence_collected) ? coverage.evidence_collected : "—";
     const expected = Number.isInteger(inventory.expected_total) ? inventory.expected_total : "—";
+    const baselineMarker = inventory.baseline_kind === "lower-bound" ? "≥" : "";
     el.innerHTML = `
       <div class="ai-readiness-copy">
         <span class="section-kicker">AI READINESS</span>
         <strong>Agent handoff coverage</strong>
-        <span>Coverage · ${esc(status)} · ${scanned}/${expected} observed/expected</span>
+        <span>Coverage · ${esc(status)} · ${scanned}/${baselineMarker}${expected} observed/baseline</span>
       </div>
       <div class="ai-readiness-metrics">
         <span><b>${value("ai_ready")}</b> AI-ready</span>
@@ -328,6 +366,7 @@
           <span class="badge">commit · ${esc(ageLabel(r.last_commit_date))}</span>
           ${auditChip(r)}
           ${qualityChip(r)}
+          ${aiReadinessChip(r)}
         </div>
       </a>
     `).join("");
@@ -461,7 +500,8 @@
               <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
               <span class="badge ${r.work_status === "STOP" ? "stop" : "public"}">${esc(r.work_status)}</span>
               ${auditChip(r)}
-          ${qualityChip(r)}
+              ${qualityChip(r)}
+              ${aiReadinessChip(r)}
             </div>
           </div>
           <span class="badge public">public</span>
@@ -487,7 +527,7 @@
         <td class="table-score">${r.priority_score}</td>
         <td>
           <a class="table-repo" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a>
-          <div class="table-audit">${auditChip(r)} ${qualityChip(r)}</div>
+          <div class="table-audit">${auditChip(r)} ${qualityChip(r)} ${aiReadinessChip(r)}</div>
         </td>
         <td><span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span></td>
         <td><span class="${r.work_status === "STOP" ? "status-stop" : "status-continue"}">${esc(r.work_status)}</span></td>
@@ -629,6 +669,7 @@
 
       const repos = data.repositories || [];
       assertPublicOnly(repos);
+      enrichAIReadiness(repos);
       await enrichAuditStatuses(repos);
 
       renderHero(repos);
