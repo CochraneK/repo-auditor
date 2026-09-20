@@ -14,6 +14,12 @@ def render(overview: dict[str, Any], registry: dict[str, Any]) -> str:
     coverage = overview.get("coverage") or {}
     repos = registry.get("repositories") or []
     public_repos = [r for r in repos if isinstance(r, dict) and r.get("visibility") == "public"]
+    readiness_rows = overview.get("public_ai_readiness") or []
+    readiness_by_name = {
+        str(row.get("name")): row
+        for row in readiness_rows
+        if isinstance(row, dict) and row.get("name")
+    }
 
     bands = Counter(str(r.get("priority_band") or "UNKNOWN") for r in public_repos)
     continuing = [r for r in public_repos if r.get("work_status") == "CONTINUE"]
@@ -87,6 +93,35 @@ def render(overview: dict[str, Any], registry: dict[str, Any]) -> str:
         )
     else:
         lines.append("- No CONTINUE repository in the public registry.")
+
+    focus_readiness = [
+        (repo, readiness_by_name.get(str(repo.get("name"))))
+        for repo in focus
+        if readiness_by_name.get(str(repo.get("name")))
+    ]
+    if focus_readiness:
+        lines += ["", "## Public AI-readiness migration", ""]
+        for repo, readiness in focus_readiness:
+            state = readiness.get("ai_readiness_state") or "UNKNOWN"
+            score = readiness.get("ai_readiness_score", "—")
+            missing = [
+                label
+                for key, label in (
+                    ("agents", "AGENTS"),
+                    ("handoff", "HANDOFF"),
+                    ("status_file", "STATUS"),
+                    ("decisions", "DECISIONS"),
+                    ("architecture_doc", "architecture"),
+                    ("validation_documented", "validation"),
+                    ("readme_visual", "README visual"),
+                    ("readme_quickstart", "quick start"),
+                )
+                if not readiness.get(key)
+            ]
+            suffix = " · missing " + ", ".join(missing) if missing else ""
+            lines.append(
+                f"- **{repo.get('name')}** — {state} · {score}/100{suffix}"
+            )
 
     lines += ["", "## Next gates", ""]
     if status != "PASS":
