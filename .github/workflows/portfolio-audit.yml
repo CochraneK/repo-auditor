@@ -1,6 +1,41 @@
 name: Portfolio Audit
 on:
   workflow_dispatch:
+    inputs:
+      semantic_review:
+        description: "Run optional L4 semantic review"
+        required: true
+        default: false
+        type: boolean
+      semantic_repository:
+        description: "Repository to review (owner/name)"
+        required: false
+        default: "CochraneK/repo-auditor"
+        type: string
+      semantic_provider:
+        description: "External provider preset"
+        required: false
+        default: "deepseek"
+        type: choice
+        options:
+          - deepseek
+          - glm
+          - custom
+      semantic_model:
+        description: "Current provider model name"
+        required: false
+        default: ""
+        type: string
+      allow_private_repository:
+        description: "Explicitly permit collecting a Private repository"
+        required: true
+        default: false
+        type: boolean
+      allow_private_external_ai:
+        description: "Explicitly permit sending Private evidence to the selected external AI"
+        required: true
+        default: false
+        type: boolean
   push:
     paths: ["portfolio/**", "audits/**", "PORTFOLIO.md", "POLICY.md", "AUDIT_RUBRIC.md", "AUDIT_MATURITY.md", "AGENTS.md", "HANDOFF.md", "STATUS.md", "DECISIONS.md", "AI_SEMANTIC_REVIEW.md", "scripts/**", "tests/**", "schemas/**", "skills/**", "docs/**", ".github/workflows/portfolio-audit.yml"]
   pull_request:
@@ -84,8 +119,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PORTFOLIO_AUDIT_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN }}"
-      PORTFOLIO_EXPECTED_TOTAL: "43"
-      PORTFOLIO_EXPECTED_PRIVATE: "9"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Report missing account-wide credential
@@ -122,3 +155,67 @@ jobs:
           git add docs/data/portfolio-overview.json docs/assets/readme PROGRESS_REPORT.md
           git commit -m 'chore: refresh aggregate audit coverage [skip ci]'
           git push
+
+  semantic-review:
+    if: github.event_name == 'workflow_dispatch' && inputs.semantic_review == true
+    permissions: { contents: read }
+    runs-on: ubuntu-latest
+    env:
+      PORTFOLIO_AUDIT_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN }}"
+      DEEPSEEK_API_KEY: "${{ secrets.DEEPSEEK_API_KEY }}"
+      ZHIPU_API_KEY: "${{ secrets.ZHIPU_API_KEY }}"
+      AI_REVIEW_API_KEY: "${{ secrets.AI_REVIEW_API_KEY }}"
+      AI_REVIEW_BASE_URL: "${{ secrets.AI_REVIEW_BASE_URL }}"
+      AI_REVIEW_MODEL: "${{ inputs.semantic_model }}"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Validate semantic-review request
+        env:
+          SEMANTIC_MODEL: "${{ inputs.semantic_model }}"
+        run: |
+          if [ -z "$SEMANTIC_MODEL" ]; then
+            echo "::error::semantic_model is required when semantic_review=true"
+            exit 2
+          fi
+      - name: Collect repository evidence
+        env:
+          GITHUB_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN || github.token }}"
+          TARGET_REPOSITORY: "${{ inputs.semantic_repository }}"
+          ALLOW_PRIVATE_REPOSITORY: "${{ inputs.allow_private_repository }}"
+        run: |
+          flags=""
+          if [ "$ALLOW_PRIVATE_REPOSITORY" = "true" ]; then
+            flags="--allow-private"
+          fi
+          python scripts/collect_repo_evidence.py "$TARGET_REPOSITORY" $flags --out private-evidence/manual-semantic-evidence.json
+      - name: Run L4 semantic review
+        env:
+          SEMANTIC_PROVIDER: "${{ inputs.semantic_provider }}"
+          ALLOW_PRIVATE_EXTERNAL_AI: "${{ inputs.allow_private_external_ai }}"
+        run: |
+          flags=""
+          if [ "$ALLOW_PRIVATE_EXTERNAL_AI" = "true" ]; then
+            flags="--allow-private-external-ai"
+          fi
+          python scripts/semantic_review.py private-evidence/manual-semantic-evidence.json \
+            --provider "$SEMANTIC_PROVIDER" \
+            --out private-evidence/manual-semantic-review.json \
+            $flags
+      - name: Write privacy-safe workflow summary
+        run: |
+          python scripts/semantic_review_summary.py \
+            private-evidence/manual-semantic-evidence.json \
+            private-evidence/manual-semantic-review.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Generate meta-learning candidates
+        run: |
+          visibility="$(python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("private-evidence/manual-semantic-evidence.json").read_text())
+          print("private" if data.get("visibility") == "private" else "public")
+          PY
+          )"
+          python scripts/meta_learning.py private-evidence/manual-semantic-review.json \
+            --source-visibility "$visibility" \
+            --out private-evidence/manual-meta-candidates.json
+          echo "Semantic evidence, full review, and candidate details remain ephemeral on the runner." >> "$GITHUB_STEP_SUMMARY"
