@@ -54,6 +54,42 @@ class ProgressReportTests(unittest.TestCase):
         self.assertIn("Coverage baseline: **lower-bound**", text)
         self.assertIn("10 / ≥11 baseline", text)
 
+    def test_public_focus_readiness_is_visible(self):
+        overview = {
+            "generated_at": "2026-01-01T00:00:00Z",
+            "audit_status": "PARTIAL",
+            "inventory": {"observed_total": 1, "expected_total": 1, "private": 0, "expected_private": 0},
+            "coverage": {"evidence_collected": 1, "reasons": []},
+            "public_ai_readiness": [{
+                "name": "alpha",
+                "ai_readiness_score": 62,
+                "ai_readiness_state": "PARTIAL",
+                "agents": True,
+                "handoff": False,
+                "status_file": True,
+                "decisions": True,
+                "architecture_doc": False,
+                "validation_documented": True,
+                "readme_visual": False,
+                "readme_quickstart": True,
+            }],
+        }
+        registry = {
+            "snapshot_date": "2026-01-01",
+            "repositories": [{
+                "name": "alpha",
+                "visibility": "public",
+                "work_status": "CONTINUE",
+                "priority_score": 90,
+                "priority_band": "P0-NOW",
+            }],
+        }
+        text = pr.render(overview, registry)
+        self.assertIn("Public AI-readiness migration", text)
+        self.assertIn("**alpha** — PARTIAL · 62/100", text)
+        self.assertIn("HANDOFF", text)
+        self.assertIn("architecture", text)
+
 
 if __name__ == "__main__":
     unittest.main()

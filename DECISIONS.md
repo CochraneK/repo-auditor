@@ -44,3 +44,10 @@ External L4 review is opt-in and manual in GitHub Actions. Normal CI never calls
 Private repository collection permission and Private evidence disclosure to an external AI are two independent authorizations. The workflow stores full Private semantic artifacts only on the ephemeral runner and exposes aggregate-only summaries for Private targets.
 
 Provider/model provenance is recorded. Cross-provider fallback is not automatic because silent fallback would change privacy, cost and model-behavior assumptions.
+
+
+## Public per-repository AI readiness
+
+Pages may expose AI-readiness details for repositories whose live/public registry identity is already public. The privacy-safe account summary must exclude all Private repository identifiers from the per-repository readiness map.
+
+AI readiness remains an onboarding/continuity dimension. It must not be presented as repository quality, scientific validity, priority, or Audit Coverage.
