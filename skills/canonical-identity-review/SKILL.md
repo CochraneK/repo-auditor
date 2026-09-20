@@ -24,3 +24,16 @@ python scripts/identity_audit.py . --json --fail-on-findings
 ```
 
 Identity consistency is a governance/metadata rule, not a quality score.
+
+
+## Output
+
+Return:
+- file/path evidence;
+- finding code;
+- canonical replacement;
+- exemption status;
+- severity;
+- auto-fixability.
+
+Do not echo prohibited legacy identity strings into generated public findings.
