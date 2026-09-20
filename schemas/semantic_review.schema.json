@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "repo-auditor L4 semantic review",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "scope",
+    "assurance_level",
+    "provider",
+    "provider_base_url",
+    "model",
+    "provider_trust",
+    "summary",
+    "confidence",
+    "findings",
+    "regression_candidates"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "scope": {"const": "ai-semantic-review"},
+    "assurance_level": {"const": "L4"},
+    "provider": {"type": "string", "minLength": 1},
+    "provider_base_url": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "provider_trust": {"enum": ["local", "external"]},
+    "summary": {"type": "string", "minLength": 1},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "title",
+          "evidence",
+          "reasoning",
+          "remediation",
+          "confidence",
+          "auto_fixable",
+          "requires_owner_decision"
+        ],
+        "properties": {
+          "code": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["P0", "P1", "P2", "P3"]},
+          "title": {"type": "string", "minLength": 1},
+          "evidence": {},
+          "reasoning": {"type": "string", "minLength": 1},
+          "remediation": {"type": "string", "minLength": 1},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "auto_fixable": {"type": "boolean"},
+          "requires_owner_decision": {"type": "boolean"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "regression_candidates": {"type": "array"}
+  },
+  "additionalProperties": true
+}
