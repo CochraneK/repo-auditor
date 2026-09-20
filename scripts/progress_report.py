@@ -30,6 +30,8 @@ def render(overview: dict[str, Any], registry: dict[str, Any]) -> str:
     handoff = coverage.get("handoff_present", "—")
     full = coverage.get("continuity_full", "—")
     status = overview.get("audit_status", "UNKNOWN")
+    baseline_kind = inventory.get("baseline_kind", "exact")
+    baseline_marker = "≥" if baseline_kind == "lower-bound" else ""
     generated = overview.get("generated_at", "unknown")
     snapshot = registry.get("snapshot_date", "unknown")
     reasons = coverage.get("reasons") or []
@@ -43,11 +45,12 @@ def render(overview: dict[str, Any], registry: dict[str, Any]) -> str:
         f"- Registry snapshot: **{snapshot}**",
         f"- Coverage snapshot: **{generated}**",
         f"- Audit coverage: **{status}**",
+        f"- Coverage baseline: **{baseline_kind}**",
         "",
         "## Audit coverage",
         "",
-        f"- Observed repositories: **{observed} / {expected} expected**",
-        f"- Observed private repositories: **{observed_private} / {expected_private} expected**",
+        f"- Observed repositories: **{observed} / {baseline_marker}{expected} baseline**",
+        f"- Observed private repositories: **{observed_private} / {baseline_marker}{expected_private} baseline**",
         f"- Evidence packages collected: **{evidence}**",
     ]
     if reasons:
@@ -88,6 +91,8 @@ def render(overview: dict[str, Any], registry: dict[str, Any]) -> str:
     lines += ["", "## Next gates", ""]
     if status != "PASS":
         lines.append("- Restore/verify account-wide audit coverage before treating portfolio evidence as complete.")
+    if baseline_kind == "lower-bound":
+        lines.append("- Replace the lower-bound inventory baseline with an exact verified aggregate when a credential with complete owner visibility is available.")
     if isinstance(ai_ready, int) and isinstance(evidence, int) and ai_ready < evidence:
         lines.append("- Expand durable agent onboarding: AGENTS, handoff, status/decisions, architecture and validation paths.")
     if int(coverage.get("repositories_with_unpinned_actions") or 0) > 0:

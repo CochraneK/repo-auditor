@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "kind": "lower-bound",
+  "minimum_total": 37,
+  "minimum_private": 1,
+  "verified_at": "2026-09-19",
+  "basis": "Privacy-safe lower bound: 36 currently observed public repositories plus confirmed existence of private repository inventory. This is intentionally not an exact count and therefore cannot produce full coverage PASS."
+}

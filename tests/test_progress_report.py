@@ -37,6 +37,23 @@ class ProgressReportTests(unittest.TestCase):
         self.assertIn("AI Readiness", text)
         self.assertNotIn("beta — STOP", text)
 
+    def test_lower_bound_is_labeled_as_minimum(self):
+        overview = {
+            "generated_at": "2026-01-01T00:00:00Z",
+            "audit_status": "PARTIAL",
+            "inventory": {
+                "observed_total": 10,
+                "expected_total": 11,
+                "private": 0,
+                "expected_private": 1,
+                "baseline_kind": "lower-bound",
+            },
+            "coverage": {"evidence_collected": 10, "reasons": []},
+        }
+        text = pr.render(overview, {"snapshot_date": "x", "repositories": []})
+        self.assertIn("Coverage baseline: **lower-bound**", text)
+        self.assertIn("10 / ≥11 baseline", text)
+
 
 if __name__ == "__main__":
     unittest.main()

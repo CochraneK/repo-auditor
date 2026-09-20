@@ -34,6 +34,8 @@ jobs:
       - run: python scripts/identity_audit.py --help
       - run: python scripts/build_readme_assets.py --out-dir /tmp/repo-auditor-readme-assets
       - run: python scripts/progress_report.py --out /tmp/PROGRESS_REPORT.md
+      - run: python scripts/ai_native_migration_plan.py --help
+      - run: python scripts/coverage_baseline.py --help
   sync-public-pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: audit
@@ -41,8 +43,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PORTFOLIO_AUDIT_TOKEN: "${{ secrets.PORTFOLIO_AUDIT_TOKEN }}"
-      PORTFOLIO_EXPECTED_TOTAL: "43"
-      PORTFOLIO_EXPECTED_PRIVATE: "9"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Refresh privacy-safe account coverage summary
@@ -97,6 +97,8 @@ jobs:
         run: |
           python scripts/scan_portfolio.py --allow-private
           python scripts/repository_triage.py private-evidence/portfolio-scan.json --out private-evidence/repository-triage.json
+          python scripts/ai_native_migration_plan.py private-evidence/portfolio-scan.json --out private-evidence/ai-native-migration-plan.json
+          python scripts/coverage_baseline.py private-evidence/portfolio-scan.json --kind lower-bound --out private-evidence/coverage-baseline-candidate.json
           python - <<'PY'
           import json
           from pathlib import Path

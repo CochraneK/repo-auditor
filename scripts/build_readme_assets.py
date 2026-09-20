@@ -63,8 +63,9 @@ def readiness(overview: dict[str, Any]) -> str:
     coverage = overview.get("coverage") or {}
     inventory = overview.get("inventory") or {}
     status = overview.get("audit_status", "UNKNOWN")
+    marker = "≥" if inventory.get("baseline_kind") == "lower-bound" else ""
     metrics = [
-        ("Observed", f"{inventory.get('observed_total', '—')}/{inventory.get('expected_total', '—')}"),
+        ("Observed", f"{inventory.get('observed_total', '—')}/{marker}{inventory.get('expected_total', '—')}"),
         ("AI-ready", coverage.get("ai_ready", "—")),
         ("AGENTS", coverage.get("agents_present", "—")),
         ("Handoff", coverage.get("handoff_present", "—")),

@@ -129,6 +129,22 @@ Private evidence → external provider only with explicit authorization
 
 Public Pages 只允许公开仓库详情和 privacy-safe aggregates。Private 仓库名称、URL、SHA、备注、代码证据和 findings 不进入 Pages。
 
+## Coverage baseline
+
+Account-wide coverage no longer depends on a stale hard-coded repository total. The canonical privacy-safe baseline is [`portfolio/coverage-baseline.json`](portfolio/coverage-baseline.json).
+
+A **lower-bound** baseline can prove incompleteness but can never produce a full coverage PASS. An exact baseline requires explicitly verified complete owner visibility. See [Audit Coverage Baseline Standard](docs/standards/AUDIT_COVERAGE_BASELINE.md).
+
+## Portfolio AI-native migration
+
+```bash
+python scripts/ai_native_migration_plan.py \
+  private-evidence/portfolio-scan.json \
+  --out private-evidence/ai-native-migration-plan.json
+```
+
+Detailed migration plans stay private when Private repository identifiers are present. See [AI-native Migration Standard](docs/standards/AI_NATIVE_MIGRATION.md).
+
 ## Audit Coverage ≠ CI status
 
 这几类状态必须分开：

@@ -26,3 +26,12 @@ Generalizable human/AI findings should become deterministic rules plus regressio
 README status visuals and `PROGRESS_REPORT.md` are derived from the public registry plus privacy-safe account aggregate. They must not become a manually maintained second source of truth.
 
 The progress report separates operating priority, repository quality, audit coverage, AI readiness, and semantic review. Generated visuals may summarize only privacy-safe aggregates.
+
+
+## Coverage baseline semantics
+
+Historical exact repository totals are not authoritative indefinitely. Normal automation uses a privacy-safe checked-in baseline. A lower-bound baseline is fail-closed and cannot produce Audit Coverage PASS. An exact baseline requires explicit evidence of complete owner visibility.
+
+## Portfolio migration semantics
+
+AI-readiness gaps generate a migration plan, not automatic truth-bearing documentation. Scaffolding may create missing structure, but repository-specific status, decisions, architecture and README claims must be contextualized and re-audited before they count as ready.
