@@ -64,6 +64,7 @@ jobs:
       - run: python scripts/repository_triage.py --help
       - run: python scripts/ai_readiness.py --help
       - run: python scripts/semantic_review.py --help
+      - run: python scripts/semantic_review_summary.py --help
       - run: python scripts/scaffold_handoff.py --help
       - run: python scripts/meta_learning.py --help
       - run: python scripts/identity_audit.py --help
