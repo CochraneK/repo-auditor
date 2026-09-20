@@ -17,6 +17,7 @@ Active — GO mode.
 - Guarded semantic-to-deterministic meta-learning candidate pipeline.
 - Generated privacy-safe progress report and README SVG status surfaces.
 - Per-public-repository AI-readiness map for Pages and migration tracking; Private identities remain aggregate-only.
+- Downstream migration meta-learning promoted into reusable privacy-boundary, asset-provenance, and inference-claim review skills.
 
 ## Current limitations
 - External AI semantic review is optional and not part of ordinary CI.
