@@ -10,6 +10,8 @@ Active — GO mode.
 - Visual UX static regression checks.
 - AI-readiness scoring and handoff/onboarding checks.
 - Optional L4 semantic review through configurable OpenAI-compatible providers.
+- Manual L4 semantic review workflow with separate Private collection and external-disclosure authorization.
+- Structured L4 output validation and actionable provider failure categories.
 - Privacy-safe Pages control plane.
 - Canonical identity guard for repository-facing `CochraneK` naming.
 - Guarded semantic-to-deterministic meta-learning candidate pipeline.
