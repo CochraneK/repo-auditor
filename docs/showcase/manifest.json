@@ -83,14 +83,14 @@
       "slug": "fake-type",
       "source": "fake_type",
       "source_path": "static browser app"
+    },
+    {
+      "slug": "rvc-factor",
+      "source": "RVC_factor",
+      "source_path": "docs/demo static app with fully synthetic public mock adapter"
     }
   ],
   "deferred": [
-    {
-      "source": "RVC_factor",
-      "status": "needs-synthetic-fixture",
-      "reason": "Existing GitHub Pages mock adapter states it was derived from a real SQLite database and includes person-like names/file metadata."
-    },
     {
       "source": "anydoor",
       "status": "private-backend",
