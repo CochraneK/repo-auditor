@@ -1,10 +1,10 @@
 (() => {
   const DATA_URL="./data/registry.json";
-  const SHOWCASE_URL="./showcase/manifest.json";
+  const SHOWCASE_URL="./showcase/manifest.json";\n  const OVERVIEW_URL="./data/portfolio-overview.json";
   const REPO_BASE="https://github.com/CochraneK/";
   const API_BASE="https://api.github.com/repos/CochraneK/";
   const $=id=>document.getElementById(id);
-  let data={repositories:[]}, showcases={items:[]};
+  let data={repositories:[]}, showcases={items:[]}, overview=null;
 
   const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   const repoUrl=name=>REPO_BASE+encodeURIComponent(name);
@@ -23,6 +23,21 @@
     document.documentElement.dataset.theme=saved||"light";
   }
   function setTheme(theme){document.documentElement.dataset.theme=theme;localStorage.setItem("repo-auditor-theme-v2",theme)}
+
+  function enrichAIReadiness(repos){
+    const rows=Array.isArray(overview?.public_ai_readiness)?overview.public_ai_readiness:[];
+    const byName=new Map(rows.map(row=>[row?.name,row]));
+    repos.forEach(repo=>{const value=byName.get(repo.name);if(value)repo._aiReadiness=value});
+  }
+
+  function aiReadinessChip(repo){
+    const r=repo._aiReadiness;if(!r)return "";
+    const state=r.ai_readiness_state||"UNKNOWN";
+    const score=Number.isInteger(r.ai_readiness_score)?r.ai_readiness_score:"—";
+    const klass=state==="AI_READY"?"ready":state==="PARTIAL"?"partial":state==="NOT_READY"?"not-ready":"unknown";
+    const label=state==="AI_READY"?"AI ready":state==="PARTIAL"?"AI partial":state==="NOT_READY"?"AI not ready":"AI unknown";
+    return `<span class="badge ai-readiness ${klass}" title="AI readiness · ${esc(score)}/100">${esc(label)}</span>`;
+  }
 
   async function loadAudit(repo){
     if(!repo.latest_audit)return;
@@ -174,15 +189,19 @@
   async function load(){
     initTheme();
     try{
-      const [r,s]=await Promise.all([
+      const [r,s,o]=await Promise.all([
         fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"}),
-        fetch(SHOWCASE_URL+"?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+        fetch(SHOWCASE_URL+"?t="+Date.now(),{cache:"no-store"}).catch(()=>null),
+        fetch(OVERVIEW_URL+"?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
       ]);
       if(!r.ok)throw new Error("registry HTTP "+r.status);
       data=await r.json();
       if((data.repositories||[]).some(x=>x.visibility!=="public"))throw new Error("Public registry contains non-public records.");
       if(s?.ok)showcases=await s.json();
-      await Promise.all((data.repositories||[]).filter(x=>x.latest_audit).map(loadAudit));
+      if(o?.ok)overview=await o.json();
+      const repos=data.repositories||[];
+      enrichAIReadiness(repos);
+      await Promise.all(repos.filter(x=>x.latest_audit).map(loadAudit));
       renderMetrics();renderAttention();renderRepositories();renderAudits();renderPalette();wire();
       $("loading").classList.add("hidden");$("app").classList.remove("hidden");
     }catch(e){
