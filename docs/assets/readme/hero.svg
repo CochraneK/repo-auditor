@@ -1,32 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img">
-<title>Audit → Fix → Re-audit</title>
-<rect width="1600" height="520" rx="30" fill="#08111f"/>
-<style>text{font-family:Inter,"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif}.title{fill:#f8fafc;font-size:48px;font-weight:800}.sub{fill:#9fb2ca;font-size:20px}.label{fill:#9fb2ca;font-size:15px;font-weight:700}.metric{fill:#f8fafc;font-size:42px;font-weight:850}.box{fill:#0f1d31;stroke:#274260;stroke-width:2}.node{fill:#111f37;stroke:#7c8cff;stroke-width:2}.nodeText{fill:#f8fafc;font-size:18px;font-weight:750}.small{fill:#9fb2ca;font-size:14px}</style>
-<text x="64" y="62" fill="#7c8cff" font-size="19" font-weight="850">CochraneK · REPO AUDITOR</text>
-<text x="64" y="126" class="title">Audit → Fix → Re-audit</text>
-<text x="64" y="164" class="sub">Evidence-backed repository control plane for humans and AI agents</text>
-<rect x="70" y="245" width="190" height="95" rx="20" class="node"/>
-<text x="165.0" y="302" text-anchor="middle" class="nodeText">Inventory</text>
-<line x1="272" y1="292" x2="320" y2="292" stroke="#7c8cff" stroke-width="4"/>
-<path d="M316 282 L332 292 L316 302 Z" fill="#7c8cff"/>
-<rect x="340" y="245" width="190" height="95" rx="20" class="node"/>
-<text x="435.0" y="302" text-anchor="middle" class="nodeText">Evidence</text>
-<line x1="542" y1="292" x2="590" y2="292" stroke="#7c8cff" stroke-width="4"/>
-<path d="M586 282 L602 292 L586 302 Z" fill="#7c8cff"/>
-<rect x="610" y="245" width="190" height="95" rx="20" class="node"/>
-<text x="705.0" y="302" text-anchor="middle" class="nodeText">Audit</text>
-<line x1="812" y1="292" x2="860" y2="292" stroke="#7c8cff" stroke-width="4"/>
-<path d="M856 282 L872 292 L856 302 Z" fill="#7c8cff"/>
-<rect x="880" y="245" width="190" height="95" rx="20" class="node"/>
-<text x="975.0" y="302" text-anchor="middle" class="nodeText">Remediate</text>
-<line x1="1082" y1="292" x2="1130" y2="292" stroke="#7c8cff" stroke-width="4"/>
-<path d="M1126 282 L1142 292 L1126 302 Z" fill="#7c8cff"/>
-<rect x="1150" y="245" width="190" height="95" rx="20" class="node"/>
-<text x="1245.0" y="302" text-anchor="middle" class="nodeText">Review</text>
-<line x1="1352" y1="292" x2="1400" y2="292" stroke="#7c8cff" stroke-width="4"/>
-<path d="M1396 282 L1412 292 L1396 302 Z" fill="#7c8cff"/>
-<rect x="1420" y="245" width="115" height="95" rx="20" class="node"/>
-<text x="1477.5" y="302" text-anchor="middle" class="nodeText">Learn</text>
-<rect x="70" y="395" width="1465" height="64" rx="18" fill="#0b213c" stroke="#274260"/>
-<text x="100" y="434" fill="#49d49d" font-size="16" font-weight="800">Privacy-safe Pages · deterministic assurance · optional semantic review · durable handoff · meta-learning</text>
+<title>Repository quality, kept visible.</title>
+<rect width="1600" height="520" rx="30" fill="#f3f1ea"/>
+<rect x="1" y="1" width="1598" height="518" rx="29" fill="none" stroke="#dedbd1"/>
+<style>text{font-family:Inter,"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif}.title{fill:#171a1f;font-size:58px;font-weight:760;letter-spacing:-1.5px}.sub{fill:#73766f;font-size:19px}.eyebrow{fill:#73766f;font-size:14px;font-weight:850;letter-spacing:2.2px}.label{fill:#73766f;font-size:14px;font-weight:700}.metric{fill:#171a1f;font-size:40px;font-weight:820}.box{fill:#fffef9;stroke:#dedbd1;stroke-width:2}.small{fill:#73766f;font-size:14px}.accent{fill:#425d52}</style>
+<text x="66" y="62" class="eyebrow">COCHRANEK · REPO AUDITOR</text>
+<text x="66" y="136" class="title">Repository quality, kept visible.</text>
+<text x="66" y="178" class="sub">A calm, public-safe control center for audit, remediation, and AI handoff.</text>
+<rect x="66" y="248" width="330" height="122" rx="18" class="box"/>
+<text x="88" y="300" class="metric">7</text>
+<text x="88" y="337" class="label">Public repositories</text>
+<rect x="431" y="248" width="330" height="122" rx="18" class="box"/>
+<text x="453" y="300" class="metric">15</text>
+<text x="453" y="337" class="label">Reviewed showcases</text>
+<rect x="796" y="248" width="330" height="122" rx="18" class="box"/>
+<text x="818" y="300" class="metric">3</text>
+<text x="818" y="337" class="label">AI-ready</text>
+<rect x="1161" y="248" width="330" height="122" rx="18" class="box"/>
+<text x="1183" y="300" class="metric">PARTIAL</text>
+<text x="1183" y="337" class="label">Coverage</text>
+<rect x="66" y="414" width="1468" height="54" rx="14" fill="#e6ece8"/>
+<circle cx="91" cy="441" r="7" fill="#3d6f5b"/>
+<text x="111" y="447" class="small">Control Center v2 · Pages live · public/private boundary fail-closed · audit evidence stays traceable</text>
 </svg>

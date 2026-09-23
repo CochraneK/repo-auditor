@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/assets/readme/hero.svg" width="100%" alt="repo-auditor control-plane flow">
+  <img src="./docs/assets/readme/hero.svg" width="100%" alt="repo-auditor repository control center snapshot">
 </p>
 
 # repo-auditor

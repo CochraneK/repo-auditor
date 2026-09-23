@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate crisp README SVGs from privacy-safe canonical portfolio data."""
+"""Generate README SVGs from privacy-safe canonical portfolio data."""
 from __future__ import annotations
 
 import argparse
@@ -8,14 +8,17 @@ import json
 from pathlib import Path
 from typing import Any
 
-BG = "#08111f"
-PANEL = "#0f1d31"
-LINE = "#274260"
-TEXT = "#f8fafc"
-MUTED = "#9fb2ca"
-ACCENT = "#7c8cff"
-GREEN = "#49d49d"
-AMBER = "#f5b85c"
+BG = "#f3f1ea"
+PANEL = "#fffef9"
+SURFACE = "#faf9f5"
+LINE = "#dedbd1"
+TEXT = "#171a1f"
+MUTED = "#73766f"
+MUTED2 = "#a3a59e"
+ACCENT = "#425d52"
+ACCENT_SOFT = "#e6ece8"
+GREEN = "#3d6f5b"
+AMBER = "#986f34"
 
 
 def esc(value: Any) -> str:
@@ -27,33 +30,45 @@ def svg_head(title: str, subtitle: str, height: int) -> list[str]:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="{height}" viewBox="0 0 1600 {height}" role="img">',
         f"<title>{esc(title)}</title>",
         f'<rect width="1600" height="{height}" rx="30" fill="{BG}"/>',
-        '<style>text{font-family:Inter,"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif}.title{fill:#f8fafc;font-size:48px;font-weight:800}.sub{fill:#9fb2ca;font-size:20px}.label{fill:#9fb2ca;font-size:15px;font-weight:700}.metric{fill:#f8fafc;font-size:42px;font-weight:850}.box{fill:#0f1d31;stroke:#274260;stroke-width:2}.node{fill:#111f37;stroke:#7c8cff;stroke-width:2}.nodeText{fill:#f8fafc;font-size:18px;font-weight:750}.small{fill:#9fb2ca;font-size:14px}</style>',
-        '<text x="64" y="62" fill="#7c8cff" font-size="19" font-weight="850">CochraneK · REPO AUDITOR</text>',
-        f'<text x="64" y="126" class="title">{esc(title)}</text>',
-        f'<text x="64" y="164" class="sub">{esc(subtitle)}</text>',
+        f'<rect x="1" y="1" width="1598" height="{height-2}" rx="29" fill="none" stroke="{LINE}"/>',
+        '<style>text{font-family:Inter,"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif}.title{fill:#171a1f;font-size:58px;font-weight:760;letter-spacing:-1.5px}.sub{fill:#73766f;font-size:19px}.eyebrow{fill:#73766f;font-size:14px;font-weight:850;letter-spacing:2.2px}.label{fill:#73766f;font-size:14px;font-weight:700}.metric{fill:#171a1f;font-size:40px;font-weight:820}.box{fill:#fffef9;stroke:#dedbd1;stroke-width:2}.small{fill:#73766f;font-size:14px}.accent{fill:#425d52}</style>',
+        '<text x="66" y="62" class="eyebrow">COCHRANEK · REPO AUDITOR</text>',
+        f'<text x="66" y="136" class="title">{esc(title)}</text>',
+        f'<text x="66" y="178" class="sub">{esc(subtitle)}</text>',
     ]
 
 
-def hero() -> str:
-    parts = svg_head("Audit → Fix → Re-audit", "Evidence-backed repository control plane for humans and AI agents", 520)
-    nodes = [
-        ("Inventory", 70), ("Evidence", 340), ("Audit", 610), ("Remediate", 880), ("Review", 1150), ("Learn", 1420)
+def hero(overview: dict[str, Any] | None = None, showcase_count: int | None = None) -> str:
+    overview = overview or {}
+    inventory = overview.get("inventory") or {}
+    coverage = overview.get("coverage") or {}
+    public_count = inventory.get("public", inventory.get("observed_total", "—"))
+    ai_ready = coverage.get("ai_ready", "—")
+    coverage_status = overview.get("audit_status", "UNKNOWN")
+    showcases = showcase_count if showcase_count is not None else "—"
+
+    parts = svg_head(
+        "Repository quality, kept visible.",
+        "A calm, public-safe control center for audit, remediation, and AI handoff.",
+        520,
+    )
+    metrics = [
+        ("Public repositories", public_count),
+        ("Reviewed showcases", showcases),
+        ("AI-ready", ai_ready),
+        ("Coverage", coverage_status),
     ]
-    for index, (label, x) in enumerate(nodes):
-        width = 190 if index < 5 else 115
+    for i, (label, value) in enumerate(metrics):
+        x = 66 + i * 365
         parts += [
-            f'<rect x="{x}" y="245" width="{width}" height="95" rx="20" class="node"/>',
-            f'<text x="{x + width/2}" y="302" text-anchor="middle" class="nodeText">{esc(label)}</text>',
+            f'<rect x="{x}" y="248" width="330" height="122" rx="18" class="box"/>',
+            f'<text x="{x+22}" y="300" class="metric">{esc(value)}</text>',
+            f'<text x="{x+22}" y="337" class="label">{esc(label)}</text>',
         ]
-        if index < len(nodes) - 1:
-            next_x = nodes[index + 1][1]
-            parts += [
-                f'<line x1="{x + width + 12}" y1="292" x2="{next_x - 20}" y2="292" stroke="{ACCENT}" stroke-width="4"/>',
-                f'<path d="M{next_x-24} 282 L{next_x-8} 292 L{next_x-24} 302 Z" fill="{ACCENT}"/>',
-            ]
     parts += [
-        '<rect x="70" y="395" width="1465" height="64" rx="18" fill="#0b213c" stroke="#274260"/>',
-        '<text x="100" y="434" fill="#49d49d" font-size="16" font-weight="800">Privacy-safe Pages · deterministic assurance · optional semantic review · durable handoff · meta-learning</text>',
+        f'<rect x="66" y="414" width="1468" height="54" rx="14" fill="{ACCENT_SOFT}"/>',
+        f'<circle cx="91" cy="441" r="7" fill="{GREEN}"/>',
+        '<text x="111" y="447" class="small">Control Center v2 · Pages live · public/private boundary fail-closed · audit evidence stays traceable</text>',
         "</svg>",
     ]
     return chr(10).join(parts) + chr(10)
@@ -71,27 +86,35 @@ def readiness(overview: dict[str, Any]) -> str:
         ("Handoff", coverage.get("handoff_present", "—")),
         ("Full continuity", coverage.get("continuity_full", "—")),
     ]
-    parts = svg_head("Portfolio readiness", "Audit coverage and agent-continuity signals stay separate from repository quality", 470)
+    parts = svg_head(
+        "Portfolio readiness",
+        "Coverage and agent-continuity signals stay separate from repository quality.",
+        470,
+    )
     for i, (label, value) in enumerate(metrics):
-        x = 65 + i * 300
+        x = 66 + i * 299
         parts += [
-            f'<rect x="{x}" y="220" width="255" height="135" rx="22" class="box"/>',
-            f'<text x="{x+22}" y="275" class="metric">{esc(value)}</text>',
-            f'<text x="{x+22}" y="315" class="label">{esc(label)}</text>',
+            f'<rect x="{x}" y="226" width="264" height="126" rx="18" class="box"/>',
+            f'<text x="{x+22}" y="280" class="metric">{esc(value)}</text>',
+            f'<text x="{x+22}" y="318" class="label">{esc(label)}</text>',
         ]
     state_color = GREEN if status == "PASS" else AMBER
     parts += [
-        f'<circle cx="78" cy="410" r="9" fill="{state_color}"/>',
-        f'<text x="100" y="416" class="small">Audit Coverage · {esc(status)} · generated from privacy-safe aggregate only</text>',
+        f'<circle cx="79" cy="411" r="7" fill="{state_color}"/>',
+        f'<text x="99" y="417" class="small">Audit coverage · {esc(status)} · privacy-safe aggregate only</text>',
         "</svg>",
     ]
     return chr(10).join(parts) + chr(10)
 
 
-def build(overview: dict[str, Any], out_dir: Path) -> list[Path]:
+def build(
+    overview: dict[str, Any],
+    out_dir: Path,
+    showcase_count: int | None = None,
+) -> list[Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     outputs = {
-        "hero.svg": hero(),
+        "hero.svg": hero(overview, showcase_count),
         "portfolio-readiness.svg": readiness(overview),
     }
     written = []
@@ -102,13 +125,25 @@ def build(overview: dict[str, Any], out_dir: Path) -> list[Path]:
     return written
 
 
+def _showcase_count(path: Path) -> int | None:
+    if not path.exists():
+        return None
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    entries = manifest.get("showcases")
+    if not isinstance(entries, list):
+        entries = manifest.get("items")
+    return len(entries) if isinstance(entries, list) else None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--overview", type=Path, default=Path("docs/data/portfolio-overview.json"))
+    parser.add_argument("--showcase-manifest", type=Path, default=Path("docs/showcase/manifest.json"))
     parser.add_argument("--out-dir", type=Path, default=Path("docs/assets/readme"))
     args = parser.parse_args()
     overview = json.loads(args.overview.read_text(encoding="utf-8"))
-    for path in build(overview, args.out_dir):
+    showcase_count = _showcase_count(args.showcase_manifest)
+    for path in build(overview, args.out_dir, showcase_count):
         print(path)
     return 0
 
