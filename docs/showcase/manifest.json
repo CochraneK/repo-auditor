@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "generated_on": "2026-09-23",
+  "policy": "explicit-public-safe-static-mirror",
+  "source_repo_visibility_may_be_private": true,
+  "excludes": [
+    "credentials",
+    "private source code beyond required static assets",
+    "Git SHAs",
+    "private audit evidence",
+    "internal notes",
+    "real user/research data",
+    "admin surfaces",
+    "unreviewed research/IP"
+  ],
+  "showcases": [
+    {
+      "slug": "long-gate",
+      "source": "long-gate",
+      "source_path": "examples/trust-report-demo.html"
+    },
+    {
+      "slug": "we-read",
+      "source": "we-read",
+      "source_path": "site/index.html"
+    },
+    {
+      "slug": "red-map",
+      "source": "red-map",
+      "source_path": "front-end subset; admin excluded"
+    },
+    {
+      "slug": "voicemod-portrait",
+      "source": "Voicemod_Portrait",
+      "source_path": "static front-end subset"
+    },
+    {
+      "slug": "gray-walker",
+      "source": "gray-walker",
+      "source_path": "index.html"
+    },
+    {
+      "slug": "cris",
+      "source": "cris",
+      "source_path": "index.html + browser libraries"
+    },
+    {
+      "slug": "animal-age",
+      "source": "Animal-Age",
+      "source_path": "index.html"
+    },
+    {
+      "slug": "ji-sui-le",
+      "source": "Ji-Sui-Le",
+      "source_path": "web/index.html"
+    },
+    {
+      "slug": "flp-webui",
+      "source": "FLP-Webui",
+      "source_path": "camera_web/camera_web_gui.html"
+    },
+    {
+      "slug": "va-emotion",
+      "source": "VA_emotion",
+      "source_path": "docs demo subset"
+    },
+    {
+      "slug": "charity-intelligence",
+      "source": "charity-intelligence",
+      "source_path": "output/2026-W37-公益周报.html"
+    },
+    {
+      "slug": "my-skills",
+      "source": "my-skills",
+      "source_path": "docs/index.html"
+    }
+  ]
+}
