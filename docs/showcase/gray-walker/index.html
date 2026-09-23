@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灰域行者 — 内心对话室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style id="theme-styles">
+:root {
+  --bg-primary:#050508; --bg-secondary:#0a0a0f; --bg-card:rgba(10,10,15,0.95);
+  --bg-card-alt:rgba(15,15,22,0.97); --bg-therapist:rgba(20,20,30,0.97);
+  --bg-grounding:rgba(5,5,8,0.98); --bg-input:rgba(200,196,184,0.03);
+  --bg-input-hover:rgba(200,196,184,0.07); --border:rgba(200,196,184,0.15);
+  --border-light:rgba(200,196,184,0.08); --border-hover:rgba(200,196,184,0.4);
+  --text-primary:#c8c4b8; --text-secondary:#d4cfc4; --text-dim:#7a7870;
+  --text-danger:#c0392b; --accent-red:#c0392b; --accent-blue:#2980b9;
+  --accent-green:#27ae60; --accent-yellow:#f39c12; --accent-purple:#af7ac5;
+  --accent-pink:#e91e63; --accent-orange:#e67e22; --accent-cyan:#5dade2;
+  --scan-bg:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);
+  --noise-opacity:0.03;
+  --screen-gradient:radial-gradient(ellipse at center,#0f0f18 0%,#050508 70%);
+  --end-gradient:radial-gradient(ellipse at center,#0f0f18 0%,#050508 100%);
+  --header-bg:rgba(10,10,15,0.85); --btn-bg:rgba(200,196,184,0.08);
+  --btn-bg-hover:rgba(200,196,184,0.15); --summary-card-bg:rgba(200,196,184,0.04);
+  --progress-done:rgba(200,196,184,0.7); --progress-current:rgba(200,196,184,1);
+  --choice-letter-border:rgba(200,196,184,0.3); --choice-letter-border-hover:rgba(200,196,184,1);
+  --g5-border:rgba(200,196,184,0.2); --breath-border:rgba(200,196,184,0.3);
+  --result-border:rgba(200,196,184,0.15); --result-voices-border:rgba(200,196,184,0.1);
+  --voice-bg:rgba(8,8,14,0.95); --tq-bg:rgba(200,196,184,0.04);
+  --tq-bg-hover:rgba(200,196,184,0.09); --g5-item-bg:transparent;
+  --grounding-text-bg:rgba(231,76,60,0.05); --grounding-text-border:rgba(231,76,60,0.15);
+  --grounding-text-color:#e74c3c; --notes-bg:rgba(46,204,113,0.05);
+  --notes-border:rgba(46,204,113,0.15); --notes-color:#27ae60;
+  --therapist-card-bg:rgba(25,25,38,0.97);
+  --intro-glow:rgba(192,57,43,0.08);
+}
+[data-theme="clarity"] {
+  --bg-primary:#f7f5f0; --bg-secondary:#eeeae1; --bg-card:rgba(255,255,255,0.93);
+  --bg-card-alt:rgba(255,253,248,0.97); --bg-therapist:rgba(255,255,255,0.97);
+  --bg-grounding:rgba(247,245,240,0.98); --bg-input:rgba(80,70,55,0.04);
+  --bg-input-hover:rgba(80,70,55,0.09); --border:rgba(80,70,55,0.18);
+  --border-light:rgba(80,70,55,0.1); --border-hover:rgba(80,70,55,0.4);
+  --text-primary:#2c2416; --text-secondary:#3d3222; --text-dim:#8a7d68;
+  --text-danger:#a83228; --accent-red:#a83228; --accent-blue:#1a6fa8;
+  --accent-green:#1e8a50; --accent-yellow:#c07810; --accent-purple:#6e2a8a;
+  --accent-pink:#c4186a; --accent-orange:#b86010; --accent-cyan:#1a7a9a;
+  --scan-bg:none; --noise-opacity:0;
+  --screen-gradient:radial-gradient(ellipse at center,#faf8f2 0%,#eeeae1 100%);
+  --end-gradient:radial-gradient(ellipse at center,#faf8f2 0%,#eeeae1 100%);
+  --header-bg:rgba(255,255,255,0.88); --btn-bg:rgba(80,70,55,0.07);
+  --btn-bg-hover:rgba(80,70,55,0.14); --summary-card-bg:rgba(80,70,55,0.04);
+  --progress-done:rgba(80,70,55,0.6); --progress-current:rgba(44,36,22,1);
+  --choice-letter-border:rgba(80,70,55,0.3); --choice-letter-border-hover:rgba(44,36,22,1);
+  --g5-border:rgba(80,70,55,0.2); --breath-border:rgba(80,70,55,0.3);
+  --result-border:rgba(80,70,55,0.15); --result-voices-border:rgba(80,70,55,0.1);
+  --voice-bg:rgba(255,255,255,0.96); --tq-bg:rgba(80,70,55,0.04);
+  --tq-bg-hover:rgba(80,70,55,0.09); --g5-item-bg:transparent;
+  --grounding-text-bg:rgba(168,50,40,0.05); --grounding-text-border:rgba(168,50,40,0.15);
+  --grounding-text-color:#a83228; --notes-bg:rgba(30,138,80,0.05);
+  --notes-border:rgba(30,138,80,0.15); --notes-color:#1e8a50;
+  --therapist-card-bg:rgba(255,255,255,0.97);
+  --intro-glow:rgba(168,50,40,0.06);
+}
+* { box-sizing:border-box; margin:0; padding:0 }
+html,body { width:100%; height:100%; overflow:hidden; background:var(--bg-primary); color:var(--text-primary); font-family:'Noto Serif SC',serif; user-select:none; transition:background .5s,color .5s }
+.scanlines { position:fixed; inset:0; background:var(--scan-bg); pointer-events:none; z-index:9999; animation:scanMove 8s linear infinite }
+@keyframes scanMove { from{background-position:0 0} to{background-position:0 100px} }
+.noise-overlay { position:fixed; inset:0; opacity:var(--noise-opacity); background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events:none; z-index:9998; transition:opacity .5s }
+#voice-layer { position:fixed; inset:0; z-index:100; pointer-events:none; overflow:hidden }
+.voice-bubble { position:absolute; padding:10px 16px; border-radius:4px; font-size:13px; line-height:1.65; max-width:280px; min-width:180px; border-left:3px solid; background:var(--voice-bg); backdrop-filter:blur(6px); animation:bubbleIn .4s ease forwards; box-shadow:0 4px 24px rgba(0,0,0,0.4); transition:background .5s }
+@keyframes bubbleIn { from{opacity:0;transform:scale(.85) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.voice-bubble.pulse { animation:bubbleIn .4s ease forwards,pulse2 2.5s ease-in-out .4s infinite }
+@keyframes pulse2 { 0%,100%{box-shadow:0 4px 24px rgba(0,0,0,0.4)} 50%{box-shadow:0 4px 32px rgba(255,255,255,0.06)} }
+.voice-bubble.fading { animation:bubbleFade .8s ease forwards }
+@keyframes bubbleFade { to{opacity:0;transform:translateY(-12px) scale(.92)} }
+.voice-volition{ border-color:#5d8aa8; color:#5d8aa8 }
+.voice-inland  { border-color:#c0392b; color:#c0392b; font-style:italic }
+.voice-authority{ border-color:#27ae60; color:#27ae60 }
+.voice-logic   { border-color:#2980b9; color:#2980b9 }
+.voice-empathy { border-color:#af7ac5; color:#af7ac5 }
+.voice-electro { border-color:#f39c12; color:#f39c12 }
+.voice-half    { border-color:#922b21; color:#922b21 }
+.voice-drama  { border-color:#e91e63; color:#e91e63 }
+.voice-suggestion{ border-color:#e67e22; color:#e67e22 }
+.voice-pale   { border-color:#7f8c8d; color:#7f8c8d; font-style:italic }
+.voice-command { border-color:#c0392b; color:#e74c3c; background:rgba(192,57,43,0.12)!important }
+.voice-thought { border-color:#8e44ad; color:#d7bde2; font-style:italic; border-style:dashed }
+/* === 新增人格样式 === */
+.voice-encyclopedia{ border-color:#5dade2; color:#5dade2 }
+.voice-conceptualization{ border-color:#2980b9; color:#2980b9 }
+.voice-visualcalc{ border-color:#1abc9c; color:#1abc9c }
+.voice-painthreshold{ border-color:#d35400; color:#d35400 }
+.voice-physicalinstrument{ border-color:#e74c3c; color:#e74c3c }
+.voice-reaction{ border-color:#f1c40f; color:#f1c40f }
+.voice-endurance{ border-color:#c0392b; color:#c0392b }
+.voice-handeye{ border-color:#e67e22; color:#e67e22 }
+.voice-perception{ border-color:#27ae60; color:#27ae60 }
+.voice-insight{ border-color:#2ecc71; color:#2ecc71 }
+.voice-shivers{ border-color:#1abc9c; color:#1abc9c }
+.voice-socrates{ border-color:#16a085; color:#16a085 }
+.voice-artexpression{ border-color:#8e44ad; color:#8e44ad }
+.voice-intuition{ border-color:#9b59b6; color:#9b59b6 }
+/* === 属性样式类 === */
+.voice-attr-intellect{ box-shadow:0 0 12px rgba(52,152,219,0.2) }
+.voice-attr-psyche{ box-shadow:0 0 12px rgba(155,89,182,0.2) }
+.voice-attr-physique{ box-shadow:0 0 12px rgba(243,156,18,0.2) }
+.voice-attr-sense{ box-shadow:0 0 12px rgba(39,174,96,0.2) }
+.voice-attr-symptom{ box-shadow:0 0 12px rgba(192,57,43,0.3) }
+/* === 极性样式类 === */
+.voice-polarity-positive{ border-width:2px }
+.voice-polarity-negative{ border-style:solid }
+.voice-polarity-neutral{ opacity:0.9 }
+/* === 属性标签样式 === */
+.voice-attr{ font-size:8px; letter-spacing:1px; padding:1px 4px; border-radius:2px; background:rgba(200,196,184,0.1); color:var(--text-dim); margin-right:4px }
+[data-theme="clarity"] .voice-volition{ border-color:#3a6e8a; color:#3a6e8a }
+[data-theme="clarity"] .voice-inland  { border-color:#a83228; color:#a83228 }
+[data-theme="clarity"] .voice-authority{ border-color:#1e8a50; color:#1e8a50 }
+[data-theme="clarity"] .voice-logic   { border-color:#1a6fa8; color:#1a6fa8 }
+[data-theme="clarity"] .voice-empathy { border-color:#8a4a9a; color:#8a4a9a }
+[data-theme="clarity"] .voice-electro { border-color:#c07810; color:#c07810 }
+[data-theme="clarity"] .voice-half    { border-color:#8a2a20; color:#8a2a20 }
+[data-theme="clarity"] .voice-drama   { border-color:#c4186a; color:#c4186a }
+[data-theme="clarity"] .voice-suggestion{ border-color:#b86010; color:#b86010 }
+[data-theme="clarity"] .voice-pale    { border-color:#7a7068; color:#7a7068 }
+[data-theme="clarity"] .voice-command { border-color:#a83228; color:#a83228; background:rgba(168,50,40,0.08)!important }
+[data-theme="clarity"] .voice-thought { border-color:#6e2a8a; color:#6e2a8a; border-style:dashed }
+.voice-name { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:4px; opacity:.7 }
+.voice-text { font-size:13px; line-height:1.5 }
+.voice-tag  { font-size:9px; letter-spacing:1px; padding:2px 5px; border-radius:2px; background:rgba(192,57,43,0.2); color:#e74c3c; margin-bottom:4px; display:inline-block }
+[data-theme="clarity"] .voice-tag { background:rgba(168,50,40,0.15); color:#a83228 }
+#theme-toggle { position:fixed; top:16px; right:16px; z-index:500; display:flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); padding:8px 14px; border-radius:3px; cursor:pointer; font-size:12px; color:var(--text-dim); font-family:'Noto Serif SC',serif; letter-spacing:1px; transition:all .3s; backdrop-filter:blur(8px) }
+#theme-toggle:hover { border-color:var(--border-hover); color:var(--text-primary); background:var(--bg-input-hover) }
+#theme-toggle .dot { width:8px; height:8px; border-radius:50%; background:#2980b9; flex-shrink:0; transition:background .5s }
+[data-theme="clarity"] #theme-toggle .dot { background:#1e8a50 }
+.screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; overflow:hidden }
+.hidden { display:none!important }
+#intro-screen { background:var(--screen-gradient); transition:background .5s }
+#intro-screen::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center,var(--intro-glow) 0%,transparent 60%); pointer-events:none }
+.intro-title { font-family:'Ma Shan Zheng',cursive; font-size:clamp(48px,8vw,96px); color:var(--text-primary); text-align:center; letter-spacing:12px; text-shadow:0 0 80px rgba(0,0,0,0.4); animation:it 3s ease forwards; opacity:0; position:relative; z-index:1; transition:color .5s }
+@keyframes it{0%{opacity:0;letter-spacing:30px;filter:blur(8px)}60%{opacity:1;letter-spacing:14px;filter:blur(0)}100{opacity:1;letter-spacing:12px}}
+.intro-subtitle{margin-top:24px;font-size:15px;color:var(--text-dim);letter-spacing:6px;opacity:0;animation:fadeIn 2s ease 1.5s forwards;transition:color .5s;position:relative;z-index:1}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.intro-start{margin-top:60px;padding:14px 48px;background:transparent;border:1px solid var(--text-dim);color:var(--text-primary);font-family:'Noto Serif SC',serif;font-size:14px;letter-spacing:4px;cursor:pointer;transition:all .3s;opacity:0;animation:fadeIn 2s ease 2.5s forwards;position:relative;z-index:1}
+.intro-start:hover{background:var(--bg-input-hover);border-color:var(--text-primary);transform:translateY(-2px)}
+.intro-warning{margin-top:40px;font-size:11px;color:var(--text-dim);opacity:0;animation:fadeIn 2s ease 3s forwards;max-width:520px;text-align:center;line-height:1.9;transition:color .5s;position:relative;z-index:1}
+#therapist-screen{background:radial-gradient(ellipse at center bottom,#12121f 0%,var(--bg-primary) 100%);z-index:200}
+.therapist-panel{max-width:660px;width:92%;background:var(--therapist-card-bg);border:1px solid var(--border);padding:40px 48px;border-radius:3px;box-shadow:0 8px 60px rgba(0,0,0,.5);max-height:88vh;overflow-y:auto;transition:all .5s}
+.therapist-label{font-size:10px;letter-spacing:4px;color:var(--text-dim);text-transform:uppercase;margin-bottom:20px;transition:color .5s}
+.therapist-title{font-size:22px;font-weight:700;color:var(--text-primary);margin-bottom:16px;line-height:1.4;transition:color .5s}
+.therapist-text{font-size:15px;line-height:2;color:var(--text-secondary);margin-bottom:28px;transition:color .5s}
+.therapist-questions{margin-bottom:32px}
+.tq{padding:12px 16px;background:var(--tq-bg);border-left:2px solid var(--text-dim);margin-bottom:8px;font-size:14px;color:var(--text-secondary);line-height:1.7;transition:all .3s}
+.tq:hover{background:var(--tq-bg-hover);border-left-color:var(--text-primary)}
+.therapist-continue{width:100%;padding:13px;background:var(--btn-bg);border:1px solid var(--border);color:var(--text-primary);font-family:'Noto Serif SC',serif;font-size:14px;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.therapist-continue:hover{background:var(--btn-bg-hover);border-color:var(--text-primary)}
+#grounding-screen{background:var(--bg-grounding);z-index:250}
+.grounding-container{text-align:center;max-width:600px;width:92%}
+.breath-circle{width:160px;height:160px;border-radius:50%;border:2px solid var(--breath-border);display:flex;align-items:center;justify-content:center;margin:0 auto 32px;animation:bc 12s ease-in-out infinite;font-size:16px;letter-spacing:3px;color:var(--text-dim);transition:border-color .5s,color .5s}
+@keyframes bc{0%{transform:scale(.7);opacity:.4;border-color:rgba(200,196,184,.1)}20%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(.7);opacity:.4}}
+.grounding-step{font-size:18px;color:var(--text-primary);margin-bottom:14px;letter-spacing:2px;opacity:0;animation:fadeIn 1s ease forwards;transition:color .5s}
+.grounding-hint{font-size:13px;color:var(--text-dim);margin-bottom:28px;line-height:1.8;transition:color .5s}
+.grounding-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:480px;margin:0 auto 28px}
+.g5-item{padding:10px 6px;border:1px solid var(--g5-border);font-size:12px;color:var(--text-dim);text-align:center;line-height:1.5;opacity:0;animation:fadeIn .5s ease forwards;transition:all .5s}
+.grounding-exit{margin-top:32px;padding:11px 36px;background:transparent;border:1px solid var(--text-dim);color:var(--text-primary);font-family:'Noto Serif SC',serif;font-size:13px;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.grounding-exit:hover{background:var(--bg-input-hover);border-color:var(--text-primary)}
+#game-screen{background:var(--bg-secondary);justify-content:flex-start;padding-top:0;overflow:hidden}
+.scene-header{width:100%;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--header-bg);border-bottom:1px solid var(--border-light);position:relative;z-index:50;backdrop-filter:blur(10px);transition:all .5s}
+.scene-name{font-size:11px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;transition:color .5s}
+.scene-progress{display:flex;gap:5px;align-items:center}
+.progress-dot{width:8px;height:8px;border-radius:50%;background:rgba(200,196,184,.2);transition:all .5s}
+.progress-dot.done{background:var(--progress-done)}.progress-dot.current{background:var(--progress-current);box-shadow:0 0 8px rgba(200,196,184,.5)}
+.scene-main{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;position:relative;overflow-y:auto;overflow-x:hidden}
+.scene-narrative{max-width:600px;width:100%;text-align:center}
+.scene-location{font-size:10px;letter-spacing:5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:20px;transition:color .5s}
+.scene-prose{font-size:16px;line-height:1.8;color:var(--text-secondary);margin-bottom:10px;transition:color .5s}
+.scene-warning{font-size:12px;color:var(--text-danger);margin-top:12px;font-style:italic;opacity:.85;line-height:1.6}
+.choices-container{max-width:560px;width:100%;margin-top:36px;display:flex;flex-direction:column;gap:12px}
+.choice-btn{padding:14px 22px;background:var(--bg-input);border:1px solid var(--border);color:var(--text-secondary);font-family:'Noto Serif SC',serif;font-size:15px;line-height:1.7;cursor:pointer;text-align:left;transition:all .3s;position:relative;overflow:hidden}
+.choice-btn::before{content:'';position:absolute;left:0;top:0;width:0;height:100%;background:var(--bg-input-hover);transition:width .3s}
+.choice-btn:hover::before{width:100%}.choice-btn:hover{border-color:var(--border-hover);color:var(--text-primary);transform:translateX(4px)}
+.choice-letter{display:inline-block;width:24px;height:24px;border:1px solid var(--choice-letter-border);text-align:center;line-height:22px;font-size:12px;margin-right:12px;color:var(--text-dim);transition:all .3s;flex-shrink:0}
+.choice-btn:hover .choice-letter{border-color:var(--choice-letter-border-hover);color:var(--text-primary)}
+.choice-effect{font-size:11px;color:var(--text-dim);margin-top:4px;margin-left:36px}
+.result-card{max-width:560px;width:92%;background:var(--bg-card-alt);border:1px solid var(--result-border);padding:32px 36px;margin-top:20px;opacity:0;animation:rca .8s ease .2s forwards;transition:all .5s}
+@keyframes rca{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.result-title{font-size:17px;color:var(--text-primary);margin-bottom:14px;font-weight:700;transition:color .5s}
+.result-text{font-size:15px;line-height:2;color:var(--text-secondary);margin-bottom:20px;transition:color .5s}
+.result-voices{font-size:12px;color:var(--text-dim);border-top:1px solid var(--result-voices-border);padding-top:14px;line-height:1.8;transition:color .5s}
+.confirm-btn{margin-top:24px;padding:11px 36px;background:var(--btn-bg);border:1px solid var(--border);color:var(--text-primary);font-family:'Noto Serif SC',serif;font-size:14px;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.confirm-btn:hover{background:var(--btn-bg-hover);border-color:var(--text-primary)}
+#end-screen{background:var(--end-gradient);transition:background .5s}
+.end-title{font-family:'Ma Shan Zheng',cursive;font-size:48px;color:var(--text-primary);letter-spacing:8px;margin-bottom:14px;transition:color .5s}
+.end-sub{font-size:14px;color:var(--text-dim);letter-spacing:4px;margin-bottom:36px;transition:color .5s}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;width:92%;margin-bottom:28px}
+.summary-card{background:var(--summary-card-bg);border:1px solid var(--border-light);padding:18px;transition:all .5s}
+.summary-card-title{font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px;transition:color .5s}
+.summary-card-value{font-size:26px;font-weight:700;color:var(--text-primary);transition:color .5s}
+.summary-card-sub{font-size:11px;color:var(--text-dim);margin-top:4px;transition:color .5s}
+.end-therapy-note{max-width:500px;text-align:center;font-size:13px;color:var(--text-dim);line-height:2;margin-bottom:22px;transition:color .5s}
+.end-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.restart-btn{padding:11px 36px;background:transparent;border:1px solid var(--text-dim);color:var(--text-primary);font-family:'Noto Serif SC',serif;font-size:13px;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.restart-btn:hover{background:var(--bg-input-hover);border-color:var(--text-primary)}
+.report-btn{padding:11px 28px;background:var(--btn-bg);border:1px solid var(--border);color:var(--text-primary);font-family:'Noto Serif SC',serif;font-size:13px;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.report-btn:hover{background:var(--btn-bg-hover);border-color:var(--text-primary)}
+#report-overlay{position:fixed;inset:0;background:rgba(5,5,8,.88);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
+#report-panel{background:var(--bg-card-alt);border:1px solid var(--border);width:100%;max-width:760px;max-height:88vh;overflow-y:auto;padding:36px 44px;position:relative;transition:all .5s}
+.report-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border-light)}
+.report-title{font-size:21px;font-weight:700;color:var(--text-primary);margin-bottom:5px;transition:color .5s}
+.report-subtitle{font-size:12px;color:var(--text-dim);letter-spacing:2px;transition:color .5s}
+.report-close{background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;padding:3px 8px;transition:color .3s;flex-shrink:0}
+.report-close:hover{color:var(--text-primary)}
+.report-section{margin-bottom:24px}
+.report-section-title{font-size:11px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid var(--border-light);transition:color .5s}
+.report-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:6px}
+.report-meta-item{background:var(--bg-input);border:1px solid var(--border-light);padding:11px 13px;transition:all .5s}
+.report-meta-label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;transition:color .5s}
+.report-meta-value{font-size:14px;color:var(--text-primary);font-weight:600;transition:color .5s}
+.report-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.score-item{background:var(--bg-input);border:1px solid var(--border-light);padding:14px;text-align:center;transition:all .5s}
+.score-label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;transition:color .5s}
+.score-value{font-size:30px;font-weight:700;color:var(--text-primary);transition:color .5s}
+.score-bar{height:3px;background:var(--border-light);margin-top:7px;border-radius:2px;overflow:hidden}
+.score-bar-fill{height:100%;background:var(--text-primary);transition:width 1s ease}
+.scene-record{margin-bottom:16px;background:var(--bg-input);border:1px solid var(--border-light);padding:18px;transition:all .5s}
+.scene-record-name{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:10px;transition:color .5s}
+.choice-record{margin-bottom:12px;padding-left:14px;border-left:2px solid var(--border);transition:border-color .5s}
+.choice-label{font-size:12px;color:var(--text-dim);margin-bottom:3px;transition:color .5s}
+.choice-text{font-size:14px;color:var(--text-secondary);margin-bottom:5px;line-height:1.6;transition:color .5s}
+.voice-record{font-size:12px;color:var(--text-dim);line-height:1.8;padding-left:12px}
+.notes-record{margin-top:12px;padding:12px;background:var(--notes-bg);border:1px solid var(--notes-border);font-size:13px;color:var(--text-secondary);line-height:1.7;transition:all .5s}
+.notes-record-label{font-size:10px;letter-spacing:2px;color:var(--notes-color);text-transform:uppercase;margin-bottom:6px;transition:color .5s}
+.grounding-record{margin-top:10px;padding:12px;background:var(--grounding-text-bg);border:1px solid var(--grounding-text-border)}
+.grounding-label{font-size:10px;letter-spacing:2px;color:var(--grounding-text-color);text-transform:uppercase;margin-bottom:5px}
+.grounding-text{font-size:13px;color:var(--text-secondary);line-height:1.7}
+.report-footer{margin-top:28px;padding-top:20px;border-top:1px solid var(--border-light)}
+.report-followup-title{font-size:11px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;transition:color .5s}
+.report-followup{font-size:13px;color:var(--text-secondary);line-height:2;padding-left:18px}
+.report-followup li{margin-bottom:7px}
+.report-actions-bottom{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.print-note{font-size:11px;color:var(--text-dim);text-align:center;margin-top:14px}
+@media print{body{background:#fff!important;color:#1a1a1a!important}#report-panel,#report-panel *{background:#fff!important;color:#1a1a1a!important;border-color:#ccc!important}#report-overlay{background:#fff!important;position:static}#report-overlay,.report-close,.report-actions-bottom,.print-note,#theme-toggle,.scanlines,.noise-overlay,.end-actions{display:none!important}}
+.fade-in-up{animation:fiu .5s ease forwards}@keyframes fiu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.text-run{position:fixed;font-size:11px;color:rgba(200,196,184,.12);white-space:nowrap;pointer-events:none;animation:tr linear forwards;z-index:50}
+@keyframes tr{from{transform:translateX(-100%)}to{transform:translateX(100vw)}}
+.retinal-burn{position:fixed;font-size:64px;font-weight:900;color:rgba(192,57,43,.09);pointer-events:none;z-index:40;animation:rb 3s ease-out forwards;font-family:'Noto Serif SC',serif}
+@keyframes rb{0%{opacity:0;transform:scale(.8)}20%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2)}}
+.hallucination-flicker{animation:hf .2s ease forwards}@keyframes hf{0%{filter:brightness(1) contrast(1)}50%{filter:brightness(1.3) contrast(1.3) saturate(1.5)}100%{filter:brightness(1) contrast(1)}}
+.screen-shake{animation:ss .3s ease-in-out}@keyframes ss{0%,100%{transform:translate(0,0)}20%{transform:translate(-4px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,-1px)}80%{transform:translate(2px,3px)}}
+.screen-shake-severe{animation:sss .8s ease-in-out}@keyframes sss{0%,100%{transform:translate(0,0)}10%{transform:translate(-8px,4px)}20%{transform:translate(8px,-4px)}30%{transform:translate(-6px,-3px)}40%{transform:translate(6px,3px)}50%{transform:translate(-4px,2px)}60%{transform:translate(4px,-2px)}70%{transform:translate(-3px,-1px)}80%{transform:translate(3px,1px)}}
+@media(max-width:600px){
+  .scene-header{padding:11px 14px}.scene-main{padding:24px 14px}.scene-prose{font-size:15px}
+  .choices-container{margin-top:24px}.choice-btn{font-size:14px;padding:13px 18px}
+  .therapist-panel{padding:28px 20px}.summary-grid{grid-template-columns:1fr 1fr}.grounding-5{grid-template-columns:repeat(3,1fr)}
+  .voice-bubble{max-width:220px;font-size:12px}.report-meta{grid-template-columns:1fr}.report-scores{grid-template-columns:1fr 1fr}
+  .report-panel{padding:20px 16px}.report-actions-bottom{flex-direction:column}.scene-narrative{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="noise-overlay"></div>
+<div class="scanlines"></div>
+<div id="theme-toggle" onclick="toggleTheme()">
+  <div class="dot"></div>
+  <span id="theme-label">清新版</span>
+</div>
+<div id="voice-layer" class="hidden"></div>
+
+<div id="intro-screen" class="screen">
+  <div class="intro-title">灰域行者</div>
+  <div class="intro-subtitle">内心对话室 &middot; 治疗游戏</div>
+  <button class="intro-start" onclick="startGame()">进入内心</button>
+  <div class="intro-warning">本游戏模拟真实精神分裂谱系体验（幻听、思维障碍、关系妄想、命令性幻听等），仅供治疗参考，不能替代专业诊疗。如感到强烈不适，请告知治疗师或使用「安全出口」暂停。</div>
+</div>
+
+<div id="therapist-screen" class="screen hidden">
+  <div class="therapist-panel">
+    <div class="therapist-label">/// 治疗师观察点 ///</div>
+    <div class="therapist-title" id="therapist-title"></div>
+    <div class="therapist-text" id="therapist-text"></div>
+    <div class="therapist-questions" id="therapist-questions"></div>
+    <button class="therapist-continue" onclick="continueGame()">继续旅程</button>
+  </div>
+</div>
+
+<div id="grounding-screen" class="screen hidden">
+  <div class="grounding-container" id="grounding-content"></div>
+</div>
+
+<div id="game-screen" class="screen hidden">
+  <div class="scene-header">
+    <div class="scene-name" id="scene-name"></div>
+    <div class="scene-progress" id="scene-progress"></div>
+  </div>
+  <div class="scene-main" id="scene-main"></div>
+</div>
+
+<div id="end-screen" class="screen hidden">
+  <div class="end-title">旅程结束</div>
+  <div class="end-sub">SESSION COMPLETE</div>
+  <div class="summary-grid" id="end-summary"></div>
+  <div class="end-therapy-note" id="end-therapy-note"></div>
+  <div class="end-actions">
+    <button class="report-btn" onclick="showReport()">&#128196; 导出治疗记录</button>
+    <button class="restart-btn" onclick="restartGame()">重新开始</button>
+  </div>
+</div>
+
+<div id="report-overlay" class="hidden" onclick="if(event.target===this)closeReport()">
+  <div id="report-panel">
+    <div class="report-header">
+      <div>
+        <div class="report-title">灰域行者 &middot; 治疗记录</div>
+        <div class="report-subtitle">GREY ZONE WALKER &middot; THERAPY SESSION REPORT</div>
+      </div>
+      <button class="report-close" onclick="closeReport()">&times;</button>
+    </div>
+    <div id="report-body"></div>
+    <div class="report-footer">
+      <div class="report-followup-title">建议后续讨论主题</div>
+      <ul class="report-followup" id="report-followup"></ul>
+    </div>
+    <div class="report-actions-bottom">
+      <button class="report-btn" onclick="downloadReportTxt()">&#11015; 下载文本版</button>
+      <button class="report-btn" onclick="printReport()">&#128210; 打印</button>
+      <button class="restart-btn" onclick="closeReport()">关闭</button>
+    </div>
+    <div class="print-note">打印后可保存为纸质治疗记录</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// PERSONAS & QUOTES — 极乐迪斯科 4×6=24 人格系统
+// ============================================================
+// 属性分类：INTELLECT(智力) | PSYCHE(精神) | PHYSIQUE(体格) | SENSE(敏感)
+// 极性分类：positive(积极/支持性) | negative(消极/破坏性) | neutral(中性)
+// 弹框位置：negative→左侧 | positive→右侧 | neutral→随机
+
+var PERSONAS = {
+  // === INTELLECT 智力 [蓝色系] ===
+  logic:       { name:"逻辑 Logic",               color:"#3498db", attr:"intellect", polarity:"positive" },
+  encyclopedia:{ name:"百科全书 Encyclopedia",    color:"#5dade2", attr:"intellect", polarity:"positive" },
+  conceptualization:{ name:"概念化 Conceptualization",color:"#2980b9", attr:"intellect", polarity:"positive" },
+  inland:      { name:"内陆帝国 Inland Empire",   color:"#8e44ad", attr:"intellect", polarity:"negative" },
+  visualcalc:  { name:"视觉计算 Visual Calculus", color:"#1abc9c", attr:"intellect", polarity:"neutral" },
+  volition:    { name:"意志 Volition",            color:"#5d8aa8", attr:"intellect", polarity:"positive" },
+
+  // === PSYCHE 精神 [紫色系] ===
+  empathy:     { name:"同理心 Empathy",           color:"#9b59b6", attr:"psyche", polarity:"positive" },
+  authority:   { name:"权威 Authority",           color:"#27ae60", attr:"psyche", polarity:"negative" },
+  drama:       { name:"戏剧性 Drama",             color:"#e91e63", attr:"psyche", polarity:"negative" },
+  suggestion:  { name:"诱劝 Suggestion",          color:"#e67e22", attr:"psyche", polarity:"negative" },
+  half:        { name:"半吊子 Half Light",        color:"#922b21", attr:"psyche", polarity:"negative" },
+  pale:        { name:"灰域 The Pale",            color:"#7f8c8d", attr:"psyche", polarity:"negative" },
+
+  // === PHYSIQUE 体格 [橙色系] ===
+  electro:     { name:"电化学 Electrochemistry",  color:"#f39c12", attr:"physique", polarity:"negative" },
+  painthreshold:{ name:"痛觉阈值 Pain Threshold",color:"#d35400", attr:"physique", polarity:"positive" },
+  physicalinstrument:{ name:"强身健体 Physical Instrument",color:"#e74c3c", attr:"physique", polarity:"positive" },
+  reaction:    { name:"反应速度 Reaction Speed",  color:"#f1c40f", attr:"physique", polarity:"neutral" },
+  endurance:   { name:"耐力 Endurance",           color:"#c0392b", attr:"physique", polarity:"positive" },
+  handeye:     { name:"手眼协调 Hand/Eye",        color:"#e67e22", attr:"physique", polarity:"neutral" },
+
+  // === SENSE 敏感 [绿色系] ===
+  perception:  { name:"感知 Perception",          color:"#27ae60", attr:"sense", polarity:"neutral" },
+  insight:     { name:"洞察力 Insight",           color:"#2ecc71", attr:"sense", polarity:"positive" },
+  shivers:     { name:"战栗 Shivers",             color:"#1abc9c", attr:"sense", polarity:"negative" },
+  socrates:    { name:"萨格拉底 Socratic",        color:"#16a085", attr:"sense", polarity:"neutral" },
+  artexpression:{ name:"艺术表达 Art Expression", color:"#8e44ad", attr:"sense", polarity:"positive" },
+  intuition:   { name:"直觉 Intuition",           color:"#9b59b6", attr:"sense", polarity:"neutral" },
+
+  // === 特殊症状人格 ===
+  command:     { name:"命令性幻听 Command",       color:"#c0392b", attr:"symptom", polarity:"negative" },
+  thought:     { name:"思维插入 Thought Insertion",color:"#8e44ad", attr:"symptom", polarity:"negative" }
+};
+
+var QUOTES = {
+  // === INTELLECT 智力 ===
+  logic:       ["这些是内侧颞叶的异常放电，可以被理解。","冷静分析：你现在安全，没有物理威胁。","幻听是一种症状，不是一种预言。","概率上，你感知到的90%是大脑的误报。","大脑在制造信号。大脑也可以重新学习。"],
+  encyclopedia:["根据DSM-5，幻听在精神分裂症中的患病率约为70%。","多巴胺假说：过度的多巴胺活动导致阳性症状。","研究显示，认知行为治疗可以减少幻听的影响。","记忆空白是解离症状的一种表现。","神经可塑性意味着大脑可以改变。"],
+  conceptualization:["你在寻找模式，但模式不一定存在。","抽象地看：这些声音是你的一部分，不是入侵者。","本质是：你的大脑在试图保护你，只是方式错了。","概念化你的体验，就获得了控制它的力量。","理解「为什么」比对抗「是什么」更有力量。"],
+  inland:      ["有什么东西在墙的另一边……它在看着你。","这不是真的，但这也很真。你明白吗？","空气里有股味道，像旧骨头和冷铁。","你有七只眼睛，但你只睁开了一只。","那只猫认识你。它一直认识你。"],
+  visualcalc:  ["那个阴影的角度不对。","你注意到他的瞳孔放大了。恐惧？还是药物？","墙上的裂缝形成了……一张脸？","光线从三个方向来，但只有两个光源。","那个倒影比你慢了0.3秒。"],
+  volition:    ["你比自己以为的更强大。别被这些声音吓倒。","站起来。不管发生什么，你都有能力选择自己的方向。","这是你的内心，不是他们。你才是这里的主人。","一步一步来。你能行的。","那些声音不能定义你。你的选择才能。"],
+
+  // === PSYCHE 精神 ===
+  empathy:     ["你在害怕。我感受到了。你不是一个人。","那些声音……它们也在害怕什么吗？","深呼吸。让我们感受这一刻。","如果那是你内心的某个部分，它想要什么？","你值得被温柔对待。包括被你自己的内心对待。"],
+  authority:   ["给我坐下。我说了算。服从命令。","你是个懦夫吗？","把那些声音给我关掉。用你的意志。","没有许可你什么都不能做。","这是命令，不是请求。"],
+  drama:       ["这就是你的命运！这就是——悲剧！","看啊！全世界都在看着你呢！","太感人了！你是这个故事的主角！","演下去！给他们看看！","没人注意？不可能！一定有人在看的！"],
+  suggestion:  ["也许……你应该再听一下……它们在告诉你什么……","闭上眼睛。数到十。当你睁眼，一切都会好起来的……","你听到那个声音了吗？那是你的真实想法。","相信我。只需要相信我就好了。","你一直在被控制。你知道吗？"],
+  half:        ["危险。快跑。","有人在你背后。转过去看！","你感觉到冷了吗？那是有人在你背后呼吸。","这是陷阱。他们都在骗你。","你必须在它伤害你之前先发制人。"],
+  pale:        ["一切都在褪色。颜色正在离开世界。","还记得你的名字吗？","没有意义。一切都空洞洞的。","遗忘吧。遗忘会来拯救你。","你身后有一片灰色的海。你正走向它。"],
+
+  // === PHYSIQUE 体格 ===
+  electro:     ["来点刺激的吧。反正你的人生已经这样了。","管他呢，喝一杯就好了。","你确定要忍住？那种感觉你知道的。","活在当下。别想那么远。","你不需要这个清醒。你需要的是忘记。"],
+  painthreshold:["痛觉是可以忍受的。你经历过更糟的。","让它穿过你。不要抵抗。","痛苦是暂时的。放弃是永久的。","你已经在承受了。这说明你能承受。","这个痛，是你活着的证明。"],
+  physicalinstrument:["你的身体能做到。跟着我。","呼吸。吸气——呼气。再来。","肌肉记忆。你的身体记得怎么平静下来。","站起来。活动一下。你的身体需要移动。","你比你的症状更强壮。"],
+  reaction:    ["现在！做决定！","不要想。动。","你的手比你的脑子快。信任它。","眨眼之间，你就能改变一切。","犹豫就是死亡。行动就是生命。"],
+  endurance:   ["你已经坚持了很久。你能再坚持一会儿。","累了没关系。继续走。","每一步都算数。即使是很小的步子。","你比你以为的更能忍耐。","继续。继续。继续。"],
+  handeye:     ["专注于你的手。感觉它在移动。","你的手指能感觉到这个杯子。这是真实的。","写下这些想法。让手替你表达。","触摸这个表面。冷。硬。真实。","你的身体是你的锚点。"],
+
+  // === SENSE 敏感 ===
+  perception:  ["你注意到他说话时没有看你吗？","那个声音的音调……有什么不对。","空气里有静电的味道。","你感觉到地板在震动吗？","他的呼吸频率变了。紧张。"],
+  insight:     ["你其实知道这不是真的。你能分辨。","那个恐惧是你的，不是外部威胁的。","你看到了模式：每次你焦虑，声音就变大。","理解：这些声音是你的一部分，不是敌人。","你比你的症状更聪明。"],
+  shivers:     ["有什么东西在你脊椎上爬……","你感觉到那个了吗？那个存在？","脖子后面的汗毛竖起来了。","有什么东西……在看着你。","那个冷风是从哪里来的？"],
+  socrates:    ["但是，你怎么知道那是真的？","你有什么证据？","那个想法从哪里来？是你的吗？","如果那不是真的呢？如果那只是一个念头？","让我问你：你真的相信那个声音吗？"],
+  artexpression:["这些声音可以是诗。可以是歌。","把你的痛苦画出来。它会变得美丽。","你的体验是独特的。它值得被表达。","艺术能把疯狂变成意义。","创造。这是你的出口。"],
+  intuition:   ["你知道答案。你只是不相信自己。","那个感觉是对的。跟着它。","有些事情，逻辑解释不了。但你知道。","信任你的直觉。它比分析更快。","你感觉到什么了吗？那就是真的。"],
+
+  // === 特殊症状人格 ===
+  command:     ["去做吧。没人会知道的。","你应该那么做。那是你真正想做的。","现在。趁还来得及。去做。"],
+  thought:     ["这真的是你的想法吗？还是……？","那个念头从哪里来的？你确定是你自己想出来的？"]
+};
+
+// ============================================================
+// SCENES — 6 scenes covering real schizophrenia symptoms
+// ============================================================
+var SCENES = [// ---- SCENE 1 ----
+  {
+    id:1, name:"清晨", location:"早晨 7:15 · 你的房间",
+    narrative:"闹钟响了。阳光从窗帘缝隙里钻进来。但你注意到——墙上有一行字，刚才不在那里。\n\n你慢慢坐起来。脑海里有声音响起来，不止一个。",
+    voices:[
+      {persona:"inland",delay:800,pos:{right:"5%",top:"15%"},repeat:true},
+      {persona:"half",delay:1500,pos:{left:"3%",top:"35%"},repeat:true},
+      {persona:"volition",delay:2200,pos:{right:"8%",bottom:"20%"},repeat:false}
+    ],
+    glitchLevel:1,
+    hallEffect:{type:"text",text:"他们在监视你",pos:"right",duration:2500},
+    choices:[
+      {letter:"A",text:"忽略那些声音，专注于呼吸",effect:"理性应对 · 自我安抚",
+        outcome:"你深吸一口气，慢慢数到五。声音还在，但你能感觉到自己在掌心里——真实的触感。",
+        voices:[{persona:"volition",text:"很好。这就是控制。你做到了。"},{persona:"inland",text:"……它在墙角笑。它觉得你很有趣。"}],
+        therapistNote:"你选择了专注呼吸——这是很好的现实锚定技巧。治疗师：你刚才感觉到哪些声音最强烈？它们让你想到什么？"},
+      {letter:"B",text:"走过去，仔细看墙上的字迹",effect:"探索幻觉 · 可能加剧焦虑",
+        outcome:"你站起来，朝那行字走去。走近之后……你发现那只是你自己潦草的字迹，你完全不记得写过。",
+        voices:[{persona:"authority",text:"我就说你是疯了。看吧。"},{persona:"logic",text:"这是记忆空白，不是外部威胁。大脑有时会忘记自己的行为。"}],
+        therapistNote:"你走向了那行字。治疗师：走近的时候，你心里在想什么？当你发现是自己写的，有没有感到惊讶或害怕？记忆空白是精分的常见症状之一。"},
+      {letter:"C",text:"大声喊「这不是真的」来对抗声音",effect:"主动对抗 · 能量消耗较大",
+        outcome:"你大喊了一声。声音确实静了——只持续了几秒钟。然后它们回来了，比之前更大声。",
+        voices:[{persona:"half",text:"你吓到我了。你吓到你自己了。"},{persona:"volition",text:"没关系，你试过了。这本身就是力量。"},{persona:"drama",text:"多么壮丽的抗争啊！史诗！"}],
+        therapistNote:"你选择了直接对抗。治疗师：对抗的时候，你感觉声音有什么变化？喊完之后你感觉怎么样？直接对抗有时会让声音暂时增强，这是正常反应。"},
+      {letter:"D",text:"按下安全出口 · 寻求支持",effect:"寻求支持 · 安全行为",
+        outcome:"你按下安全出口。暂停。呼吸。你知道什么时候该寻求帮助。这不是软弱。",
+        voices:[{persona:"volition",text:"这是最明智的选择。你做得很好。"}],
+        therapistNote:"你主动使用了安全出口，这需要勇气。治疗师：是什么让你决定按下安全出口？你觉得什么时候最适合寻求帮助？"}
+    ],
+    therapist:{
+      title:"场景一 · 治疗观察点",
+      text:"这是很多人每天早晨都会经历的。幻听和幻觉不一定意味着危险——它们是大脑处理信息的方式出现了偏差。今天早上你遇到了几种不同的「声音」。",
+      questions:["你现在感觉怎么样？","这几个声音里，哪个让你感觉最不安？","如果你再次经历这些，有什么是你想尝试的？"]
+    }
+  },
+
+  // ---- SCENE 6 ----
+  {
+    id:6, name:"药效", location:"上午 9:00 · 治疗室",
+    narrative:"治疗结束后，你坐在椅子上休息。药效开始起作用了。\n\n那些声音变得……遥远了一些。像是隔着一层厚厚的玻璃，还在说话，但你不那么在意了。\n\n治疗师走进来，在你对面坐下：「昨晚怎么样？今天感觉如何？」",
+    voices:[
+      {persona:"inland",delay:1500,pos:{left:"5%",top:"15%"},repeat:true},
+      {persona:"volition",delay:3000,pos:{right:"5%",top:"20%"},repeat:false},
+      {persona:"logic",delay:4500,pos:{left:"8%",bottom:"25%"},repeat:false}
+    ],
+    glitchLevel:2,
+    hallEffect:null,
+    choices:[
+      {letter:"A",text:"和治疗师分享你的感受",effect:"开放沟通 · 建立信任",
+        outcome:"你告诉治疗师，昨晚声音很吵，但现在……好多了。治疗师点点头：「药效通常会持续4-6小时。你做得很好，愿意来治疗。」",
+        voices:[{persona:"empathy",text:"你愿意分享，这本身就是进步。"},{persona:"volition",text:"治疗师在听。你被看见了。"}],
+        therapistNote:"开放沟通是治疗的核心。治疗师：你觉得和治疗师分享感受，和告诉家人有什么不同？你有没有觉得有些话只能对治疗师说？"},
+      {letter:"B",text:"询问药物的作用机制",effect:"认知理解 · 减少恐惧",
+        outcome:"治疗师解释：「这种药物作用于多巴胺受体，帮助大脑减少异常信号。它不是让声音消失，而是让你不那么受它们影响。」",
+        voices:[{persona:"logic",text:"多巴胺D2受体拮抗剂。科学原理。你可以理解它。"},{persona:"volition",text:"知道原理，你就不会被它控制。"}],
+        therapistNote:"理解药物原理可以帮助减少对未知的恐惧。治疗师：你对药物有什么担心吗？有没有想过停药？对于精分患者，药物治疗通常是必要的，但需要长期坚持。"},
+      {letter:"C",text:"安静地坐着，感受药效",effect:"自我觉察 · 内心平静",
+        outcome:"你闭上眼睛，静静感受。声音还在，但像远处的海浪——有节奏，但不刺耳。你感到一种久违的平静。",
+        voices:[{persona:"volition",text:"平静。你找到了它。"},{persona:"inland",text:"……它们在墙角看着你，但它们不说话了。"}],
+        therapistNote:"自我觉察是疗愈的重要能力。治疗师：你描述声音像「远处的海浪」，这个比喻很好。你有没有发现，当你不与声音对抗时，它们反而变得更温和？"}
+    ],
+    therapist:{
+      title:"场景六 · 治疗观察点",
+      text:"药效是治疗过程中的重要环节。药物不是让症状消失，而是让患者有能力应对它们。这个场景展示了药物起效时的体验——声音还在，但变得可管理。关键是：药物+心理治疗的效果远好于单一治疗。",
+      questions:["你对药物有什么感觉？","你觉得和治疗师的沟通怎么样？","你现在对声音的态度有什么变化？"]
+    }
+  },
+
+  // ---- SCENE 2 [最困难] ----
+  {
+    id:2, name:"午后", location:"下午 2:30 · 咖啡馆",
+    narrative:"治疗结束后，你和家人来到咖啡馆。你坐在角落的座位，试着享受这杯咖啡。\n\n但今天的声音格外嘈杂。妈妈轻声说了句什么，你完全没听清，但大脑自动填充了让你不安的内容。\n\n邻桌的人在交谈，他们的声音混在一起。你忽然有一种强烈的感觉：他们在说你。收银台那边也是。窗外的行人也在看你。\n\n「整个世界都在议论你。」一个声音说。",
+    voices:[
+      {persona:"half",delay:400,pos:{left:"3%",top:"12%"},repeat:true},
+      {persona:"pale",delay:900,pos:{right:"5%",top:"20%"},repeat:true},
+      {persona:"suggestion",delay:1400,pos:{left:"5%",top:"35%"},repeat:true},
+      {persona:"inland",delay:2000,pos:{right:"8%",bottom:"30%"},repeat:true},
+      {persona:"drama",delay:2600,pos:{left:"4%",bottom:"18%"},repeat:false}
+    ],
+    glitchLevel:3,
+    shake:"severe",
+    hallEffect:{type:"text",text:"所有人都在看你",pos:"center",duration:3000},
+    choices:[
+      {letter:"A",text:"转头看向妈妈，观察她的表情",effect:"现实检验 · 收集信息",
+        outcome:"你转头看向妈妈。她正在微笑着看窗外，手里端着你最爱吃的蛋糕——根本就没有在说话。",
+        voices:[{persona:"logic",text:"视觉确认：妈妈没有开口。来源是大脑内部，不是外部现实。"},{persona:"volition",text:"很好，你做了正确的检验。"}],
+        therapistNote:"你选择了观察确认——这是非常棒的现实检验策略。治疗师：当妈妈实际在微笑时，你有什么感觉？你能区分「听到的」和「真实的」吗？同时，注意场景中包含了一种精分常见症状：关系妄想（觉得周围人在谈论自己）。"},
+      {letter:"B",text:"告诉妈妈：「我刚才听到你在说我……」",effect:"开放沟通 · 减少隔离感",
+        outcome:"妈妈放下叉子，温柔地看着你：「我没有说那句话。但谢谢你告诉我。你听到的时候是什么感觉？」",
+        voices:[{persona:"empathy",text:"你妈妈没有生气。她在努力理解你。"},{persona:"inland",text:"但也许……她在骗你？"}],
+        therapistNote:"你选择和妈妈分享了你的体验——这叫做「外化」，是治疗中的重要一步。治疗师：你觉得说出来和不说出来，感觉有什么不同？你妈妈的反应让你感到……？开放沟通可以打破精分患者常有的孤立感。"},
+      {letter:"C",text:"假装没听到，埋头喝咖啡",effect:"回避 · 短期有效但积累压力",
+        outcome:"你假装没事，埋头喝咖啡。但声音持续存在，而且越来越大：「你躲不掉的。」邻桌的交谈声也变得越来越刺耳。",
+        voices:[{persona:"pale",text:"躲吧。躲进咖啡里。躲进沉默里。"},{persona:"half",text:"它们越来越近了。"},{persona:"logic",text:"回避策略的局限正在显现。"}],
+        therapistNote:"你选择了回避。治疗师：你知道回避可能让声音暂时消失，但最后声音反而更响了。这种模式常见吗？回避会强化大脑对声音的注意，形成恶性循环。"}
+    ],
+    therapist:{
+      title:"场景二 · 治疗观察点",
+      text:"这个场景涉及第三人幻听——听到亲人的声音，以及关系妄想（觉得周围人在谈论自己）。这两种症状在精神分裂中非常常见。关键不是否认声音的存在，而是帮助大脑重新学习区分「内部」和「外部」。",
+      questions:["在这个场景里，你最害怕的是什么？","妈妈的微笑和蛋糕——这些真实的细节对你有帮助吗？","你觉得「假装没事」和「说出来」，哪个更难？哪个更有效？"]
+    }
+  },
+
+  // ---- SCENE 4 ----
+  {
+    id:4, name:"超市", location:"傍晚 5:00 · 超市货架前",
+    narrative:"你独自一人在超市。货架上的罐头排列得整整齐齐，但你脑子里乱糟糟的。\n\n有人在跟踪你。你确定。货架尽头那个穿蓝衣服的人，已经跟你走过三个过道了。\n\n「他们把你的名字放进了数据库。」一个声音说。「你被选中了。」",
+    voices:[
+      {persona:"pale",delay:400,pos:{left:"4%",top:"20%"},repeat:true},
+      {persona:"half",delay:1200,pos:{right:"6%",top:"15%"},repeat:true},
+      {persona:"suggestion",delay:2000,pos:{right:"10%",top:"35%"},repeat:false}
+    ],
+    glitchLevel:2,
+    hallEffect:{type:"image",duration:2000},
+    choices:[
+      {letter:"A",text:"停下来，数到十，然后转身看那个人",effect:"现实检验 · 打破焦虑循环",
+        outcome:"你停下来，数到十。然后转身。那个穿蓝衣服的人——推着一辆婴儿车，正在给哭闹的孩子找东西。他根本就没有在看你的方向。",
+        voices:[{persona:"logic",text:"确认：无跟踪行为。焦虑放大了你的感知。"},{persona:"volition",text:"你的检验是对的。焦虑不等于事实。"}],
+        therapistNote:"你做了停下来转身的决定——这需要勇气。治疗师：当你转身看到那个人在推婴儿车，你的第一反应是什么？这种感觉（被跟踪、被监视）在精分中叫做「被害妄想」，但它带来的恐惧是真实的，值得被认真对待。"},
+      {letter:"B",text:"快速结账离开，不再看那个人",effect:"回避行为 · 减少当下刺激",
+        outcome:"你抓起一袋薯片，快速走向收银台。付钱的时候，你的手在发抖。你没有回头看。",
+        voices:[{persona:"half",text:"逃掉了。但下次呢？"},{persona:"pale",text:"它们会再来。一次又一次。"}],
+        therapistNote:"你选择了快速离开。治疗师：离开之后，你心里在想什么？回避可以在短期内降低焦虑，但长期来看会限制一个人的活动范围，导致社会退缩——这是精分的「负性症状」之一。"},
+      {letter:"C",text:"直接走过去，问那个人「你为什么跟着我？」",effect:"直接行动 · 打破妄想",
+        outcome:"你深吸一口气，走过去。那个人抬起头，一脸茫然：「什么？我只是带孩子买东西……」他看起来真的不知道你在说什么。",
+        voices:[{persona:"authority",text:"你竟然走过去了。勇敢。但也危险。"},{persona:"empathy",text:"他只是个普通的父亲。这就是真相。"}],
+        therapistNote:"你选择了最直接的行动——直接去问。治疗师：走过去的时候，你害怕吗？当你听到他的回答，你有什么感觉？直接验证（在安全的前提下）是处理妄想的好方法之一，但需要在治疗师的支持下进行。"}
+    ],
+    therapist:{
+      title:"场景四 · 治疗观察点",
+      text:"这个场景模拟了「被害妄想」和「关系妄想」——感觉被人监视、跟踪、或者被特殊选中。这些是非常常见的精分症状，大约70%的患者会在病程中出现。大脑会把模糊的社会信息解读为威胁性的。治疗的目标不是「证明你想多了」，而是帮助患者在感到不安全时学会安全地验证。",
+      questions:["这种被跟踪的感觉，在真实生活中出现过几次？","当那个穿蓝衣服的人只是在找婴儿用品，你有什么感觉？","你觉得自己的判断和实际情况，有过出入吗？"]
+    }
+  },
+
+  ,// ---- SCENE 5 ----
+  {
+    id:5, name:"晚餐", location:"晚上 7:00 · 家里餐桌旁",
+    narrative:"你和家人坐在一起吃饭。电视在放新闻。\n\n你突然感觉到——主持人刚才说的某句话，是在说你。新闻里提到的一个名字，和你的名字很像。\n\n然后，你开始不确定：这到底是主持人说的，还是你自己想出来的？\n\n「那些想法不是你的。」一个声音说。「它们被放进去的。」",
+    voices:[
+      {persona:"suggestion",delay:600,pos:{left:"3%",top:"15%"},repeat:true},
+      {persona:"thought",delay:1500,pos:{right:"6%",top:"20%"},repeat:true},
+      {persona:"inland",delay:2200,pos:{left:"5%",bottom:"25%"},repeat:false},
+      {persona:"empathy",delay:2800,pos:{right:"8%",bottom:"18%"},repeat:false}
+    ],
+    glitchLevel:2,
+    hallEffect:{type:"text",text:"你听到了你自己",pos:"right",duration:2000},
+    choices:[
+      {letter:"A",text:"关掉电视，专注于眼前的饭菜和家人",effect:"减少刺激输入 · 感官聚焦",
+        outcome:"你拿起遥控器，关掉了电视。餐桌上安静了下来。你看着盘子里的菜。你妈妈在夹菜。一切都很正常。声音变小了。",
+        voices:[{persona:"volition",text:"你把注意力拉回来了。你在桌子上，你在饭桌旁。"},{persona:"inland",text:"……安静了。至少安静了一些。"}],
+        therapistNote:"关掉电视是一个很好的决定。治疗师：关掉电视之后，你有没有感觉好一点？这是一种「减少刺激」策略——当外部信息过载时，减少输入可以降低大脑的混乱感。同时，这也是「选择性注意」的练习。"},
+      {letter:"B",text:"告诉家人：「新闻里刚才在说我，是真的吗？」",effect:"现实验证 · 寻求外部确认",
+        outcome:"你妈妈愣了一下，然后笑了：「什么新闻？你在说谁？」你爸爸也转头看过来，一脸困惑。他们都没有听到任何关于你的内容。",
+        voices:[{persona:"empathy",text:"家人想要理解你。他们没有觉得你奇怪。"},{persona:"logic",text:"外部确认：没有客观证据支持你的判断。这是大脑的误报。"}],
+        therapistNote:"你选择向家人求证。治疗师：当你听到妈妈的回应，你有什么感觉？这个场景涉及「思维被广播感」和「妄想解读」——觉得自己的想法被别人知道了，或者外界事件与自己有特殊联系。外化讨论可以帮助区分内部体验和外部现实。"},
+      {letter:"C",text:"试着忽略，埋头吃饭",effect:"内化回避 · 积累压力",
+        outcome:"你埋头吃饭。食物没有味道。你妈妈问了你一句话，你听到了声音，但不确定她有没有说话。",
+        voices:[{persona:"pale",text:"灰域在扩散。一切都在褪色。"},{persona:"inland",text:"还有多远的路要走？"}],
+        therapistNote:"你选择了沉默。治疗师：你知道埋头吃饭时，你的身体感觉是什么吗？这种「情感平淡」和与家人的疏离，是精分「负性症状」的表现之一。治疗中很重要的一个方向，是帮助患者重新建立与亲近人的情感连接。"}
+    ],
+    therapist:{
+      title:"场景五 · 治疗观察点",
+      text:"这个场景涉及「思维被广播」或「思维插入」——觉得自己的想法不是自己的，或者被外部力量控制了。这是精分的一个核心阳性症状（思维障碍），大约60%的患者体验过。晚餐时的家庭互动也是治疗的重要场景——家庭成员的支持系统对康复有巨大影响。",
+      questions:["在真实生活中，你有没有过类似的体验——不确定某个想法是不是自己的？","和家人在一起时，你通常怎么应对这些声音？","家人的支持对你的重要性有多大？"]
+    }
+  },
+
+  ,// ---- SCENE 3 [轻松/和解] ----
+  {
+    id:3, name:"深夜", location:"夜晚 11:00 · 你的房间",
+    narrative:"你躺在床上。今天经历了很多。\n\n那些声音还在，但它们变得安静了一些。像是……经过了漫长的一天，它们也累了。\n\n你闭上眼睛，试着和它们相处。不是对抗，也不是逃避。只是……共处。\n\n一个温和的声音响起：「你今天做得很好。」",
+    voices:[
+      {persona:"volition",delay:1000,pos:{left:"5%",top:"20%"},repeat:false},
+      {persona:"empathy",delay:2500,pos:{right:"5%",top:"25%"},repeat:false},
+      {persona:"logic",delay:4000,pos:{left:"8%",bottom:"25%"},repeat:false}
+    ],
+    glitchLevel:1,
+    hallEffect:null,
+    choices:[
+      {letter:"A",text:"轻声说：「谢谢你们今天的陪伴」",effect:"接纳与和解",
+        outcome:"你说出了这句话。那些声音……安静了下来。有一种奇妙的平静感，像是和多年未见的老朋友达成了某种理解。",
+        voices:[{persona:"empathy",text:"我们一直都在。我们也是你的一部分。"},{persona:"volition",text:"接纳不是放弃。接纳是开始。"}],
+        therapistNote:"这是一个非常有力量的时刻。治疗师：和声音「和解」并不意味着认同它们，而是意味着你不再被它们控制。你如何看待自己和这些声音的关系？"},
+      {letter:"B",text:"写下今天的感受",effect:"外化情绪",
+        outcome:"你拿起笔和纸，写下今天的经历。那些混乱的想法变成文字后，变得清晰了许多。声音也随着你的书写，变得越来越柔和。",
+        voices:[{persona:"logic",text:"书写是很好的外化工具。你把内在的混乱变成了可见的秩序。"},{persona:"inland",text:"纸上的文字比脑子里的声音温柔多了。"}],
+        therapistNote:"写日记是一种非常有效的自我疗愈方式。治疗师：当你把想法写下来，你有什么感觉？你平时有记录情绪的习惯吗？"},
+      {letter:"C",text:"做一次深呼吸练习，然后入睡",effect:"自我安抚",
+        outcome:"你慢慢吸气，慢慢呼气。身体放松下来。那些声音像背景音乐一样，不再那么刺耳。你感到一种久违的平静，渐渐进入梦乡。",
+        voices:[{persona:"volition",text:"休息也是一种力量。明天是新的一天。"}],
+        therapistNote:"深呼吸是最简单也最有效的放松技巧。治疗师：你平时睡前有什么放松的习惯吗？良好的睡眠对症状管理非常重要。"}
+    ],
+    therapist:{
+      title:"场景三 · 治疗观察点",
+      text:"深夜是反思和和解的时刻。经过一天的挑战，你学会了和这些声音共处，而不是被它们控制。接纳不是放弃——接纳是疗愈的开始。你的内心有不同的声音，它们不都是敌人，有些甚至是保护者。",
+      questions:["今天最让你印象深刻的场景是什么？","你觉得自己和这些声音的关系有了什么变化？","今晚你想对自己说什么？"]
+    }
+  },
+
+  ];
+
+// ============================================================
+// GAME STATE
+// ============================================================
+var state = {
+  currentScene:0, score:{awareness:0,connection:0,resilience:0,voiceCount:0},
+  selectedChoices:[], groundingUsed:0, voiceHistory:[],
+  sessionComplete:false, startTime:null, reportData:null, currentTheme:"walker",
+  activeBubbles:[]
+};
+
+// ============================================================
+// THEME
+// ============================================================
+function toggleTheme() {
+  var body = document.body;
+  var label = document.getElementById('theme-label');
+  if (state.currentTheme === "walker") {
+    body.setAttribute("data-theme","clarity"); state.currentTheme = "clarity"; label.textContent = "阴郁版";
+  } else {
+    body.setAttribute("data-theme","walker"); state.currentTheme = "walker"; label.textContent = "清新版";
+  }
+}
+
+// ============================================================
+// UTILITY
+// ============================================================
+function escapeHtml(s) {
+  if (s == null) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function getTimestamp() {
+  var d = new Date();
+  var p = function(n){ return String(n).padStart(2,"0"); };
+  return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+}
+
+// ============================================================
+// VOICE SYSTEM — 弹框位置：左侧消极 | 右侧积极 | 中性随机
+// ============================================================
+// 左侧位置（消极人格）
+var BUBBLE_LEFT = [
+  {left:"3%",top:"10%"},{left:"4%",top:"25%"},{left:"3%",top:"40%"},
+  {left:"5%",top:"55%"},{left:"4%",bottom:"30%"},{left:"3%",bottom:"15%"}
+];
+// 右侧位置（积极人格）
+var BUBBLE_RIGHT = [
+  {right:"3%",top:"10%"},{right:"4%",top:"25%"},{right:"3%",top:"40%"},
+  {right:"5%",top:"55%"},{right:"4%",bottom:"30%"},{right:"3%",bottom:"15%"}
+];
+var leftSlotUsed = [], rightSlotUsed = [];
+
+function getSlotByPolarity(polarity) {
+  var slots, used, side;
+  if (polarity === "negative") {
+    slots = BUBBLE_LEFT; used = leftSlotUsed; side = "left";
+  } else if (polarity === "positive") {
+    slots = BUBBLE_RIGHT; used = rightSlotUsed; side = "right";
+  } else {
+    // neutral: 随机选择左右
+    if (Math.random() < 0.5) {
+      slots = BUBBLE_LEFT; used = leftSlotUsed; side = "left";
+    } else {
+      slots = BUBBLE_RIGHT; used = rightSlotUsed; side = "right";
+    }
+  }
+  // 找一个空位
+  for (var i = 0; i < slots.length; i++) {
+    if (!used[i]) { used[i] = true; return { slot: slots[i], index: i, side: side }; }
+  }
+  // 没有空位，随机
+  var ri = Math.floor(Math.random() * slots.length);
+  return { slot: slots[ri], index: ri, side: side };
+}
+function releaseSlot(idx, side) {
+  if (side === "left" && idx >= 0 && idx < leftSlotUsed.length) leftSlotUsed[idx] = false;
+  else if (side === "right" && idx >= 0 && idx < rightSlotUsed.length) rightSlotUsed[idx] = false;
+}
+
+function spawnVoice(personaKey, text, pos, opts) {
+  opts = opts || {};
+  var layer = document.getElementById("voice-layer");
+  if (!layer || layer.classList.contains("hidden")) return;
+  var p = PERSONAS[personaKey]; if (!p) return;
+
+  var existing = layer.querySelectorAll(".voice-bubble:not(.fading)");
+  if (existing.length >= 6) {
+    existing[0].classList.add("fading");
+    setTimeout(function(){ if(existing[0].parentNode) existing[0].remove(); }, 800);
+  }
+
+  // 根据人格极性决定位置
+  var polarity = p.polarity || "neutral";
+  var { slot, index, side } = getSlotByPolarity(polarity);
+  
+  var b = document.createElement("div");
+  b.className = "voice-bubble voice-" + personaKey + (opts.pulse ? " pulse" : "");
+  // 添加属性和极性类
+  if (p.attr) b.classList.add("attr-" + p.attr);
+  if (p.polarity) b.classList.add("polarity-" + p.polarity);
+  
+  b.style.left   = slot.left   || "auto";
+  b.style.right  = slot.right  || "auto";
+  b.style.top    = slot.top    || "auto";
+  b.style.bottom = slot.bottom || "auto";
+  b.style.zIndex = 110 + Math.floor(Math.random() * 15);
+  b.dataset.slotIndex = index;
+  b.dataset.slotSide = side;
+
+  var isCmd = (personaKey === "command");
+  var tagHtml = isCmd ? "<div class=\"voice-tag\">&#9888; 命令性幻听</div>" : "";
+  // 显示属性标签
+  var attrLabel = p.attr ? "<span class=\"voice-attr\">" + p.attr.toUpperCase() + "</span> " : "";
+  b.innerHTML = "<div class=\"voice-name\">" + attrLabel + p.name + "</div>" + tagHtml + "<div class=\"voice-text\">" + escapeHtml(text) + "</div>";
+  layer.appendChild(b);
+  state.voiceHistory.push({ persona: personaKey, text: text, scene: state.currentScene, polarity: polarity, attr: p.attr });
+
+  var duration = opts.duration || (opts.pulse ? 15000 : 10000);
+  setTimeout(function() {
+    if (b.parentNode) {
+      b.classList.add("fading");
+      setTimeout(function() { if(b.parentNode){ b.remove(); releaseSlot(parseInt(b.dataset.slotIndex)||0, b.dataset.slotSide); } }, 800);
+    }
+  }, duration);
+  return b;
+}
+
+function clearVoices() {
+  var layer = document.getElementById("voice-layer");
+  if (layer) { layer.innerHTML = ""; leftSlotUsed = []; rightSlotUsed = []; }
+}
+
+// ============================================================
+// EFFECTS
+// ============================================================
+function triggerGlitch(level) {
+  var main = document.getElementById("game-screen");
+  if (level >= 3) { main.classList.add("screen-shake-severe"); setTimeout(function(){ main.classList.remove("screen-shake-severe"); }, 800); }
+  else if (level >= 2) { main.classList.add("screen-shake"); setTimeout(function(){ main.classList.remove("screen-shake"); }, 300); }
+}
+function triggerHallEffect(eff) {
+  if (!eff) return;
+  if (eff.type === "text") {
+    var el = document.createElement("div"); el.className = "retinal-burn";
+    if (eff.pos === "center") { el.style.left = "50%"; el.style.top = "50%"; el.style.transform = "translate(-50%,-50%)"; }
+    else if (eff.pos === "right") { el.style.right = "5%"; el.style.top = "10%"; }
+    else { el.style.left = "5%"; el.style.top = "10%"; }
+    el.textContent = eff.text;
+    el.style.animation = "rb " + eff.duration + "ms ease-out forwards";
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, eff.duration);
+  } else if (eff.type === "image") {
+    var gs = document.getElementById("game-screen");
+    gs.classList.add("hallucination-flicker");
+    setTimeout(function(){ gs.classList.remove("hallucination-flicker"); }, 200);
+  }
+}
+function triggerTextRun() {
+  var msgs = ["你没有在做梦","墙后面有东西","关灯","它们在说你的名字","你不属于这里","你听到那个声音了吗","这是真的","这是你的错"];
+  var r = document.createElement("div"); r.className = "text-run";
+  r.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+  r.style.top = (20 + Math.random() * 60) + "%";
+  r.style.fontSize = (10 + Math.random() * 7) + "px";
+  r.style.animationDuration = (5 + Math.random() * 5) + "s";
+  document.body.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 10000);
+}
+
+// ============================================================
+// SCREEN MANAGEMENT
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(function(s){ s.classList.add("hidden"); });
+  document.getElementById(id).classList.remove("hidden");
+}
+function updateProgress() {
+  var c = document.getElementById("scene-progress"); if (!c) return;
+  c.innerHTML = "";
+  for (var i = 0; i < SCENES.length; i++) {
+    var d = document.createElement("div"); d.className = "progress-dot";
+    if (i < state.currentScene) d.classList.add("done");
+    if (i === state.currentScene) d.classList.add("current");
+    c.appendChild(d);
+  }
+}
+
+// ============================================================
+// GAME FLOW
+// ============================================================
+function renderScene() {
+  var scene = SCENES[state.currentScene];
+  showScreen("game-screen");
+  document.getElementById("voice-layer").classList.remove("hidden");
+  clearVoices();
+  document.getElementById("scene-name").textContent = "场景 " + scene.id + " / " + scene.name;
+  updateProgress();
+
+  var main = document.getElementById("scene-main");
+  var prose = scene.narrative.replace(/\n/g, "<br>");
+  var warnHtml = scene.glitchLevel >= 3 ? '<div class="scene-warning">&#9888; 此场景含有命令性幻听元素，可能引起部分患者不安</div>' : '';
+  main.innerHTML =
+    '<div class="scene-narrative fade-in-up">' +
+    '<div class="scene-location">' + escapeHtml(scene.location) + '</div>' +
+    '<div class="scene-prose">' + prose + '</div>' + warnHtml +
+    '</div>' +
+    '<div class="choices-container" id="choices-container" style="opacity:0;"></div>';
+
+  if (scene.glitchLevel >= 2) setTimeout(function(){ triggerGlitch(scene.glitchLevel); }, 1000);
+  if (scene.hallEffect) setTimeout(function(){ triggerHallEffect(scene.hallEffect); }, 700);
+
+  // 声音依次出现，固定间隔800ms
+  var baseDelay = 1500; // 场景开始后的基础延迟
+  var voiceInterval = 800; // 每个声音之间的间隔
+  scene.voices.forEach(function(v, i) {
+    var delay = baseDelay + (i * voiceInterval); // 依次出现，间隔800ms
+    setTimeout(function() {
+      var qlist = QUOTES[v.persona] || [];
+      var quote = qlist[Math.floor(Math.random() * qlist.length)];
+      spawnVoice(v.persona, quote, v.pos, { pulse: v.repeat, duration: v.repeat ? 15000 : 10000 });
+      if (scene.glitchLevel >= 2) setTimeout(function(){ triggerTextRun(); }, Math.random() * 2000 + 500);
+    }, delay);
+  });
+
+  setTimeout(function() {
+    var container = document.getElementById("choices-container");
+    if (!container) return;
+    container.style.opacity = "1";
+    var btns = scene.choices.map(function(c, i) {
+      return '<button class="choice-btn fade-in-up" style="animation-delay:' + (i * 0.1) + 's;" onclick="makeChoice(' + i + ')">' +
+             '<span class="choice-letter">' + c.letter + '</span>' + escapeHtml(c.text) +
+             (c.effect ? '<div class="choice-effect">' + escapeHtml(c.effect) + '</div>' : '') + '</button>';
+    }).join("");
+    var safetyBtn = document.createElement("button");
+    safetyBtn.className = "choice-btn fade-in-up";
+    safetyBtn.style.cssText = "border-color:rgba(192,57,43,.3);color:#c0392b;margin-top:8px;";
+    safetyBtn.style.animationDelay = (scene.choices.length * 0.1 + 0.15) + "s";
+    safetyBtn.innerHTML = '<span class="choice-letter" style="border-color:rgba(231,76,60,.4);color:#c0392b;">&#9670;</span>按下安全出口 · 5-4-3-2-1 grounding练习';
+    safetyBtn.onclick = function(){ openGrounding(); };
+    container.innerHTML = btns;
+    container.appendChild(safetyBtn);
+  }, 2500);
+}
+
+function makeChoice(index) {
+  var scene = SCENES[state.currentScene];
+  var choice = scene.choices[index];
+  state.selectedChoices.push({
+    sceneId: scene.id, sceneName: scene.name, choiceIndex: index,
+    choiceText: choice.text, choiceLetter: choice.letter,
+    outcome: choice.outcome,
+    voices: choice.voices ? choice.voices.slice() : [],
+    therapistNote: choice.therapistNote || "", groundingUsed: false
+  });
+  if (index === 0 || index === 1) state.score.awareness++;
+  if (index === 1) state.score.connection++;
+  if (index === 2 || index === 3) state.score.resilience++;
+  state.score.voiceCount += choice.voices ? choice.voices.length : 0;
+
+  var container = document.getElementById("choices-container");
+  if (!container) return;
+  container.innerHTML = "";
+  var result = document.createElement("div"); result.className = "result-card";
+  var voicesHtml = "";
+  if (choice.voices && choice.voices.length) {
+    var vLines = choice.voices.map(function(v) {
+      var col = PERSONAS[v.persona] ? PERSONAS[v.persona].color : "#888";
+      return '<span style="color:' + col + ';">[' + (PERSONAS[v.persona] ? PERSONAS[v.persona].name : v.persona) + ']</span> ' + escapeHtml(v.text);
+    }).join("<br>");
+    voicesHtml = '<div class="result-voices"><strong style="color:var(--text-primary);font-size:11px;letter-spacing:2px;">内心声音回应：</strong><br>' + vLines + '</div>';
+  }
+  result.innerHTML =
+    '<div class="result-title">你的选择</div>' +
+    '<div class="result-text">' + choice.outcome + '</div>' +
+    voicesHtml +
+    '<button class="confirm-btn" onclick="showTherapist()">与治疗师讨论</button>';
+  container.appendChild(result);
+
+  if (choice.voices) {
+    var positions = [{left:"5%",top:"15%"},{right:"5%",top:"15%"},{left:"5%",bottom:"22%"},{right:"5%",bottom:"22%"}];
+    choice.voices.forEach(function(v, i) {
+      setTimeout(function(){ spawnVoice(v.persona, v.text, positions[i % positions.length], { pulse: true, duration: 12000 }); }, i * 1200);
+    });
+  }
+}
+
+function showTherapist() {
+  var scene = SCENES[state.currentScene];
+  showScreen("therapist-screen");
+  document.getElementById("voice-layer").classList.add("hidden");
+  clearVoices();
+  document.getElementById("therapist-title").textContent = scene.therapist.title;
+  document.getElementById("therapist-text").textContent = scene.therapist.text;
+  document.getElementById("therapist-questions").innerHTML =
+    scene.therapist.questions.map(function(q){ return '<div class="tq">&#10097; ' + q + '</div>'; }).join("");
+}
+
+function continueGame() {
+  state.currentScene++;
+  if (state.currentScene >= SCENES.length) showEndScreen();
+  else renderScene();
+}
+
+// ============================================================
+// GROUNDING
+// ============================================================
+function openGrounding() {
+  state.groundingUsed++;
+  if (state.selectedChoices.length > 0) {
+    var last = state.selectedChoices[state.selectedChoices.length - 1];
+    if (last.sceneId === SCENES[state.currentScene].id) last.groundingUsed = true;
+  }
+  showScreen("grounding-screen");
+  document.getElementById("voice-layer").classList.add("hidden");
+  clearVoices();
+
+  var container = document.getElementById("grounding-content");
+  container.innerHTML =
+    '<div class="breath-circle" id="breath-circle"><span id="breath-label">吸气</span></div>' +
+    '<div class="grounding-step" id="grounding-step" style="animation-delay:.5s;">5-4-3-2-1 感官练习</div>' +
+    '<div class="grounding-hint" id="grounding-hint" style="animation-delay:1s;">跟随引导，慢慢来。把注意力带回这个房间。</div>' +
+    '<div class="grounding-5" id="grounding-5"></div>' +
+    '<button class="grounding-exit" onclick="closeGrounding()">我感觉好些了 &middot; 继续</button>';
+
+  var breathLabel = document.getElementById("breath-label");
+  var phases = ["吸气…","屏住…","呼气…"];
+  var phase = 0;
+  var breathInt = setInterval(function(){ phase = (phase + 1) % 3; breathLabel.textContent = phases[phase]; }, 4000);
+
+  var senses = [
+    {label:"5",desc:"样你能看到的东西",instr:"环顾四周，说出5样你能看到的东西"},
+    {label:"4",desc:"样你能触碰的东西",instr:"触摸4样东西，感受它们的质地"},
+    {label:"3",desc:"样你能听到的声音",instr:"仔细听，辨认出3种不同的声音"},
+    {label:"2",desc:"种你能闻到的气味",instr:"闻一闻，尝试找出2种气味"},
+    {label:"1",desc:"种你能尝到的味道",instr:"感受舌头上1种味道（即使只是口水味）"}
+  ];
+  var si = 0;
+  var senseInt = setInterval(function(){
+    if (si >= senses.length) {
+      clearInterval(senseInt);
+      document.getElementById("grounding-step").textContent = "你回来了。你在这里。";
+      document.getElementById("grounding-hint").textContent = "这些声音是大脑的产物。你现在在安全的房间里。";
+      return;
+    }
+    var s = senses[si];
+    document.getElementById("grounding-step").textContent = s.label + " — " + s.desc;
+    document.getElementById("grounding-hint").textContent = s.instr;
+    var item = document.createElement("div"); item.className = "g5-item";
+    item.style.animationDelay = (si * 0.15) + "s";
+    item.innerHTML = '<strong style="font-size:18px;color:var(--text-primary);">' + s.label + '</strong><br>' + s.desc;
+    document.getElementById("grounding-5").appendChild(item);
+    si++;
+  }, 5000);
+  container._breathInt = breathInt;
+  container._senseInt = senseInt;
+}
+
+function closeGrounding() {
+  var c = document.getElementById("grounding-content");
+  if (c._breathInt) clearInterval(c._breathInt);
+  if (c._senseInt) clearInterval(c._senseInt);
+  showScreen("game-screen");
+  document.getElementById("voice-layer").classList.remove("hidden");
+}
+
+// ============================================================
+// END SCREEN
+// ============================================================
+function showEndScreen() {
+  state.sessionComplete = true;
+  showScreen("end-screen");
+  document.getElementById("voice-layer").classList.add("hidden");
+  clearVoices();
+
+  var aw = Math.min(100, state.score.awareness * 20 + 30);
+  var cn = Math.min(100, state.score.connection * 35 + 20);
+  var rs = Math.min(100, state.score.resilience * 30 + 20);
+
+  document.getElementById("end-summary").innerHTML =
+    '<div class="summary-card"><div class="summary-card-title">现实觉察</div><div class="summary-card-value">' + aw + '%</div><div class="summary-card-sub">识别幻觉与现实的能力</div></div>' +
+    '<div class="summary-card"><div class="summary-card-title">人际连接</div><div class="summary-card-value">' + cn + '%</div><div class="summary-card-sub">主动与他人分享体验的意愿</div></div>' +
+    '<div class="summary-card"><div class="summary-card-title">心理韧性</div><div class="summary-card-value">' + rs + '%</div><div class="summary-card-sub">面对声音时的应对与恢复力</div></div>' +
+    '<div class="summary-card"><div class="summary-card-title">安全出口</div><div class="summary-card-value">' + state.groundingUsed + '次</div><div class="summary-card-sub">主动寻求支持的行为</div></div>';
+
+  document.getElementById("end-therapy-note").innerHTML =
+    '今天的旅程到这里结束了。<br><br>在真实治疗中，我们会花更多时间讨论每个场景。<br>你不需要记住所有应对技巧，只需要记住一件事：<br><br>' +
+    '<strong style="color:var(--text-primary);font-size:15px;">当你听到那些声音，你不是孤独的。</strong><br><br>' +
+    '治疗师在这里。家人在这里。<br>而你的内心，也有不同的声音在尝试帮助你。<br><br>下次见。';
+
+  state.reportData = buildReportData();
+}
+
+// ============================================================
+// REPORT SYSTEM
+// ============================================================
+function buildReportData() {
+  var startStr = state.startTime ? state.startTime.toLocaleString("zh-CN",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}) : getTimestamp();
+  var endStr = getTimestamp();
+  var sceneRecords = state.selectedChoices.map(function(sc) {
+    var voicesHtml = sc.voices.map(function(v) {
+      var col = PERSONAS[v.persona] ? PERSONAS[v.persona].color : "#888";
+      return '<span style="color:' + col + ';">[' + (PERSONAS[v.persona] ? PERSONAS[v.persona].name : v.persona) + ']</span> ' + escapeHtml(v.text);
+    }).join("<br>");
+    var gndHtml = sc.groundingUsed ? '<div class="grounding-record"><div class="grounding-label">&#9670; 触发安全出口 / grounding</div><div class="grounding-text">本次共使用安全出口 ' + state.groundingUsed + ' 次。</div></div>' : '';
+    var noteHtml = sc.therapistNote ? '<div class="notes-record"><div class="notes-record-label">&#9998; 治疗师记录提示</div>' + escapeHtml(sc.therapistNote) + '</div>' : '';
+    return '<div class="scene-record">' +
+      '<div class="scene-record-name">' + escapeHtml(sc.sceneName || "") + '</div>' +
+      '<div class="choice-record">' +
+        '<div class="choice-label">选择 ' + escapeHtml(sc.choiceLetter) + '</div>' +
+        '<div class="choice-text">' + escapeHtml(sc.choiceText) + '</div>' +
+        (voicesHtml ? '<div class="voice-record">' + voicesHtml + '</div>' : '') +
+      '</div>' + noteHtml + gndHtml + '</div>';
+  }).join("");
+
+  var allVoices = {};
+  state.voiceHistory.forEach(function(v){
+    if (!allVoices[v.persona]) allVoices[v.persona] = [];
+    if (allVoices[v.persona].indexOf(v.text) === -1) allVoices[v.persona].push(v.text);
+  });
+
+  var followups = [];
+  if (state.score.awareness >= 2) followups.push("患者展现出良好的现实检验意识，可进一步探讨其在真实生活中的检验频率与效果。");
+  if (state.score.connection >= 1) followups.push("患者愿意向家人分享幻觉体验——建议后续安排家属Psychoeducation，建立家庭支持系统。");
+  if (state.score.resilience >= 1) followups.push("患者展现了不同程度的应对策略，建议在下次治疗中详细回顾各策略的有效性。");
+  if (state.groundingUsed > 0) followups.push("患者本次使用安全出口 " + state.groundingUsed + " 次，可讨论在实际生活中是否有类似的安全锚定行为。");
+  if (state.voiceHistory.some(function(v){ return v.persona === "command"; }))
+    followups.push("命令性幻听出现——建议关注命令内容是否涉及危险行为，建立安全计划（Crisis Plan）。");
+  if (state.voiceHistory.some(function(v){ return v.persona === "half"; }))
+    followups.push("「半吊子」(Half Light) 声音多次出现——建议关注患者的恐惧反应模式，是否存在被害妄想倾向。");
+  if (state.voiceHistory.some(function(v){ return v.persona === "pale"; }))
+    followups.push("「灰域」声音出现——提示虚无感或抑郁情绪，建议关注患者的情感状态，评估抑郁风险。");
+  if (state.voiceHistory.some(function(v){ return v.persona === "thought"; }))
+    followups.push("「思维插入」声音出现——建议详细讨论思维障碍的具体内容，评估认知功能状态。");
+  if (followups.length === 0) followups.push("建议在下次治疗中回顾本次体验，讨论患者最印象深刻的场景和声音。");
+  followups.push("可结合 PANSS 量表进行标准化评估，建立基线数据。");
+
+  var aw = Math.min(100, state.score.awareness * 20 + 30);
+  var cn = Math.min(100, state.score.connection * 35 + 20);
+  var rs = Math.min(100, state.score.resilience * 30 + 20);
+
+  return { startTime:startStr, endTime:endStr, scoreAwareness:aw, scoreConnection:cn, scoreResilience:rs,
+    groundingUsed:state.groundingUsed, sceneRecords:sceneRecords, allVoices:allVoices,
+    followups:followups, choices:state.selectedChoices };
+}
+
+function showReport() {
+  var rd = state.reportData || buildReportData();
+  var body = document.getElementById("report-body");
+  body.innerHTML =
+    '<div class="report-section"><div class="report-section-title">基本信息</div><div class="report-meta">' +
+    '<div class="report-meta-item"><div class="report-meta-label">开始时间</div><div class="report-meta-value">' + escapeHtml(rd.startTime) + '</div></div>' +
+    '<div class="report-meta-item"><div class="report-meta-label">结束时间</div><div class="report-meta-value">' + escapeHtml(rd.endTime) + '</div></div>' +
+    '<div class="report-meta-item"><div class="report-meta-label">场景完成</div><div class="report-meta-value">' + rd.choices.length + ' / ' + SCENES.length + '</div></div>' +
+    '</div></div>' +
+    '<div class="report-section"><div class="report-section-title">评估维度</div><div class="report-scores">' +
+    '<div class="score-item"><div class="score-label">现实觉察</div><div class="score-value">' + rd.scoreAwareness + '%</div><div class="score-bar"><div class="score-bar-fill" style="width:' + rd.scoreAwareness + '%"></div></div></div>' +
+    '<div class="score-item"><div class="score-label">人际连接</div><div class="score-value">' + rd.scoreConnection + '%</div><div class="score-bar"><div class="score-bar-fill" style="width:' + rd.scoreConnection + '%"></div></div></div>' +
+    '<div class="score-item"><div class="score-label">心理韧性</div><div class="score-value">' + rd.scoreResilience + '%</div><div class="score-bar"><div class="score-bar-fill" style="width:' + rd.scoreResilience + '%"></div></div></div>' +
+    '<div class="score-item"><div class="score-label">安全出口</div><div class="score-value">' + rd.groundingUsed + '<span style="font-size:14px">次</span></div><div class="score-bar"><div class="score-bar-fill" style="width:' + Math.min(100,rd.groundingUsed*20) + '%;background:#c0392b"></div></div></div>' +
+    '</div></div>' +
+    '<div class="report-section"><div class="report-section-title">场景记录与选择详情</div>' + rd.sceneRecords + '</div>' +
+    '<div class="report-section"><div class="report-section-title">人格声音接触记录</div>' +
+    '<div style="font-size:13px;color:var(--text-secondary);line-height:2;background:var(--bg-input);border:1px solid var(--border-light);padding:16px">' +
+    Object.keys(rd.allVoices).map(function(k) {
+      var col = PERSONAS[k] ? PERSONAS[k].color : "#888";
+      return '<div style="margin-bottom:8px"><span style="color:' + col + ';">' + escapeHtml(PERSONAS[k] ? PERSONAS[k].name : k) + '</span> — 共出现 ' + rd.allVoices[k].length + ' 次</div>';
+    }).join("") + '</div></div>';
+  document.getElementById("report-followup").innerHTML = rd.followups.map(function(f){ return "<li>" + escapeHtml(f) + "</li>"; }).join("");
+  document.getElementById("report-overlay").classList.remove("hidden");
+  document.getElementById("report-overlay").style.display = "flex";
+}
+
+function closeReport() {
+  document.getElementById("report-overlay").classList.add("hidden");
+  document.getElementById("report-overlay").style.display = "none";
+}
+
+function downloadReportTxt() {
+  var rd = state.reportData || buildReportData();
+  var lines = [];
+  lines.push("========================================");
+  lines.push("灰域行者 · 治疗记录");
+  lines.push("GREY ZONE WALKER · THERAPY SESSION REPORT");
+  lines.push("========================================");
+  lines.push("");
+  lines.push("【基本信息】");
+  lines.push("记录时间：" + rd.startTime + " 至 " + rd.endTime);
+  lines.push("场景完成：" + rd.choices.length + " / " + SCENES.length);
+  lines.push("");
+  lines.push("【评估维度】");
+  lines.push("现实觉察：" + rd.scoreAwareness + "%");
+  lines.push("人际连接：" + rd.scoreConnection + "%");
+  lines.push("心理韧性：" + rd.scoreResilience + "%");
+  lines.push("安全出口使用：" + rd.groundingUsed + "次");
+  lines.push("");
+  lines.push("【场景记录】");
+  rd.choices.forEach(function(sc) {
+    lines.push("");
+    lines.push("── " + sc.sceneName + " ──");
+    lines.push("选择 " + sc.choiceLetter + "：" + sc.choiceText);
+    lines.push("结果：" + sc.outcome);
+    if (sc.voices && sc.voices.length) {
+      lines.push("人格声音回应：");
+      sc.voices.forEach(function(v){ lines.push("  · [" + (PERSONAS[v.persona]?PERSONAS[v.persona].name:v.persona) + "] " + v.text); });
+    }
+    if (sc.groundingUsed) lines.push("[使用安全出口 / grounding]");
+    if (sc.therapistNote) lines.push("治疗师提示：" + sc.therapistNote);
+  });
+  lines.push("");
+  lines.push("【建议后续讨论主题】");
+  rd.followups.forEach(function(f,i){ lines.push((i+1) + ". " + f); });
+  lines.push("");
+  lines.push("========================================");
+  lines.push("本记录由灰域行者治疗游戏自动生成");
+  lines.push("生成时间：" + new Date().toLocaleString("zh-CN"));
+  var txt = lines.join("\n");
+  var blob = new Blob([txt],{type:"text/plain;charset=utf-8"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a"); a.href = url;
+  a.download = "灰域行者_治疗记录_" + getTimestamp().replace(/[ :]/g,"-") + ".txt";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function printReport() { window.print(); }
+
+// ============================================================
+// START / RESTART
+// ============================================================
+function startGame() {
+  state = {
+    currentScene:0, score:{awareness:0,connection:0,resilience:0,voiceCount:0},
+    selectedChoices:[], groundingUsed:0, voiceHistory:[],
+    sessionComplete:false, startTime:new Date(), reportData:null, currentTheme:state.currentTheme,
+    activeBubbles:[]
+  };
+  renderScene();
+}
+
+function restartGame() { showScreen("intro-screen"); clearVoices(); }
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape" && !document.getElementById("grounding-screen").classList.contains("hidden")) closeGrounding();
+  if (e.key === "Escape" && !document.getElementById("game-screen").classList.contains("hidden")) openGrounding();
+  if (e.key === "Escape" && !document.getElementById("report-overlay").classList.contains("hidden")) closeReport();
+});
+</script>
+</body>
+</html>
