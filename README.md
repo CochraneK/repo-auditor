@@ -209,3 +209,11 @@ python scripts/audit_freshness.py
 Portfolio Command Center: https://cochranek.github.io/repo-auditor/
 
 源码在 `docs/`。Public Pages 是展示层，不是 private control plane。
+
+## Public showcases
+
+`repo-auditor` can act as a public static showcase while source repositories remain Private. Reviewed artifacts are mirrored under `docs/showcase/`; the publication allowlist lives in `docs/showcase/manifest.json`.
+
+The showcase layer is intentionally separate from the audit registry. It may publish a project display name and the minimum static assets required for a reviewed demo, but it does not publish Private repository URLs, Git SHAs, internal findings/notes, credentials, real user/research data, admin surfaces, or unreviewed IP.
+
+When Pages is enabled, open `/showcase/` from the main audit terminal.
