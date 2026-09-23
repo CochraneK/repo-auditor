@@ -49,8 +49,8 @@ The gate is deliberately conservative. Potential patent value, employer/client/P
 For a public repository:
 
 ```bash
-python scripts/collect_repo_evidence.py CochraneK/long-gate \
-  --out evidence/long-gate.json
+python scripts/collect_repo_evidence.py CochraneK/repo-auditor \
+  --out evidence/repo-auditor.json
 ```
 
 The collector gathers GitHub facts such as repository metadata, head SHA, common project files, workflow status, lockfiles, and whether GitHub Action references use immutable commit SHAs.
