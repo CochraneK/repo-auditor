@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Voicemod Portraits</title>
+    <link rel="stylesheet" href="./styles.css?v=20260716-avatar-polish" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <p class="brand-kicker">Avatar Studio</p>
+        <h1 class="hero-title">Voicemod Portraits</h1>
+      </header>
+
+      <section class="studio" aria-label="头像预览与控制">
+        <div class="stage-stack">
+          <section class="stage-card" id="stageCard" aria-label="当前头像预览">
+            <button class="stage-fullscreen" id="fullscreenBtn" type="button">全屏</button>
+
+            <div class="avatar-wrap" id="avatarWrap">
+              <div class="pulse-ring pulse-ring-outer" aria-hidden="true"></div>
+              <div class="pulse-ring pulse-ring-inner" aria-hidden="true"></div>
+              <img id="avatarImage" class="avatar" alt="当前头像" />
+            </div>
+
+            <div class="now">
+              <p>Selected</p>
+              <h2 id="nowTitle">未选择</h2>
+            </div>
+
+            <div class="meter" aria-hidden="true">
+              <div id="meterFill"></div>
+            </div>
+          </section>
+
+          <section class="control-panel" aria-label="头像控制台">
+            <div class="control-heading">
+              <div>
+                <p>Control Deck</p>
+                <h2>头像控制台</h2>
+              </div>
+              <div class="mic-status" id="micStatus">
+                <span></span>
+                <strong>正在连接麦克风</strong>
+              </div>
+            </div>
+
+            <div class="control-grid">
+              <section class="control-group appearance-group" aria-label="角色与舞台">
+                <p class="group-title">角色与舞台</p>
+
+                <div class="appearance-row">
+                  <label class="field avatar-field">
+                    <span>主头像</span>
+                    <select id="avatarSelect"></select>
+                  </label>
+
+                  <div class="field background-field">
+                    <span>舞台背景</span>
+                    <div class="background-controls">
+                      <select id="bgMode" aria-label="舞台背景">
+                        <option value="transparent">透明</option>
+                        <option value="green">绿幕</option>
+                        <option value="blue">蓝幕</option>
+                        <option value="black" selected>黑色</option>
+                        <option value="white">白色</option>
+                        <option value="custom">自定义颜色</option>
+                        <option value="image">本地图片</option>
+                      </select>
+                      <label class="color-picker" title="选择自定义背景色">
+                        <input id="customBg" type="color" value="#20242a" aria-label="自定义背景色" />
+                      </label>
+                      <label class="image-picker" title="选择本地背景图片">
+                        <input id="backgroundImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+                        <span>图片</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="field drive-field">
+                    <span>驱动模式</span>
+                    <div class="drive-mode" role="group" aria-label="声音驱动模式">
+                      <button type="button" data-drive-mode="stage1">一阶</button>
+                      <button type="button" data-drive-mode="stage2">二阶</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="control-group motion-group" aria-label="声音响应">
+                <p class="group-title">声音响应</p>
+
+                <label class="field range-field">
+                  <span>麦克风灵敏度 <output id="sensitivityValue">max</output></span>
+                  <input id="sensitivity" type="range" min="0.5" max="4" step="0.1" value="4" />
+                </label>
+
+                <label class="field range-field">
+                  <span>动画强度 <output id="motionValue">1.0x</output></span>
+                  <input id="motion" type="range" min="0.2" max="2.5" step="0.1" value="1" />
+                </label>
+
+                <div class="response-actions">
+                  <button id="micBtn" type="button">开启麦克风驱动</button>
+                  <button id="resetBtn" type="button">重置动作</button>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="library" aria-label="头像库">
+        <div class="library-toolbar">
+          <div>
+            <p class="section-kicker">Portrait Library</p>
+            <div class="stats" id="stats"></div>
+          </div>
+          <div class="library-tools" id="libraryTools">
+            <label class="source-control">
+              <span class="sr-only">头像来源</span>
+              <select id="sourceMode" aria-label="头像来源">
+                <option value="voicemod">voicemod</option>
+                <option value="dicebeer">dicebeer</option>
+                <option value="aiface">aiface</option>
+                <option value="custom">custom</option>
+              </select>
+            </label>
+            <label class="search">
+              <span class="sr-only">搜索头像</span>
+              <input id="searchInput" type="search" placeholder="搜索头像名称" autocomplete="off" />
+            </label>
+            <label class="sort-control">
+              <span class="sr-only">头像排序</span>
+              <select id="sortMode" aria-label="头像排序">
+                <option value="default">默认排序</option>
+                <option value="color">颜色渐变</option>
+              </select>
+            </label>
+            <label class="custom-avatar-picker" id="customAvatarPicker" title="上传并自动裁剪自定义头像" hidden>
+              <input id="customAvatarInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" multiple />
+              <span id="customAvatarPickerText">上传头像</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="avatar-grid" id="avatarGrid" aria-live="polite" aria-label="246 个头像选项"></div>
+        <button class="load-more-btn" id="loadMoreBtn" type="button" hidden>加载更多</button>
+      </section>
+
+      <section class="resource-section" aria-labelledby="avatarResourcesTitle">
+        <div class="resource-heading">
+          <p class="section-kicker">Open Avatar Resources</p>
+          <h2 id="avatarResourcesTitle">开源头像制作</h2>
+        </div>
+
+        <div class="resource-grid">
+          <a class="resource-card" href="https://www.dicebear.com/" target="_blank" rel="noopener noreferrer">
+            <h3>DiceBear</h3>
+            <p>开源头像生成库，适合批量生成一致的 SVG/PNG 占位头像，也方便按 seed 做可复现头像。</p>
+            <span class="resource-link">访问 DiceBear →</span>
+          </a>
+
+          <a class="resource-card" href="https://getavataaars.com/" target="_blank" rel="noopener noreferrer">
+            <h3>Avataaars</h3>
+            <p>经典组合式人物头像，可调整发型、表情、服饰等元素，适合做基础人物角色库。</p>
+            <span class="resource-link">访问 Avataaars →</span>
+          </a>
+
+          <a class="resource-card" href="https://www.openpeeps.com/" target="_blank" rel="noopener noreferrer">
+            <h3>Open Peeps</h3>
+            <p>手绘人物插画组件库，人物姿态和多样性较好，适合作为中文人物角色设计参考。</p>
+            <span class="resource-link">访问 Open Peeps →</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="resource-section" aria-labelledby="faceDownloadsTitle">
+        <div class="resource-heading">
+          <p class="section-kicker">Face Dataset References</p>
+          <h2 id="faceDownloadsTitle">人脸数据集参考</h2>
+        </div>
+
+        <p class="resource-note asset-provenance-note">这些链接用于数据来源调研，不代表仓库确认其可重新分发或商用。当前内置第三方头像的许可状态见 DATA_PROVENANCE.md。</p>
+
+        <div class="resource-grid">
+          <a class="resource-card" href="https://iapr-tc4.org/face-datasets/" target="_blank" rel="noopener noreferrer">
+            <h3>CASIA-FaceV5 / CAS-PEAL</h3>
+            <p>中科院相关人脸数据集入口，包含彩色人脸和姿态、表情、光照等采集条件，适合科研参考。</p>
+            <span class="resource-link">访问 CASIA 数据集 →</span>
+          </a>
+
+          <a class="resource-card" href="https://github.com/X-zhangyang/Asian-Face-Image-Dataset-AFD-dataset" target="_blank" rel="noopener noreferrer">
+            <h3>Asian Face Image Dataset, AFD</h3>
+            <p>亚洲人脸数据集项目，提供样例、论文和下载信息；使用前建议确认数据许可和肖像权边界。</p>
+            <span class="resource-link">访问 AFD →</span>
+          </a>
+
+          <a class="resource-card" href="https://github.com/a312863063/seeprettyface-dataset" target="_blank" rel="noopener noreferrer">
+            <h3>SeePrettyFace Dataset</h3>
+            <p>StyleGAN 生成的人脸数据集参考。公开可访问不等于允许重新分发；使用或生成衍生头像前请核对原始许可与用途限制。</p>
+            <span class="resource-link">访问 SeePrettyFace →</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <div class="scroll-actions" aria-label="页面滚动快捷按钮">
+      <button class="scroll-jump" id="scrollTopBtn" type="button" aria-label="滚动到页面顶部">
+        <span>↑</span>
+      </button>
+      <button class="scroll-jump" id="scrollResourcesBtn" type="button" aria-label="滚动到底部开源头像制作区域">
+        <span>↓</span>
+      </button>
+    </div>
+
+    <script type="module" src="./js/app.js?v=20260716-avatar-polish"></script>
+  </body>
+</html>
