@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-page-node-id="tnV0GiOmBTCqGBYpU5UMvB">
+<head data-page-node-id="epfyj1qFhhGd1Zq1oVARqh">
+<meta charset="utf-8" data-page-node-id="BP8ecUf6v6o5uFCxAJtDDw">
+<meta name="viewport" content="width=device-width,initial-scale=1" data-page-node-id="qbCF2y1weFZspDtAzgNAw5">
+<title>公益情报周报 · 2026-W37</title>
+<meta name="generator" content="公益情报周报 · 2026-W37" data-page-node-id="OFBmjotKocQBvblGLt3Zs3">
+<style>
+:root{
+  --bg:#eef1f5; --paper:#ffffff; --paper2:#f6f8fa; --paper3:#eef2f6;
+  --ink:#15212e; --ink2:#46586a; --ink3:#7b8b9a;
+  --rule:#e4e9ee; --rule2:#cdd6df;
+  --accent:#1b4f72; --accent2:#2e6f9e; --accent-bg:#edf3f8;
+  --l1:#0f6e56; --l1bg:#e6f4f0; --l1rail:#1aa37c;
+  --l2:#1b4f72; --l2bg:#eaf1f7; --l2rail:#2e6f9e;
+  --l3:#8a5a00; --l3bg:#fbf1e1; --l3rail:#c8901f;
+  --l4:#a52a2a; --l4bg:#fbeaea; --l4rail:#d64545;
+  --card-sh:0 1px 2px rgba(20,32,43,.05),0 4px 14px rgba(20,32,43,.06);
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC",STSong,SimSun,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+  --bg:#0f141a; --paper:#161d25; --paper2:#1b232c; --paper3:#202a34;
+  --ink:#e8eef4; --ink2:#a9b7c4; --ink3:#7c8b9a;
+  --rule:#2b3540; --rule2:#3a4652;
+  --accent:#7fb4d6; --accent2:#9cc7e4; --accent-bg:#1c2833;
+  --l1:#5fbfa4; --l1bg:#122c26; --l1rail:#5fbfa4;
+  --l2:#7fb4d6; --l2bg:#16232f; --l2rail:#7fb4d6;
+  --l3:#d9a94a; --l3bg:#2b2415; --l3rail:#d9a94a;
+  --l4:#e08b8b; --l4bg:#2c1a1a; --l4rail:#e08b8b;
+  --card-sh:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans);
+  font-size:16px; line-height:1.8; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility; padding-bottom:40px}
+a{color:var(--accent2); text-decoration:none; word-break:break-all}
+a:hover{text-decoration:underline}
+strong{font-weight:600}
+
+/* 顶部 sticky 栏目导航 */
+.topnav{position:sticky; top:0; z-index:30; background:color-mix(in srgb,var(--paper) 92%,transparent);
+  backdrop-filter:saturate(140%) blur(8px); border-bottom:1px solid var(--rule);
+  display:flex; gap:4px; padding:8px 16px; overflow-x:auto; white-space:nowrap}
+.topnav .brand{font-weight:700; color:var(--accent); margin-right:8px; letter-spacing:.5px; flex:none}
+.topnav a{color:var(--ink2); font-size:13px; padding:4px 10px; border-radius:20px; flex:none}
+.topnav a:hover{background:var(--accent-bg); color:var(--accent); text-decoration:none}
+
+/* 版心 */
+.sheet{max-width:920px; margin:26px auto; background:var(--paper);
+  padding:48px 60px 56px; border:1px solid var(--rule); border-radius:10px; box-shadow:var(--card-sh)}
+
+/* 报头 */
+.masthead{position:relative; margin:0 0 8px}
+.mh-top{display:flex; justify-content:space-between; align-items:flex-end; font-size:12px; color:var(--ink3); letter-spacing:1px}
+.mh-top .kicker{font-weight:600; color:var(--accent)}
+.mh-issue{font-family:ui-monospace,Consolas,monospace; letter-spacing:.5px}
+.mh-title{font-family:var(--serif); font-size:38px; font-weight:700; letter-spacing:8px;
+  text-align:center; margin:14px 0 6px; color:var(--ink); text-indent:8px}
+.mh-sub{text-align:center; font-size:13.5px; color:var(--ink2); letter-spacing:1px}
+.mh-meta{text-align:center; font-size:13.5px; color:var(--ink2); margin-top:8px}
+.mh-meta .dot{margin:0 8px; color:var(--rule2)}
+.mh-window{text-align:center; font-size:12.5px; color:var(--ink3); margin-top:6px; letter-spacing:.2px}
+.mh-count{display:inline-block; margin-left:6px; padding:1px 9px; border-radius:20px;
+  background:var(--accent-bg); color:var(--accent); font-size:12px; font-weight:600}
+.mh-line{border:0; border-top:2px solid var(--ink); margin:18px 0 0}
+.mh-line2{border:0; border-top:1px solid var(--ink); margin:3px 0 0}
+
+/* 本期要点（导读卡 + 风险面） */
+.digest{margin:30px 0 8px; background:var(--paper2); border:1px solid var(--rule);
+  border-radius:10px; padding:20px 24px}
+.digest h2{margin:0 0 14px; font-size:15px; color:var(--accent); letter-spacing:2px;
+  border:0; padding:0; font-weight:700}
+.threads{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+.thread{background:var(--paper); border:1px solid var(--rule); border-radius:8px; padding:12px 14px; border-top:3px solid var(--accent)}
+.thread .t{font-weight:700; font-size:14px; color:var(--ink); margin-bottom:6px}
+.thread .d{font-size:13px; color:var(--ink2); line-height:1.7}
+.risk{margin:14px 0 0; background:var(--l4bg); border:1px solid color-mix(in srgb,var(--l4) 35%,transparent);
+  border-left:4px solid var(--l4); border-radius:0 8px 8px 0; padding:12px 16px}
+.risk .rh{font-size:13px; font-weight:700; color:var(--l4); letter-spacing:1px; margin-bottom:6px}
+.risk ul{margin:0; padding-left:18px}
+.risk li{font-size:13px; color:var(--ink); margin:3px 0}
+
+/* 栏目标题（带序号徽标） */
+.sec{display:flex; align-items:center; gap:12px; margin:40px 0 18px}
+.sec .idx{display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
+  background:var(--accent); color:#fff; border-radius:7px; font-size:14px; font-weight:700; flex:none}
+.sec h2{margin:0; font-size:18px; font-weight:700; color:var(--ink); letter-spacing:.5px; border:0; padding:0}
+.sec .ln{flex:1; height:1px; background:var(--rule)}
+
+/* 条目卡片 */
+.entry{position:relative; background:var(--paper); border:1px solid var(--rule);
+  border-radius:10px; padding:16px 20px 16px 22px; margin:14px 0; box-shadow:var(--card-sh); overflow:hidden}
+.entry::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--l1rail)}
+.entry.lv1::before{background:var(--l1rail)}
+.entry.lv2::before{background:var(--l2rail)}
+.entry.lv3::before{background:var(--l3rail)}
+.entry.lv4::before{background:var(--l4rail)}
+.e-head{display:flex; align-items:baseline; gap:10px; justify-content:space-between}
+.e-no{color:var(--ink3); font-weight:700; font-size:14px; flex:none}
+.e-title{font-size:16.5px; font-weight:600; color:var(--ink); line-height:1.6; flex:1; margin:0}
+.e-badge{flex:none; padding:1px 9px; border-radius:20px; font-size:11.5px; font-weight:600; letter-spacing:.3px; white-space:nowrap}
+.lv1 .e-badge{background:var(--l1bg); color:var(--l1)}
+.lv2 .e-badge{background:var(--l2bg); color:var(--l2)}
+.lv3 .e-badge{background:var(--l3bg); color:var(--l3)}
+.lv4 .e-badge{background:var(--l4bg); color:var(--l4)}
+.e-abs{font-size:15px; color:var(--ink); line-height:1.8; margin:10px 0 0; padding-left:12px; border-left:2px solid var(--rule2)}
+.e-meta{display:flex; flex-wrap:wrap; gap:8px 14px; margin:12px 0 0; font-size:13px; color:var(--ink2)}
+.e-meta .chip{display:inline-flex; align-items:center; gap:5px; background:var(--paper2); border:1px solid var(--rule); border-radius:6px; padding:3px 9px}
+.e-meta .chip b{color:var(--ink3); font-weight:500}
+.e-meta a{font-family:ui-monospace,Consolas,monospace; font-size:12px}
+.e-table{margin:12px 0 0; overflow-x:auto}
+
+/* 三类 callout 语义区分 */
+.call{margin:10px 0 0; padding:9px 14px; border-radius:0 8px 8px 0; font-size:13px; line-height:1.75}
+.call .ct{font-weight:700; margin-right:6px}
+.call.note{background:var(--accent-bg); border-left:3px solid var(--accent2); color:var(--ink)}
+.call.note .ct{color:var(--accent)}
+.call.caveat{background:var(--l3bg); border-left:3px solid var(--l3rail); color:var(--ink)}
+.call.caveat .ct{color:var(--l3)}
+.call.risk{background:var(--l4bg); border-left:3px solid var(--l4rail); color:var(--ink)}
+.call.risk .ct{color:var(--l4)}
+
+/* 图例 */
+.legend{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 0; font-size:12px; color:var(--ink2)}
+.legend .it{display:inline-flex; align-items:center; gap:6px; background:var(--paper2); border:1px solid var(--rule); border-radius:20px; padding:3px 11px}
+.legend .sw{width:10px; height:10px; border-radius:3px}
+
+/* 原有：表格/统计/页脚 兼容 */
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px; border:1px solid var(--rule)}
+th,td{border-bottom:1px solid var(--rule); padding:7px 11px; text-align:left}
+th{background:var(--paper2); font-weight:600; color:var(--ink); border-bottom:1px solid var(--rule2); white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.total td{background:var(--paper2); font-weight:600; color:var(--ink)}
+.stat li{font-size:14px; color:var(--ink2); margin:6px 0; line-height:1.8}
+.stat li strong{color:var(--accent)}
+.cov{margin:20px 0}
+.alert{margin:14px 0; padding:11px 16px; background:var(--l3bg); border-left:3px solid var(--l3rail);
+  border-radius:0 8px 8px 0; color:var(--ink); font-size:13.5px; line-height:1.8}
+.alert p{margin:4px 0}
+blockquote{margin:16px 0; padding:11px 16px; background:var(--paper2); border-left:2px solid var(--rule2); border-radius:0 3px 3px 0; color:var(--ink2); font-size:13.5px; line-height:1.8}
+blockquote p{margin:4px 0}
+.colophon{margin-top:46px; padding-top:18px; border-top:2px solid var(--ink); text-align:center; color:var(--ink3); font-size:12.5px; line-height:2}
+.colophon .org{color:var(--ink2); font-size:13px; letter-spacing:.5px}
+
+/* 主题切换（按钮由 md2html 注入，此处仅负责样式） */
+#tbtn{position:fixed; right:20px; bottom:20px; z-index:40; background:var(--paper); color:var(--ink2);
+  border:1px solid var(--rule2); border-radius:6px; padding:6px 12px; font-size:12.5px; cursor:pointer; font-family:inherit}
+#tbtn:hover{border-color:var(--accent); color:var(--accent)}
+
+@media(max-width:720px){
+  .sheet{padding:28px 18px 36px; margin:12px; border-radius:8px}
+  .mh-title{font-size:26px; letter-spacing:4px}
+  .threads{grid-template-columns:1fr}
+  body{font-size:15px}
+}
+@media print{
+  @page{size:A4; margin:16mm 15mm}
+  body{background:#fff; color:#000; font-size:11pt; padding:0}
+  .topnav,#tbtn{display:none}
+  .sheet{box-shadow:none; border:0; max-width:100%; padding:0; margin:0; border-radius:0}
+  .entry,.digest{box-shadow:none; break-inside:avoid}
+  .mh-title{color:#000}
+}
+</style>
+</head>
+<body data-page-node-id="O6xp5Ags12wTv6KL39U36L">
+<nav class="topnav" data-page-node-id="DARAwSh8ZPwtiQmvJzrMkL">
+  <span class="brand" data-page-node-id="7yW0zpucZX99cURn94cYjd">公益情报日报</span>
+  <a href="#digest" data-page-node-id="UjiLolHnnTr4qfoHBHHQQF">要点</a><a href="#s1" data-page-node-id="l2Wm2MAGf2ertnqSHqP75W">一·政策法规与标准（27 条）</a><a href="#s2" data-page-node-id="8kNeEmkdV4R7PSGI3k1Lrg">二·登记资质、年检与行政执法（12 条，高风险全复核）</a><a href="#s3" data-page-node-id="50LKqC6A4zbVZOQmemXrMA">三·灾害救助与应急救援（17 条）</a><a href="#s4" data-page-node-id="J7IM2LdsDpHKxOyHgwPhGm">四·中华慈善日 · 慈善周 · 久久公益节（56 条）</a><a href="#s5" data-page-node-id="jJoYbyedzktapeD6snb1UZ">五·养老服务体系与老龄事业（43 条）</a><a href="#s6" data-page-node-id="R6hpHubzL1aMFq7QhAgS0M">六·儿童福利、未成年人保护与教育助学（24 条）</a><a href="#s7" data-page-node-id="OehBr5i8WXsByy5g2GP0NX">七·社会救助与兜底保障（10 条）</a><a href="#s8" data-page-node-id="AHxZ5HKvfjjixCxj5PlVYg">八·慈善表彰、人物与行业建设（39 条）</a><a href="#s9" data-page-node-id="DmUzA6Yu5ULCj0e1XDdUxF">九·基金会、平台与资助公示动态（20 条）</a><a href="#s10" data-page-node-id="rtt04RotXqh1pEdub3xkCR">十·国际人道与发展（22 条）</a><a href="#stats" data-page-node-id="gWDG8bCnx5hQDSL8WndsnQ">统计</a>
+</nav>
+<div class="sheet" data-page-node-id="FgdtZA7wtCifRIsJnTGyAV">
+<header class="masthead" data-page-node-id="josTHHiuuUo4O8q3a2tqe4">
+  <div class="mh-top" data-page-node-id="troP3yL8nFfAaUxJNQbDCs">
+  <span class="kicker" data-page-node-id="IjOA9ctxXiiWXWqcqXfPXF">CHARITY INTELLIGENCE DAILY</span>
+  <span class="mh-issue" data-page-node-id="zDZreCAaEjJnHKQZG1D9f4">NO. — · 精修公报风</span>
+</div>
+<h1 class="mh-title" data-page-node-id="5bq4WjhfioRzmFPL8jFOHP">公益情报周报 · 2026-W37</h1>
+  <div class="mh-meta" data-page-node-id="QhAaSDlz09t6pzh7SN7NXn"></div>
+  
+  <hr class="mh-line" data-page-node-id="Jkpwl6uSXL6A7MUNkfYQJA"><hr class="mh-line2" data-page-node-id="MDwTmJLLICOvTddGbkDUTA">
+</header>
+<main data-page-node-id="Pbspe0GuGEr7LZonvFDdop">
+<h1 data-page-node-id="8rwzUzrqdNCH5hSnjjzWEW">公益情报周报 · 2026-W37</h1>
+<p data-page-node-id="zrusdp6d7FN5FkMl5wn4aA">覆盖时段：2026-09-07 00:00 ~ 2026-09-13 24:00（自然周）｜数据来源：本周 5 期公益情报日报（09-07 / 09-08 / 09-09 / 09-10 / 09-11，周末两日无日报产出）</p>
+<hr  data-page-node-id="2abkzmUlfv7k11So2qNEYz"/>
+<section class="digest" id="digest" data-page-node-id="h5m5ub0w6EjVCE6bd3MHDZ">
+  <h2 data-page-node-id="DisMZUrJ2KxMwZ9HHFCEZx">本期要点 · 导读</h2>
+  <div class="threads" data-page-node-id="He5eJJg2GEVtXWZqirW49L"><div class="thread" data-page-node-id="FZuYNw25mGVH2F75an7PXi"><div class="t" data-page-node-id="Zfdd8B6frZiOLZQC1iYbHw">中华慈善日</div><div class="d" data-page-node-id="5dIuN0zJA6xDvttu7bWM7D">周期性慈善活动贯穿全周、热点依次迁移。 周初（9-7~9-8）以各地主题活动收尾复盘为主（辽宁、贵州、重庆、安顺、徐州、上海慈善周回眸等）；周三（9-9）起进入集中募捐期，各级红十字会、慈善会密集发布一起捐倡议（海南、潼南、崇阳、宿州、泸水、顺德等），叠加在遂昌、婺城、锡山、濮阳、恩施、景宁等地党政机关铺开；周中（9-10）湖北慈善周宜昌启动现场 10 家企业捐 520 余万元并落地宜昌首单 70 万元慈善信托。C4 章（慈善日·慈善周·久久公益节）周内累计 56 条，为最大热点域。</div></div><div class="thread" data-page-node-id="h6qGSxQzLt2lblkiLctPmS"><div class="t" data-page-node-id="jdVf1NK3e7IgFEzzCVdOZu">养老服务进入政策密集期。</div><div class="d" data-page-node-id="Bh1HLln4FfvWaegEo0ouUw">养老服务进入政策密集期。 两项养老机构强制性国标（GB 48013—2026、GB 48014—2026，2027-08-01 实施）周初发布并多源解读；《辽宁省养老服务条例》出台（10-01 施行）、黑龙江全面推开长护险、国家医保局提出 2028 年底长护险基本全国覆盖目标、北京调整高龄津贴发放方式、辽宁/江苏先后调度养老消费补贴项目。C5 章周内 43 条，为第二大热点域。</div></div><div class="thread" data-page-node-id="rmw6PssQcWnuyyi1DBEU29"><div class="t" data-page-node-id="YxNPqEpNbAq3KAzJDtTIyQ">停止资助后被催捐</div><div class="d" data-page-node-id="74TKQvdDzRw4QN7m0lyxTW">监管执法信号明显增强。 呼和浩特赛罕区 8 家社会组织被撤销登记（处罚公告送达阶段）；江苏省厅公布 518 家省级社会组织年检结论、12 家不合格；湖北三部门公布 97 家公益性捐赠税前扣除资格名单；北京对北京国际金融论坛送达行政处罚事先告知书；西藏网警通报涉吉隆泥石流谣言 6 起案件多人被罚；嘉峪关事件官方介入核查（真实性尚未证实）。C2 章周内 12 条，全部过高风险复核。灾害线：西藏吉隆"8·26"泥石流捐赠官方口径超 6.6 亿元（9-5 时点），日喀则红十字会启动第一期资金公示；江西遂川"9·5"泥石流 12 人遇难、1 人失联（9-8 18 时口径）；台风致湖南、福建仙游受灾，红总会启动四级响应，仙游县红十字会累计接收捐款 862 万余元。与上周（W36）对比说明：上周日报仅存 9-6 一期（17 条）入库，无法做完整周度对比；可确认的变化是——本周条目量（297 条）为上周可存档期的 17 倍以上，主因是双主题活动放量与搜狗微信通道自 9-9 起打通（9-9/9-10/9-11 三期分别经微信通道新增 10/32/11 条）。新出现的政策文件：GB 48013/48014 两项国标、浙民慈〔2026〕92 号、江西《民政社会救助基层经办服务规范》、《辽宁省养老服务条例》、贵州《民政精神卫生福利机构综合监管机制》、湖南《民政行政执法事项目录清单（2026 年版）》、湖北税前扣除资格 2026 年第 2 号公告。新出现的机构动态：国家图书馆基金会样式雷文化遗产专项基金成立、上海启光自然科学发展基金会（待核实）、字节跳动公益平台、腾讯公益机制。</div></div></div>
+</section>
+<h2 id="s1" data-page-node-id="KPRR36PsBXgJ8qNrqEbpKu">一、政策法规与标准（27 条）</h2>
+<article class="entry lv1" data-page-node-id="egk9gtEYdwOqatbEYvPTDv">
+  <div class="e-head" data-page-node-id="g6tzYoeYo8jgRVh6K4aXBb"><span class="e-no" data-page-node-id="NM4QIsGWZmGJFsSCb58OYB"></span><h3 class="e-title" data-page-node-id="dwblB3l89TaO64yAsSILhC">国家级</h3></div>
+    
+  
+  <div class="call note" data-page-node-id="Su6Y1uUuHEt4RfIffPuLDK"><span class="ct" data-page-node-id="ffGjmH1p19Obv998BC8FhJ">第六次中国城乡老年人生活状况抽样调查</span>（9-7·#1、#2）｜民政部通知+启动新闻｜<span class="lv lv1" data-page-node-id="0IOryfKGI5GaCFg8oFsZA7">官方原文</span>｜已核验 —— 民函〔2026〕60 号，五部门联合发文，样本 33 万人、覆盖 31 省及新疆兵团 1002 个县；落款 8-28、网站发布 9-2，已发布生效。https://www.mca.gov.cn/n152/n165/c1662004999980012952/content.html</div>
+<div class="call note" data-page-node-id="OQSCIicBCxqSonTBfoV0CD"><span class="ct" data-page-node-id="3MWMNVZMKFBYgZA4Rrfugt">《养老机构基本规范》等两项强制性国标发布</span>（9-8·#1、#16、#22，三源印证）｜民政部转载+上海局+广东厅｜[权威媒体/官方原文]｜已核验 —— GB 48013—2026、GB 48014—2026，2027-08-01 实施、设一年过渡期；居室禁设地下半地下、失能多人间≤6 床等条款经逐条比对。https://www.mca.gov.cn/n152/n166/c1662004999980013124/content.html</div>
+<div class="call note" data-page-node-id="MorefQ2a2XBjr6l5r84IXG"><span class="ct" data-page-node-id="gYNmjDfcVOaz7qc4uVH2oT">第五次全国殡葬工作会议后续部署</span>（9-8·#3）｜民政部转载｜<span class="lv lv2" data-page-node-id="Ylh0BqG4k0A4kyWEmp8pUg">权威媒体</span>｜已核验 —— 会议 9-7 于湖南召开，本条为次日报道。</div>
+<div class="call note" data-page-node-id="zbGBv0rzHZSdXZX2sNQegx"><span class="ct" data-page-node-id="eTxSh0BvVaNwRDi0ASeQlq">七部门推进特殊教育优质融合发展</span>（9-8·#48）｜《公益时报》头版｜<span class="lv lv2" data-page-node-id="GFIHWBOYJ74rDMG5ijRUgB">权威媒体</span>｜待核实 —— 《特殊教育发展提升"十五五"行动计划》七部门名单与文号为二手转述，未回一手源（另 9-10 期判定其首发 09-08，已按时间窗排除编号条目）。</div>
+<div class="call note" data-page-node-id="5uv5mQH2e4BWqJ353HF1sA"><span class="ct" data-page-node-id="joUlTlsHWjIGXGlCsFRdeg">"十五五"体育强国建设部署</span>（9-8·#50）｜《公益时报》｜<span class="lv lv2" data-page-node-id="PHiDqc0l2Wm5DD7qBKLZoy">权威媒体</span>｜待核实 —— 含深化体育支教志愿服务、引入社会公益力量，文件原文待核。</div>
+<div class="call note" data-page-node-id="jnMIMfYu62fNFX2FVCbCY8"><span class="ct" data-page-node-id="wBALihrCrJaWUUdkmXNSWu">人社部等三部门：优化城乡社区岗位吸纳高校毕业生</span>（9-10·#6）｜广东省厅转载｜<span class="lv lv2" data-page-node-id="4beU4AGZyLB0Jyaw6qy4rg">权威媒体</span>｜已核验（文号待核）—— 要求新招聘社区岗位原则上全部面向高校毕业生开放，定期组织进社区开展志愿服务与公益活动。</div>
+<div class="call note" data-page-node-id="ZP1SDaW2vymDCxYYpNzH0M"><span class="ct" data-page-node-id="ehkqrtqDWMBQSEC8kl7x8C">全国人大常委会：将开展无障碍环境建设法等三部法律执法检查</span>（9-9·#32）｜人民网｜<span class="lv lv2" data-page-node-id="mOUTHYxfqPtuf139GOH6a9">权威媒体</span>｜已核验 —— "十五五"系列发布会披露：社会救助法规定 8 类救助对象、10 项救助措施；执法检查为已宣布的监督工作计划。</div>
+<div class="call note" data-page-node-id="QdNmaHune4S8UUontBYo97"><span class="ct" data-page-node-id="KrNxETjdBX2z6HJcWlrfwc">人社部 2026 年就业政策宣传月</span>（9-8·#59）｜人民网｜<span class="lv lv2" data-page-node-id="7feB6w15S9moEL79ynb7zN">权威媒体</span>｜已核验。</div>
+<div class="call note" data-page-node-id="CpTHMzVQ6EXiQXU2cBV0Ta"><span class="ct" data-page-node-id="9qwKQLkBJI7Jv7XkwTKphI">司法部、全国普法办第一批普法责任制典型案例</span>（9-8·#60）｜人民网｜<span class="lv lv2" data-page-node-id="G2bjWmem8bBU8sSKEkg9eS">权威媒体</span>｜已核验。</div>
+</article>
+<article class="entry lv1" data-page-node-id="wFV1IvocuDIhj23eibrKO9">
+  <div class="e-head" data-page-node-id="fObXpmfu9vTz1IuODBkTEx"><span class="e-no" data-page-node-id="9m8INcB5wdNmSniNzc79vF"></span><h3 class="e-title" data-page-node-id="e9iRI2pDyDdWueU8KfSOZu">地方性（法规、规章与规范性文件）</h3></div>
+    
+  
+  <div class="call note" data-page-node-id="KfTLz9ofuQALSR5gWhurAB"><span class="ct" data-page-node-id="2B9fq5E6HBl06mfs98Kroc">浙江：慈善组织公益性捐赠税前扣除资格管理办法（试行）</span>（9-9·#35）｜微信公众号「浦江会计」转述｜<span class="lv lv3" data-page-node-id="yMWLvaME3wEdE22PKXmF0W">二手转述</span>｜已核验 —— 浙民慈〔2026〕92 号，浙民政厅+财政厅+省税务局印发，2026-07-30 印发、09-01 已施行；资格全国有效、有效期三年，经「浙里捐赠」平台一站认定。<strong data-page-node-id="xOyC71affn7MFB1jpbSmOh">首发日早于本周，本条为微信端转发+解读。</strong></div>
+<div class="call note" data-page-node-id="PGCYG49vaVgrTSeAoWxcG5"><span class="ct" data-page-node-id="0o6HLqCPNXhi13D87hZdqh">江西：《民政社会救助基层经办服务规范》</span>（9-9·#5）｜民政部转载｜<span class="lv lv2" data-page-node-id="hRIOH9dknG4dSV9ncmSU9I">权威媒体</span>｜已核验 —— 省救助局与赣州、龙南联合制定，2027-02-01 施行，推行首问负责等五项制度。</div>
+<div class="call note" data-page-node-id="YQJa1BXbxL2pBQCmXjcpaq"><span class="ct" data-page-node-id="IJgINDwJuUl5rCqE1NNq1a">青海：修订印发《临时救助工作实施办法》</span>（9-9·#6）｜民政部转载｜<span class="lv lv2" data-page-node-id="eFuWmWYsGTvvgWKn624cvr">权威媒体</span>｜已核验（文号待核）—— 「小额快救」3 日内审批发放、急难免核对公示、打破户籍地受理限制。</div>
+<div class="call note" data-page-node-id="7XYjB9KAAYojExeMMwLcw9"><span class="ct" data-page-node-id="HT6SEGY0FaYzXV7sxEmFjr">辽宁：《辽宁省养老服务条例》</span>（9-10·#21）｜民政部转载｜<span class="lv lv2" data-page-node-id="j3A0hT2Tn1rxTDJ8WNpqtm">权威媒体</span>｜已核验（施行日待核）—— 省人大常委会表决通过、12 章 84 条，10-01 施行，首创养老服务师职业资格制度表述。https://www.mca.gov.cn/n152/n166/c1662004999980013185/content.html</div>
+<div class="call note" data-page-node-id="l4rjV0uzQyjrOzAxnUR1Z0"><span class="ct" data-page-node-id="TIws6TDfqbLu2OKC0K0Ohj">贵州七部门：《民政精神卫生福利机构综合监管机制》</span>（9-11·#4）｜贵州省厅｜<span class="lv lv1" data-page-node-id="4QkE62JNkyVFwAUUeAhj6i">官方原文</span>｜已核验 —— 已正式印发，规范收治对象、经费使用等八方面。</div>
+<div class="call note" data-page-node-id="86zgOLEWHKg2fNBTg2CDoM"><span class="ct" data-page-node-id="v1S3uVPFLKmceNpV6R7KF5">湖南：《民政行政执法事项目录清单（2026 年版）》</span>（9-11·#13）｜湖南省厅｜<span class="lv lv1" data-page-node-id="MHPc4C44vJeAYx7NkL6RFr">官方原文</span>｜已核验 —— 9-11 17:55 印发，附正式文件。https://mzt.hunan.gov.cn/mzt/xxgk/zcfg/wj/202609/t20260911_34062441.html</div>
+<div class="call note" data-page-node-id="iVYTb6A47MGOP3PtbrBmBX"><span class="ct" data-page-node-id="H1UeiR9WqXxDeI5JlyKCg8">广东：《民政行政处罚程序规定》延长有效期征求意见</span>（9-9·#27）｜广东省厅｜<span class="lv lv1" data-page-node-id="IqOs9ettpeOCiQeIL2gfk7">官方原文</span>｜待核实 —— 征求意见阶段，发布与截止时间页面未显示。</div>
+<div class="call note" data-page-node-id="kk9OOvRhjUSQRBUn7hwzph"><span class="ct" data-page-node-id="lyMIs2TJVdbu0X8VRzScCL">湖北：《临时救助实施办法》出台报道</span>（9-8·#34）｜河南厅转载《中国社会报》｜<span class="lv lv2" data-page-node-id="3Og6uAf7uDWDC0dSFNnOJp">权威媒体</span>｜待核实 —— 文号、施行日未核实（存 2025 试行版鄂民政发〔2025〕2 号）。</div>
+<div class="call note" data-page-node-id="A3VkgP8h5HJ5adrxNtc5AB"><span class="ct" data-page-node-id="jIwNt4p2Ax34Q5aPXBkFEM">陕西：敬老助残乡村公益性岗位开发管理新规</span>（9-8·#35）｜河南厅转载｜<span class="lv lv2" data-page-node-id="jHYjL1myX8I95TMI9bdgXl">权威媒体</span>｜待核实 —— 发文单位与文号待核。</div>
+<div class="call note" data-page-node-id="NQrANLSxYNd40DNAB7x6fS"><span class="ct" data-page-node-id="zmjmgzQkuBYYZs32RCieMf">宁夏：民政"十五五"锚定 14 项指标</span>（9-8·#4）｜民政部转载｜<span class="lv lv2" data-page-node-id="EX67jNuPxXcVeriI86EwYA">权威媒体</span>｜待核实 —— 规划阶段，是否正式印发待确认。</div>
+<div class="call note" data-page-node-id="FvvI9dSmGPeMbyt74FafYv"><span class="ct" data-page-node-id="XpyMMqRUwI5BmgPWcCQ9MB">北京：调整高龄津贴发放方式</span>（9-10·#22）｜民政部转载｜<span class="lv lv2" data-page-node-id="OYovVkRjeCzk3aAxR1A1RS">权威媒体</span>｜已核验（细节待核）—— 80-89/90-99/100+ 每月 100/500/800 元，2027-01-01 起全部金融账户发放。</div>
+<div class="call note" data-page-node-id="wGjcVtiKc87FjMiLBK3H3G"><span class="ct" data-page-node-id="deKw9RTMBDEoaoPt1VuFg0">江苏：《困境儿童基本生活精准保障实施办法》解读</span>（9-10·#43）｜微信转述｜<span class="lv lv3" data-page-node-id="rcEFnkVPGCWfTavkQKCgYq">二手转述</span>｜待核实 —— 称省民政厅等 10 部门印发，文号以"苏民"开头，未取得一手原文。</div>
+<div class="call note" data-page-node-id="7bEKFT2qGupSe9WQezphCV"><span class="ct" data-page-node-id="OGL9W78WNourOc4kvnymfC">上海长宁：《老年人意定监护监督人工作指引》</span>（9-9·#23）｜上海局｜<span class="lv lv1" data-page-node-id="EE3CxRgXjLNUqvsB590QFm">官方原文</span>｜已核验 —— 区级指引+工具箱+服务联合体。</div>
+<div class="call note" data-page-node-id="A579ymE3mZTRWHZt215HRx"><span class="ct" data-page-node-id="tY1zW4bicGrfu0wMTQdM01">河北唐山：11 部门社会救助帮扶政策清单</span>（9-7·#3）｜民政部转载｜<span class="lv lv2" data-page-node-id="hRCjLmvc3yvmK2s9k8q0Su">权威媒体</span>｜待核实 —— 未见唐山一手原文。</div>
+<div class="call note" data-page-node-id="bIVJKPwpe6nhLAsvdGmunZ"><span class="ct" data-page-node-id="LHRrB0bH7MDHSE8XHzxR18">内蒙古：养老服务设施布局技术导则</span>（9-7·#4）｜民政部转载｜<span class="lv lv2" data-page-node-id="dFWQeWpaGNCXg5E0BVOzBE">权威媒体</span>｜待核实。</div>
+<div class="call note" data-page-node-id="ql8P4QXbmUgkht4rq8zKFL"><span class="ct" data-page-node-id="5echyPRJ2Qnq6zHIlWBD9x">北京：困境儿童摸排探访工作指引</span>（9-7·#5）｜民政部转载｜<span class="lv lv2" data-page-node-id="Nvw8XpBdYhJvIvBzoS2p1v">权威媒体</span>｜待核实。</div>
+<div class="call note" data-page-node-id="MEvKiaVitfsr6FbtmR60R7"><span class="ct" data-page-node-id="VwX5Mdp0uVdtQWsImExkJM">民政部：部署老龄事业和银发经济统计监测</span>（9-7·#6）｜民政部转载｜<span class="lv lv2" data-page-node-id="MTRWzVRkzewxF6dyCwf3KF">权威媒体</span>｜待核实 —— 未见部级原文。</div>
+</article>
+<h2 id="s2" data-page-node-id="7wU2pujviiKHKmnGT9Vg0U">二、登记资质、年检与行政执法（12 条，高风险全复核）</h2>
+<ul data-page-node-id="63EQCOtMltJjPynsuSRlz4">
+<li data-page-node-id="F7v0hK2TVndpBWqqnoaFFj"><strong data-page-node-id="TmiT99FI9K0SK5OhI1gmFv">北京国际金融论坛：行政处罚事先告知书公告送达</strong>（9-7·#10）｜北京局执法处｜<span class="lv lv1" data-page-node-id="0M4Hif22iCvyi2P6wwB6U3">官方原文</span>｜已核验 —— 京民先公告〔2026〕13 号，涉嫌未按规定接受 2025 年度检查，拟警告处罚；<strong data-page-node-id="72pPVLJHcPgx651xvXSFPQ">仅为事先告知阶段，非已生效处罚</strong>。https://mzj.beijing.gov.cn/art/2026/9/3/art_371_693154.html</li>
+<li data-page-node-id="iWXcHY6JH6QecB5gUGQ2JY"><strong data-page-node-id="rwXUMPiFgUxPnIBkYDrQHH">呼和浩特赛罕区 8 家社会组织被撤销登记</strong>（9-9·#36）｜微信「都市全接触 奔腾融媒」转区民政局公告｜<span class="lv lv3" data-page-node-id="qHEGHEhi0YPEvPljJVpBKR">二手转述</span>｜已核验 —— 连续两年年检不合格，涉 5 所幼儿园、1 残疾人康复中心、1 社工中心等；公告送达阶段，60 日复议/6 个月诉讼救济渠道已载明。</li>
+<li data-page-node-id="pg7a5gvij6LEutQ98QCshY"><strong data-page-node-id="lZLvuacTD121IdlvEOoCgA">江苏省厅：518 家省级社会组织 2025 年度年检结论（第一批）</strong>（9-10·#2）｜江苏省厅｜<span class="lv lv1" data-page-node-id="zrLgmeSOnrzHDfbVXHeVJ2">官方原文</span>｜已核验 —— 12 家民非年检不合格（名单见原文），系同一公告、微信转述已合并。https://mzt.jiangsu.gov.cn/art/2026/9/10/art_55002_11827843.html</li>
+<li data-page-node-id="KHCPWSk2HReqE4LkCdTlUP"><strong data-page-node-id="zHbQKeGqOhvtbKGLLu4CRZ">湖北三部门：97 家公益性捐赠税前扣除资格名单（2026-2028 第一批）</strong>（9-10·#3）｜鄂财政厅+税务局+民政厅公告 2026 年第 2 号｜<span class="lv lv1" data-page-node-id="4SNFtYnlFdhmtFTtEvenq5">官方原文</span>｜已核验 —— 落款 9-7、公开 9-9；周报复测该 URL 返回 412（WAF 拦截），内容以日报成稿时核验为准。</li>
+<li data-page-node-id="jkmE4otxPuaGQk4eQkToXL"><strong data-page-node-id="C9QFaxLjICAZkuBgJWerEs">北京市 365 家市级社会组织初步评估等级公示</strong>（9-7·#9）｜北京局｜<span class="lv lv1" data-page-node-id="jL2nUjy9nqBo7C9bFcogBF">官方原文</span>｜已核验 —— 5A 49/4A 124/3A 181/2A 10/1A 1；<strong data-page-node-id="6HrZUtMzB4CiTwt1dWn6me">公示期起止原文未载明；为初步等级非终评</strong>。</li>
+<li data-page-node-id="VjYpBhp28wSUA7SxkUUcoi"><strong data-page-node-id="HvomwcafmBOCdmH5JEVXDR">上海两家民企发起设立启光自然科学发展基金会</strong>（9-8·#9）｜民政部转载｜<span class="lv lv2" data-page-node-id="Sfv4pgnVjmOp5KMjDeQTVH">权威媒体</span>｜待核实 —— 名称、出资额、登记状态未获登记公告确认，不得引用具体数字。</li>
+<li data-page-node-id="KGqFpumrADUqJ1Acf6XzqK"><strong data-page-node-id="xPKqunpb5g9AHm9EhYH0Qy">青海：社会组织注销登记办法培训</strong>（9-9·#20）｜青海省厅｜<span class="lv lv1" data-page-node-id="FbhxpXprIFGnBm6bQHdcRW">官方原文</span>｜已核验（文号待核）—— 《青海省社会组织注销登记办法》一般注销十一步流程。</li>
+<li data-page-node-id="7yKsfvx2ow7ZkIZvyWlBHE"><strong data-page-node-id="1cjRiC8Hxksc3FjFN7gVK6">新疆民政厅所属 3 单位公开招聘编制外人员</strong>（9-9·#26）｜新疆厅｜<span class="lv lv1" data-page-node-id="BGtjxGBMmY9kJDDkRN3ULa">官方原文</span>｜已核验。</li>
+<li data-page-node-id="rTG3nkf3n9ckQcqxbBwm2C"><strong data-page-node-id="EyR7ECIX36T24YlGwc4Wls">芜湖：2026 年市级社会组织评估政策解读会</strong>（9-9·#42）｜微信转述｜<span class="lv lv3" data-page-node-id="3752uVNpekAI4aXdLE9ZEw">二手转述</span>｜已核验 —— 民政部新修订《社会组织评估管理办法》为已修订发布规章。</li>
+<li data-page-node-id="L9PIzZlDjXgS9SBujH5eYH"><strong data-page-node-id="Ri7hYQuCKgJDp2vEz6XdhF">涉吉隆泥石流谣言：6 起案件多人被行政处罚</strong>（9-10·#41）｜中国新闻网｜<span class="lv lv2" data-page-node-id="5E153p09thGdTOPahWo4y2">权威媒体</span>｜已核验 —— 西藏网警通报，编造灾害成因/搜救悬赏等被西藏、黑龙江、安徽、云南、广东公安机关处罚；具体人数待核，<strong data-page-node-id="2O9DWLBTtkb0nXQfG06uH0">不得据此推断任何机构捐赠违规</strong>。https://www.chinanews.com.cn/sh/2026/09-10/10694349.shtml</li>
+<li data-page-node-id="4DYtvbBGJG0XWgU1V5JtiI"><strong data-page-node-id="Y5dh6hNNyWslZwLSKdVl8L">嘉峪关"停止资助后遭催捐"事件官方核查中</strong>（9-10·#74）｜红星新闻｜<span class="lv lv2" data-page-node-id="zkbXFkPHcp0bm6GURaAJf0">权威媒体</span>｜待核实 —— <strong data-page-node-id="K3BCnxK12Q9X54HXCUCj3k">负面指控类，官方调查尚无结论，事件真实性未证实</strong>（当事人拒绝提供受助人信息、当地教育机构查无此人）；仅陈述官方回应，不作道德判断。</li>
+<li data-page-node-id="EbjO843Vr2nmKi8pTne2X0"><strong data-page-node-id="JuASm08BYz7sPaK2DQVLiB">江苏省区划地名协会第三次会员大会</strong>（9-8·#8）｜民政部转载（与江苏省厅同文合并）｜<span class="lv lv2" data-page-node-id="jVp3IAJUbRiskBPoWz2apF">权威媒体</span>｜已核验。</li>
+</ul>
+<hr  data-page-node-id="tvjoY0TdkbpZWbCgOk4CRf"/>
+<h2 id="s3" data-page-node-id="rEgJiU8bqeFmSdbsQIUnhP">三、灾害救助与应急救援（17 条）</h2>
+<article class="entry lv1" data-page-node-id="jJeCp4fmExC3w7AoGKQVzv">
+  <div class="e-head" data-page-node-id="yGORWfStBC3G1xLdEcZYjo"><span class="e-no" data-page-node-id="aMRWIbLPmU45UA0CrSRsgN"></span><h3 class="e-title" data-page-node-id="hiODfoEFfIHM5FEQexs1uK">西藏吉隆"8·26"泥石流（专题）</h3></div>
+    
+  
+  <div class="call note" data-page-node-id="VpIMebJBzPG99qBQ5WwlJW"><span class="ct" data-page-node-id="r1i8xWzic5owyrhBBDoebk">民政部：吉隆灾害慈善捐赠已超 6.6 亿元</span>（9-7·#11）｜新华网引民政部｜<span class="lv lv2" data-page-node-id="pmPeT4VbJkcVtymhp1pQ7W">权威媒体</span>｜已核验 —— 超 147 万人次互联网捐赠 5016 万元；<strong data-page-node-id="nce19FnX8tvOuB3gPfwVwK">"据不完全统计"，时点 9-5，引用须带时点</strong>。https://www.news.cn/local/20260905/2fef4d5e3afc443db44b4c0f221d5b0c/c.html</div>
+<div class="call note" data-page-node-id="FBpPAjGXfSRpC23oHdU4Tj"><span class="ct" data-page-node-id="Cxift0XAGkv2Md73snvdqN">日喀则市慈善总会开通救灾捐赠渠道</span>（9-7·#12）｜新华网｜<span class="lv lv2" data-page-node-id="IGlPUALqrBJnD6emrX9HP9">权威媒体</span>｜已核验 —— 两账户已比对原文；<strong data-page-node-id="tWziFLxmm6ik2GbsdJaeEo">捐款前请经官方渠道二次核实账号</strong>。</div>
+<div class="call note" data-page-node-id="sEDcHJwzdbZAJ8eyNssm2L"><span class="ct" data-page-node-id="Jqr6QAbc1IcUF24JBKXuzw">红基会救灾简报 3 条</span>（9-7·#13、#14、#15）｜红基会官网｜<span class="lv lv1" data-page-node-id="39MSCQaRwypXbU1qrNQ1cW">官方原文</span>｜已核验 —— 藏桂两地供餐供水持续；1 万盒自热米饭运抵吉隆。</div>
+<div class="call note" data-page-node-id="3aX6buWXHghWANWG73I7iA"><span class="ct" data-page-node-id="ryKz7Ar4n7xayIbQEhcuYn">大梦龙途捐赠 200 万元驰援吉隆</span>（9-7·#16）｜红基会官网｜<span class="lv lv1" data-page-node-id="ZcX7mVoCkspA3B5Ajecc4C">官方原文</span>｜已核验 —— <strong data-page-node-id="UlIwC7hozfSWZPCoUSunjH">是否计入 6.6 亿口径未确认，不得相加</strong>。</div>
+<div class="call note" data-page-node-id="gkOOYmGXBjkVgHgKITr6lz"><span class="ct" data-page-node-id="CMxPJJLGPNeVTWGzodTmvV">吉隆核心区通电</span>（9-7·#19）｜新华网｜<span class="lv lv2" data-page-node-id="kSrjTO2eK2RlMrEGzeHEEc">权威媒体</span>｜已核验。</div>
+<div class="call note" data-page-node-id="yKHFrF7aEYtM3xaJhRFRdr"><span class="ct" data-page-node-id="d9GSg84PPRA0PWuoYQXtDp">日喀则市红十字会第一期捐赠资金公示</span>（9-10·#42）｜微信「西藏发布」｜<span class="lv lv1" data-page-node-id="DvsaoRB6HJoSrjnPtMNb0P">官方原文</span>｜已核验（金额待核）。</div>
+<div class="call note" data-page-node-id="aA2vFg7m37AhvlJuUFuETo"><span class="ct" data-page-node-id="J0GLzm7NfGw5ZBHxV3RZlt">涉吉隆谣言多人被处罚</span>见第二章第 10 条（9-10·#41）。</div>
+</article>
+<article class="entry lv1" data-page-node-id="8nhcoj0d9kwqmOeB2BMThA">
+  <div class="e-head" data-page-node-id="vqblauT5TyP2RaRH43F5J9"><span class="e-no" data-page-node-id="cvP273Dw0MDIwDPWX2qmzA"></span><h3 class="e-title" data-page-node-id="TUXV3XmQpzXsVxU4ZEx3Je">江西遂川"9·5"泥石流</h3></div>
+    
+  
+  <div class="call note" data-page-node-id="uJvytOi51GfZUDSsmqRMCW"><span class="ct" data-page-node-id="aSUNHhasrnREoCfcMhMPb1">遂川高坪镇泥石流 12 人遇难、1 人失联</span>（9-8·#55）｜中国新闻网｜<span class="lv lv2" data-page-node-id="yHMMW2PxbAICBJ9mbjXnIj">权威媒体</span>｜已核验（双源交叉）—— 台风"沙德尔"强降雨引发；<strong data-page-node-id="xe3Dx65aICGTYrD7UaeZTK">新华社/央视口径"12 人遇难"与前线指挥部"发现 11 具遗体"存在统计口径差异，引用须注明通报主体与 9-8 18 时截点</strong>。https://www.chinanews.com.cn/sh/2026/09-08/10692924.shtml</div>
+</article>
+<article class="entry lv1" data-page-node-id="fCA1JiUbkF0HeQKXRRGxi3">
+  <div class="e-head" data-page-node-id="3btZSRmjqFSnGFpUqxz7QY"><span class="e-no" data-page-node-id="cDLgs4WMvlhTs8GpT9SHBB"></span><h3 class="e-title" data-page-node-id="obkX1rdDtSgRt78Dgby1Uo">台风"沙德尔"应对</h3></div>
+    
+  
+  <div class="call note" data-page-node-id="ZpkBqJGAKoAhnBJDJEaZMg"><span class="ct" data-page-node-id="WubPGdhNPZK3zOVQ1tzXU1">中国红十字会总会向湖南调拨救灾物资、启动四级响应</span>（9-9·#37）｜微信转述｜<span class="lv lv3" data-page-node-id="XVVfKD1WUKbyNsAHNFeAcQ">二手转述</span>｜待核实 —— 物资种类数量未披露。</div>
+<div class="call note" data-page-node-id="rms9TfnLS5c5jbRhD5waYj"><span class="ct" data-page-node-id="46GN1ZJODI8hmvOzP3UCfC">仙游县红十字会累计接收防汛捐款 862 万余元（第三期公示）</span>（9-9·#38）｜微信「仙游今报」｜<span class="lv lv3" data-page-node-id="XoXkBGBcl9xTvZVLL5LoUk">二手转述</span>｜待核实 —— 明细与截止时间须回公示原文。</div>
+<div class="call note" data-page-node-id="S3cHzIbXUfND1D5IcyTAFC"><span class="ct" data-page-node-id="h65mcpVj4SedDq8WeVy9RG">福建福鼎一线抢险</span>（9-7·#50）｜新华网｜<span class="lv lv2" data-page-node-id="DkRslM0wdPsTixfK7Rph6g">权威媒体</span>｜已核验。</div>
+</article>
+<article class="entry lv1" data-page-node-id="0S86Q7XGxYFyRTdQDY2SU8">
+  <div class="e-head" data-page-node-id="N5gU1b1oq2QyUd1pgEeDqA"><span class="e-no" data-page-node-id="StvyZeIlXhTGCXe9g0bERr"></span><h3 class="e-title" data-page-node-id="Acnc0JnLXLoveBH79dRm59">应急能力建设</h3></div>
+    
+  
+  <div class="call note" data-page-node-id="RHwjSAt68IVlmZkKlMNBMR"><span class="ct" data-page-node-id="FPJunUzzoYQLXw5mYCruJq">民政部：年底前养老机构从业人员消防技能培训全覆盖</span>（9-10·#23，9-11 广东转载同文已并入）｜民政部转载｜<span class="lv lv2" data-page-node-id="scdcgNGDE57COX7xoMwu5h">权威媒体</span>｜已核验 —— 截至 8 月底已培训 43.1 万人次。</div>
+<div class="call note" data-page-node-id="90HZ3ugTAGSahkEnctDLRX"><span class="ct" data-page-node-id="WmCkPZGfWxGEwXyN3gOQU0">天津滨海新区消防实操实训</span>（9-10·#24）｜<span class="lv lv2" data-page-node-id="46eTZgsUehcPBGEvZrzjWF">权威媒体</span>｜已核验。</div>
+<div class="call note" data-page-node-id="t5pmK3OfpbKLYjOiTxvQKM"><span class="ct" data-page-node-id="ZOCSCvX9AXEqUTQOfJNrNB">广东直升机索降技能复训 260 名队员</span>（9-8·#58）｜中国新闻网｜<span class="lv lv2" data-page-node-id="aZIFgP0OX7kMDI3DPLw2HX">权威媒体</span>｜已核验。</div>
+<div class="call note" data-page-node-id="kIwrXoHb5uvrS5QbGrm1WW"><span class="ct" data-page-node-id="jy9DLBK2y30D205mql5lyM">《社会力量参与救灾研究：秩序的视角》成都发布</span>（9-10·#7）｜广东省厅转载｜<span class="lv lv2" data-page-node-id="ePzggvauHPeCXFKFtZ0Z0A">权威媒体</span>｜已核验（出版信息待核）。</div>
+<div class="call note" data-page-node-id="uXbUrLVO4u3tiXw8VzrUyf"><span class="ct" data-page-node-id="feM94a8pRPnCWGrkx22bDS">2026 中国国际应急管理展览会</span>（9-10·#39）｜新华网｜<span class="lv lv2" data-page-node-id="a7flH5dPuc9revx1r4JLZG">权威媒体</span>｜已核验。</div>
+</article>
+<h2 id="s4" data-page-node-id="f9enGvQQFyqUFm7ET8OF1c">四、中华慈善日 · 慈善周 · 久久公益节（56 条）</h2>
+<article class="entry lv1" data-page-node-id="VUgNKTBpytNET8dl9APLA5">
+  <div class="e-head" data-page-node-id="UCdigbIIPyK0V6agWidbMZ"><span class="e-no" data-page-node-id="erhRxPG7zaCZKGR4YxucdZ"></span><h3 class="e-title" data-page-node-id="ptyrNter44D0qVxmdDhC5D">慈善日 / 慈善周主题活动</h3></div>
+    
+  
+  </article>
+<article class="entry lv1" data-page-node-id="0ZnMIDvilSx4CHcV9EEs5F">
+  <div class="e-head" data-page-node-id="cwQhrAA429vUCittACnqsb"><span class="e-no" data-page-node-id="Tx3xKADyR3H1TFfqPH4Aqk"></span><h3 class="e-title" data-page-node-id="FFVrn2WlaHNxRCZ5d4BZNC">久久公益节（9-1 启动，本周进入集中募捐期）</h3></div>
+    
+  
+  </article>
+<article class="entry lv1" data-page-node-id="3CWqfvsrOBX34A01AjlQXY">
+  <div class="e-head" data-page-node-id="9EXxcdZACr3IzuBUqgxbM6"><span class="e-no" data-page-node-id="GsYHupFFyUJpbiijfd4BVv"></span><h3 class="e-title" data-page-node-id="XJYLQrGzPR8mlLV4cWxLMC">慈善一日捐（多地党政机关带动）</h3></div>
+    
+  
+  </article>
+<article class="entry lv1" data-page-node-id="W5AtYusVo6BTxlEfMFsvZS">
+  <div class="e-head" data-page-node-id="gQoMH4TYF9NdtFKuv0iuTi"><span class="e-no" data-page-node-id="zXIrg0EL1HkxZHONNCaP5O"></span><h3 class="e-title" data-page-node-id="OYLJWnF3vwITt23riPBnnU">社区慈善与地方实践</h3></div>
+    
+  
+  </article>
+<h2 id="s5" data-page-node-id="TZPr1Q0aGQf8osO6yHVFya">五、养老服务体系与老龄事业（43 条）</h2>
+<ul data-page-node-id="DAJxomMogvT432j2ztxCjO">
+<li data-page-node-id="E1qGoYRau3sDXjBDEsrU6y"><strong data-page-node-id="7IGJX6Pwzh6PnK6VSF3bLt">长护险</strong>：全国参保超 3.2 亿（9-7·#20）｜已核验；国家医保局目标 2028 年底基本全国覆盖、22 省印发省级方案（9-8·#2）｜待核实（目标性表述非文件）；黑龙江全面推开（9-11·#38）｜已核验。</li>
+<li data-page-node-id="KdjRvykYCV6IPe3gJdLZEB"><strong data-page-node-id="iukF3FVSjEOapr8q9sNgpI">养老消费补贴</strong>：辽宁全省调度会（9-10·#12）、江苏视频调度会（9-11·#14，与辽宁为不同省份不同会议）｜已核验（补贴标准待核）；《人民日报》：截至 7 月底近 200 万失能老人受益（9-11·#25）｜已核验；南京建邺试点居家养老消费券 62.4 元/月、9 大类 33 项服务（9-9·#3）｜已核验。</li>
+<li data-page-node-id="R7zID1QA93jLfW1u5GmKRg"><strong data-page-node-id="97pJpFTxpAyGLedcy62tYE">机构安全与监管</strong>：两项国标（见第一章）；曹忠平暗访长沙养老机构安全生产（9-11·#12）｜已核验；郑州制定养老机构突发事件应急预案（9-11·#31）；宿城养老机构"数字防护网"（9-7·#29）；养老机构消防培训全覆盖（见第三章）。</li>
+<li data-page-node-id="zcKGwxdYNSUbRnADz5OKkV"><strong data-page-node-id="TRu77OOtBUvIVaYawXj5Aw">农村养老</strong>：重庆 21 部门《加强农村老年人关爱服务若干措施》16 条（9-10·#27）、重庆农村养老工作会议（9-7·#32）、丰县"幸福小院"互助养老（9-11·#19）、思南民慈社工累计上门照护 1500 人次（9-9·#18）｜已核验。</li>
+<li data-page-node-id="TgWhokQbTf1dXhUIECRgKQ"><strong data-page-node-id="BC4mdr7IAIFwKtnhXtN1Og">助餐与社区养老</strong>：广州 1400 个长者饭堂（9-9·#11）、河南推动老年助餐规范发展（9-11·#29）、北京 93 个全国示范性老年友好型社区（9-8·#33）、社区嵌入式服务（9-8·#13）、"物业+养老"静安首店+中新网报道（9-11·#23、#40 同事件多源）、打开院门向社区延伸（9-11·#27）。</li>
+<li data-page-node-id="6u788X013Qh2D4AOsN2DR9"><strong data-page-node-id="bcWup6sR2kKPNXdtU8Mh9m">老年友好与银发经济</strong>：老年友好型社会论述（9-8·#21）、银发经济评论 2 条（9-8·#25、#26：约 4000 万失能半失能老人 vs 50 万持证护理员）、老年大学开学季（9-8·#56）、上海助老热线情绪陪伴（9-11·#22）、湖南"三湘怡养"：60+ 人口 1605 万、老龄化率 24.72%（9-10·#25）、威海旅居养老年均服务 49 万人次带动消费 16.8 亿（9-7·#37）、铜陵助餐 139 个点位（9-7·#34）、宁夏基层老年协会覆盖率将达 90%（9-8·#4）。</li>
+<li data-page-node-id="ehcvYNfroTUtGS5pO9OQBl"><strong data-page-node-id="yiYUnMHjjt23fcYVKNOjXU">人才与机构</strong>：苏州幼师高专转型康养专业首批新生（9-8·#28）、泰州"祥泰链养"品牌（9-8·#31）、宁夏旅居养老机构经营报道（9-8·#15）、辽宁特困供养机构改造 9 月底完工（9-10·#13）、陕西养老产业政银企对接授信约 3.2 亿（9-10·#28）。</li>
+<li data-page-node-id="sflWsFIbFHAqkq2CndB6M3"><strong data-page-node-id="9HjfdwGpxbhFEhUiAIEJ0L">普法与提示</strong>：中消协提醒老年消费者当心净水器"会销"陷阱（9-10·#29）、国家卫健委提示警惕"血液净化"抗衰骗局（9-10·#31）。</li>
+<li data-page-node-id="IVRl34c3FlICkSL75z84as"><strong data-page-node-id="pJ4aeXOfbFWFqulRpFqxAr">其他</strong>：上海静安/北碚意定监护试点推进（9-11·#24，微信转载待核实；与长宁指引呼应）、青海老年人生活状况抽样调查启动（9-11·#20，待核实）、全国养老服务体系建设座谈会暨三级网络建设会议（9-11·#1，民政部要闻）。</li>
+</ul>
+<hr  data-page-node-id="8FYoJGE63dCGQktl8sFc3t"/>
+<h2 id="s6" data-page-node-id="mqREGiC9OEl1R8NtcpUUOt">六、儿童福利、未成年人保护与教育助学（24 条）</h2>
+<ul data-page-node-id="D0Cgjo7XByYwJBOLJ2gLjf">
+<li data-page-node-id="D6Pl8CF7smyZbFwEDdv2Vl"><strong data-page-node-id="1EdvpwLixrVqdFl3lb7Byg">政策与机制</strong>：北京规范未成年人保护强制报告工作（9-11·#28）、湖南全链条未成年人保护体系（9-7·#31）、三部门社区岗位政策（见第一章）。</li>
+<li data-page-node-id="1jvGK0w0PUUECRSLXJjYuk"><strong data-page-node-id="hi3DqdMfOzsXJcAx6l4kTK">困境儿童</strong>：福建困境儿童福利保障培训（9-8·#7）、梁山"医路护健康"（9-8·#10）、万山"暖童港湾"启动（9-8·#42，金额待核）、万州"四色管理"已完成 507 名评估（9-10·#44）、凯里儿童关爱活动（9-11·#8）、安顺儿童福利院模拟法庭（9-8·#39）、从江"三送"（9-8·#40）、晴隆"一老一小"（9-8·#41）、丹都街道走访（9-8·#43）、残基会残疾大学新生助学祝福（9-7·#42）。</li>
+<li data-page-node-id="ojpjJvoyr32KSu9Z6moySC"><strong data-page-node-id="gcC5Dr3VxRhxsCaRsLWxBt">教育助学与教师节专题</strong>（新华网 9-10 系列）：叶连平与定向培养乡村教师（#32）、凉山"妞妞合唱团"（#33）、临泉秦翔 30 年公益书法课（#34）、隆回草原学校谭美珍（#35）、蓟州山区分校郑宝国（#36）、天津泰心医院援青先心病筛查累计救治近 1.7 万患儿（#37，数据待核）、"春雨"助学（9-11·#37）。</li>
+<li data-page-node-id="Idp2oattf696Ll4ynPv3wH"><strong data-page-node-id="tCXhCKguv1N0DmEIiNYzy8">健康与安全</strong>：第五届预防儿童烧烫伤宣传周（启动 9-6，联动 80 家社会组织 20 家烧伤科医院）（9-9·#7）、人口福利基金会"乡村儿童健康支持计划"落地川黔滇（9-9·#31）、"童梦同宇"天文科普征集（9-8·#51）。</li>
+</ul>
+<hr  data-page-node-id="1djNgYrUIgvGLdwhZScNgb"/>
+<h2 id="s7" data-page-node-id="6DXIv2GGEwtA42yakr1Ltt">七、社会救助与兜底保障（10 条）</h2>
+<ul data-page-node-id="AN7eIZ4rqbPElVW3ASD7R1">
+<li data-page-node-id="euw6aLJ3okRFhDWI7okcSN"><strong data-page-node-id="C3WpyiO1mbfrSZWaCP2DOQ">人民日报评论：一人看演唱会全家退出低保？</strong>（9-9·#21）｜<span class="lv lv2" data-page-node-id="HsLW35PoUYOuS5KUUYuipD">权威媒体</span>｜已核验 —— 低保以共同生活家庭整体认定、动态管理有进有出；赣州案例系触发动态监测预警而非直接取消。</li>
+<li data-page-node-id="8jhbVz4dgJDaxxZAUSFoFf"><strong data-page-node-id="KhAL7DdLEXs2lZ6pYCcfh9">青海强化分散供养失能特困人员照料服务监管</strong>（9-8·#6）｜已核验。</li>
+<li data-page-node-id="bURW8FFD4rbamr34TgXFum"><strong data-page-node-id="HI594EnWqvyDMKCWAwtmga">湖北临时救助办法 / 青海临时救助修订 / 贵州临时救助政策发布会及中新网报道</strong>（9-8·#34 见第一章；9-9·#6；9-11·#5、#39 同事件多源）。</li>
+<li data-page-node-id="iDMVlzF23IZFwDt5XTWB2m"><strong data-page-node-id="AMIqMs3PjxDFZdbGr3yE96">泰州"数据主动找人"救助闭环</strong>（9-7·#27）、广州"花城有爱"全链条帮扶（9-8·#24）、中山"信用+社会救助"326 户 670 人后置补充纳入（9-8·#32）、大庆"政策找人"转型（9-11·#10）、新乡党建引领社会救助（9-11·#11）、大兴安岭民意座谈会纠治救助不到位（9-11·#25 内，9-9·#25）。</li>
+</ul>
+<hr  data-page-node-id="F0fALjsPOt7jaHlySwR6Me"/>
+<h2 id="s8" data-page-node-id="td2H1KinzkKnVmjBvzqaXv">八、慈善表彰、人物与行业建设（39 条）</h2>
+<ul data-page-node-id="AO36DApnPJ12TXMWdIkvFK">
+<li data-page-node-id="6T3Cs0IwsAdw6OZkDzmOhs"><strong data-page-node-id="GzHvhivyhSvGeM7mE40gzV">第十三届"中华慈善奖"系列</strong>：表彰大会 9-1 在人民大会堂召开、谌贻琴出席、92 个获奖者（9-7·#22）｜已核验；获奖者展播——腾讯（历年捐赠超 336 亿，企业简介口径）（9-9·#12）、中国平安（累计捐赠超 32 亿、"三村工程"帮扶资金超 332 亿）（9-10·#9）、广州"穗"系列项目与慈善信托（534 个长者饭堂链接善款物超 1560 万）（9-8·#20）、爱小丫团队获慈善楷模（9-7·#23）。</li>
+<li data-page-node-id="sHnA6DhgXZnvqXVoABfHNs"><strong data-page-node-id="KyGHlPUA6mTgtiOcxkumEH">人物</strong>：慈善楷模赵新玲（9-8·#36）、"磨刀老人"吴锦泉（9-11·#17）、民政部直属机关优秀党员付华（9-8·#23）、魔豆妈妈夏虹/陈春红（9-7·#24、#25）、都匀救助工作者张忠秀（9-9·#17）。</li>
+<li data-page-node-id="WCjR5l1y0SyNgni55II6dk"><strong data-page-node-id="dJouICgnTN3eOkCvPS08r9">慈善文化</strong>：慈善文化"五进"一周年综述（9-7·#21）、"让善意持续生长"评论（9-11·#26）、慈善史研究两篇（兴仁善堂、宋型慈善）（9-10·#10、#11）、郑功成"构建中国民政自主知识体系"（9-11·#2）及同日呼应文章（9-11·#3，待核实）、慈善微课堂第四期（9-11·#6）、襄阳慈善知识科普（9-11·#52）、2025 全国敬老养老助老公益广告入围公示（9-7·#7）。</li>
+<li data-page-node-id="iHUD8Fi40Belh34Y0gOU0A"><strong data-page-node-id="V9ovLrf7HB9VA18D75yjS4">行业数据</strong>：民政部统计——全国登记认定慈善组织 1.59 万家、累计 760 亿人次指尖捐赠 1700 亿元（9-9·#1，统计截止时点待核实）。</li>
+<li data-page-node-id="vywp2A8PgUO8kvywTBGcGa"><strong data-page-node-id="QRM1wlAPCdgYThHDUHOC4j">培训与人事</strong>：全国残疾人福利工作培训班（8-24~26 举办）（9-9·#13）、"慈善人才领航计划"启动（9-7·#38，主办方待核）、上海社区事务受理技能大赛 124 人报名（9-9·#22）、新疆 3 单位招聘（9-9·#26）、民政部地名研究所面试公告（9-10·#1）、海峡两岸婚姻家庭服务中心面试（9-7·#8）、青海福彩 21 名内训师上岗（9-11·#21）、福彩青年人才报道（9-11·#34）、福彩二十年人物（9-11·#18）、市场监管公益宣传人物（9-11·#35）。</li>
+<li data-page-node-id="WZYTOcTnvKA6ZAHdoDvtz6"><strong data-page-node-id="dBxeZEW4SF9kFu8Mgd9gNZ">党建与工作交流</strong>：上饶市民政局撰文（9-9·#8）、"六个坚持"评论（9-7·#33）、黑龙江厅/江苏厅党建会议（9-11·#9、#15）。</li>
+<li data-page-node-id="shB2xUEQJ5zI2yRweajWyj"><strong data-page-node-id="qE5RwGs6JlVPN8E1Xmn20O">婚姻家庭辅导</strong>：大理"三道茶"辅导室（10 万元福彩公益金支持）（9-9·#2）、婚登文旅融合（9-8·#12）。</li>
+</ul>
+<hr  data-page-node-id="0OJ6qxZn2k0FKhEpKFssHJ"/>
+<h2 id="s9" data-page-node-id="JHCFKbVQN3BC2dybvEfDRP">九、基金会、平台与资助公示动态（20 条）</h2>
+<ul data-page-node-id="XbRqbWkEX15NVlCCq5A26w">
+<li data-page-node-id="jbL3G5tKsvg49rhuwfaH08"><strong data-page-node-id="64n4lWyOIpUkQn7hWowFGB">中国红十字基金会</strong>：脑营养科研基金课题评审公示（公示期 9-8~9-14）（9-8·#52）、"汤计人道传播基金"第五批拟资助公示（9-8·#53）、小天使基金人道关怀金资助名单公示（9-9·#28）、中央专项彩票公益金大病儿童救助（白血病）评审公示（9-9·#29）｜<span class="lv lv1" data-page-node-id="gRZcAQH1ieGD26iYLoGguf">官方原文</span>｜已核验（受助人数金额见原文）。</li>
+<li data-page-node-id="cvo5ButQhYoviOjQGYS0TH"><strong data-page-node-id="Zxe34GyDJ6ug531Q4BIfWE">中国人口福利基金会</strong>：大学生乡村医生示范培训班资助结果公告（仅 1 家有效申请）（9-10·#14）、"公益音乐季"委托公告 37.29 万元（9-10·#15）｜已核验（金额待核）。</li>
+<li data-page-node-id="scf84MxypM4n9wiVkMDezf"><strong data-page-node-id="XT27iBKs4Lft1hQAbLlWud">平台动态</strong>：腾讯公益"单元捐"（见第四章）；字节跳动公益平台"沃土计划"首期拟扶持 30 个优质项目（9-11·#32）｜已核验。</li>
+<li data-page-node-id="JXIOSXt8diBWis59FI5zMM"><strong data-page-node-id="D1EYTJtrYVqvBZl6p5qsS8">新设机构/基金</strong>：国家图书馆基金会样式雷文化遗产专项基金成立（9-10·#5，规模未披露）；上海启光自然科学发展基金会（见第二章，待核实）。</li>
+<li data-page-node-id="vYEGX0yoSkJJeSwdv2QjN2"><strong data-page-node-id="CYITFhX500Nt7nSv6pnH4d">企业捐赠（媒体转述，金额待核实）</strong>：东莞横沥百家企业捐资兴教、怡合达 500 万设立教育发展基金（9-10·#61）、河南矿山 20 万重奖 16 名教师（9-10·#60）、太原益源庆向山西省红十字会捐 20 万（9-10·#62）、黔西南三企业向州儿童福利院捐爱心车辆（数量价值未披露）（9-9·#19）。</li>
+<li data-page-node-id="wvPvfvXN6oit9E7MuvlPgF"><strong data-page-node-id="ecHDUp7oFbJsLqhWhaVXEd">政府购买与采购</strong>：海南界线界桩系统运维采购 6 万元（9-8·#46）、海南采购意向公告（9-8·#47，意向≠公告）。</li>
+<li data-page-node-id="5vxhzf3kbLYLmxzk7ecOct"><strong data-page-node-id="5A8JNR9nxqw7mACE4eQc1n">其他</strong>：广西阳江福利院暑期关爱收官（9-10·#8）、开明慈善基金会"开明阅读走基层"二期（9-10·#64）、中美青年北京"伙伴林"公益植树（9-11·#41）、香港国际公益慈善论坛闭幕（十周年、80 余位讲者、超 2000 名代表）（9-10·#4）。</li>
+</ul>
+<hr  data-page-node-id="aOyBjh2BTsGqrNdVX0gwX5"/>
+<h2 id="s10" data-page-node-id="BVtLGDMsBWZYTNh4nn6eoS">十、国际人道与发展（22 条）</h2>
+<ul data-page-node-id="vqoyzBSheHIBMvFsltGULK">
+<li data-page-node-id="GTG471hKF03ehTe54tCG8U"><strong data-page-node-id="PA224hCk4wWkajk1nGcdHt">尼泊尔洪灾</strong>：联合国发起 4960 万美元紧急呼吁，8-26 起的灾难已致 1250 余人遇难（9-4 时点，伤亡数字已复核带时点）（9-7·#43）；UNICEF：至少 2.2 万名儿童亟需饮水卫生支持（9-7·#44，发布日待核实）。</li>
+<li data-page-node-id="CrNGOuxKtDEuJSL97a9JgG"><strong data-page-node-id="nOdqcRH2AhCoAqU9zlOabK">IFRC</strong>：所罗门群岛气旋"Maila"灾后恢复（9-8·#62）。</li>
+<li data-page-node-id="Cht3HYIeqECopuL0P5euwg"><strong data-page-node-id="Ssy3ZiuN5CuuJemLHZxfns">联合国治理议程</strong>：第 81 届联大开幕（9-8·#61）、古特雷斯"投资于和平"呼吁（9-9·#43，美东时区跨窗已标注）、也门特使通报重陷大规模冲突（9-10·#75）、古特雷斯呼吁塔利班撤销对阿富汗妇女禁令（9-7·#45，待核实）、UN Women 执行主任致辞（9-9·#45）、"9·11"25 周年声明与专题（9-10·#77、#78）、首支青年难民奥运代表队将参加 2026 青奥会（9-11·#53）。</li>
+<li data-page-node-id="BIiCdIQu0e2IGl9FYsHIWR"><strong data-page-node-id="2AMrkeNnUU1jpLf40Nr3mu">气候与环境</strong>：WMO 确认 2026 年 8 月为有记录以来最热 8 月（9-11·#54）、联合国气候负责人称气候危机成欧洲经济安全紧急状况（今夏极端高温致数万人死亡、损失 1800 亿欧元）（9-10·#76）、FAO 食品价格指数 8 月环比涨 1.9%（9-7·#47，待核实）、厄尔尼诺或持续至 2027 年 2 月（9-7·#48，待核实）、海平面上升专题（9-7·#46，待核实）。</li>
+<li data-page-node-id="MROxl7mvHmgTAGSUXBUgDH"><strong data-page-node-id="nmZjCX4kFqnUu0iLZJ1vsE">智库与援外体系</strong>：IIED"加速气候韧性融资五项建议"（9-9·#44）与"自然资金须支持地方行动"（9-8·#63）；The New Humanitarian 播客：aid-for-hire 会否成为新常态（9-10·#81）；FCDO 新任常任秘书任命（9-10·#79）与也门局势声明（9-10·#80）。</li>
+</ul>
+<hr  data-page-node-id="oc7ocv9EQBeOu9zgBCS9pm"/>
+<h2 data-page-node-id="irHfruKdatGykIq01ThIbO">十一、其他：生态环保、区划地名、殡葬、乡村振兴与低相关条目（27 条）</h2>
+<ul data-page-node-id="uZmAlInvXKHBCq046suZzW">
+<li data-page-node-id="aDSMH39Hakrk5Q0raF7MBB"><strong data-page-node-id="zjne0DOj39LUOd8tfmJuqN">生态环保</strong>：彩云兜兰野外回归（9-7·#49）、青海久治黄河生态（9-7·#53）、广东惠东盐碱地改良（9-7·#51）、神农架生态高地（9-11·#33）、三沙海龟保护 1546 窝/救助 1759 只（9-10·#38）、中国海洋发展基金会第十届全国净滩公益：启动（9-7·#39）与潍坊主会场观察（9-11·#36，同一活动系列两阶段）、京津冀长城守护与村落振兴公益行动启动（9-10·#40）。</li>
+<li data-page-node-id="YZdPLnZiuX3htBMJRbdKYo"><strong data-page-node-id="f8s0V4oFhiKjtdgVffhXG5">乡村振兴与助农</strong>：云南永平核桃产业 38.19 亿产值带动 3.4 万户增收（9-7·#52）、沪迪协作 22 载民宿 2506 家户均增收超 5 万（9-8·#57）、贵州贵联公益 320 名志愿者服务 3000 名乡村学生（9-9·#15）、新疆"为乡村孩子上素养课"覆盖 110 所小学（9-9·#39）。</li>
+<li data-page-node-id="6iIFxkIsM3MCJNpUHe9ozR"><strong data-page-node-id="NN6HRZVcpM5azwBqxCPkdJ">区划地名</strong>：佛山地名规范治理（9-8·#19）、贵州乡村地名整治（9-8·#38）、"乡村著名行动"助力和美乡村（9-11·#30）。</li>
+<li data-page-node-id="TH7SDeFNcebuHPbUC8ugFI"><strong data-page-node-id="Pc4KyoSd7s0is03UstcuCt">殡葬</strong>：湖南安乡节地生态葬改革（9-7·#36）、温州殡仪馆内涝抢险纪实（9-8·#11，主体待核）。</li>
+<li data-page-node-id="HCGYD5d0Ijk05zaRYgCSjF"><strong data-page-node-id="WzogolhQmxED7AYx7NsikO">消费与风控提示</strong>：中消协净水器"会销"提示（9-10·#29）、卫健委"血液净化"骗局提示（9-10·#30、#31）。</li>
+<li data-page-node-id="3dRIC9VLLkPVhMP9hcyeok"><strong data-page-node-id="UFJqCONUxn4VEpkLSsBpBg">低相关（依 全列收录）</strong>：北京拔萃双语学校开学典礼（9-7·#54）、2025 中国国际福祉博览会（标题年份与发布年不一致，届次待核）（9-7·#40、#41；9-10·#26 为同展会后续报道）、"贴秋膘"科普（9-10·#30）。</li>
+</ul>
+<hr  data-page-node-id="35uNGxWhIzOw1LJMZGbFDL"/>
+<h2 id="stats" data-page-node-id="ksGHLZAVnoUrSLVZ68XHyu">本期统计</h2>
+<table data-page-node-id="GgrcyAlqFDDd7taVTaKFJD">
+<thead data-page-node-id="8rdZ6T8Fsl0YTb3z8tuNk3">
+<tr data-page-node-id="lbjAgHJwmuBBxvB8y5fssM">
+<th data-page-node-id="pVU2ZRRABujiWyaR1cwRM2">指标</th>
+<th data-page-node-id="TdzJujzJZNt2Ms5eoudKRD">数值</th>
+</tr>
+</thead>
+<tbody data-page-node-id="Wp8SW6XEVE46qTcn7WsYVv">
+<tr data-page-node-id="pcMcpKCMhwVK3A56nHCmf3">
+<td data-page-node-id="GTBALppuw0EIeTkj3X7BMn"><strong data-page-node-id="sGtn1PQSmfLjRNkMPOBiBb">本周条目总数（5 期日报合计）</strong></td>
+<td data-page-node-id="J94NHQeo1tx6zSKQKCLeyY"><strong data-page-node-id="FnPJEBXqEANFyJjnN082fw">297 条</strong>（9-7: 54 · 9-8: 63 · 9-9: 45 · 9-10: 81 · 9-11: 54；9-12/9-13 无日报产出）</td>
+</tr>
+<tr data-page-node-id="XiGG8Pk14Rom1lo9FksusB">
+<td data-page-node-id="6Py7MAAetH1WJynLsQY1AW">跨日报去重丢弃</td>
+<td data-page-node-id="XUzLUGMHxhNYXF96Uo3P0J">0 条（brief_db scan 跨日硬重复 0；30 组相似经人工比对均为不同事件/系列连载/多源印证）</td>
+</tr>
+<tr data-page-node-id="aHDPCwkgS0fXS0bxMN9hyK">
+<td data-page-node-id="YCZo43ewdQZ68D80fVHanX">同一事件多源印证（周报内已标注关联）</td>
+<td data-page-node-id="1D6EXvuHDUNqr09DATEiU8">12 组（两项养老国标×3 源、贵州临时救助×2、物业+养老×2、净滩×2、无锡一日捐×2、慈善奖展播×2 等）</td>
+</tr>
+<tr data-page-node-id="bzPpUj5y5ohTv9Mh0txZ9g">
+<td data-page-node-id="nBXqThBXEJGVHxQz3958fL">核验情况</td>
+<td data-page-node-id="wHgkIM13qifjHr90ZziOvA">已核验 246 · 待核实 51（待核实清单见文末声明）</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="ljIzOjWLIjhugKhEku7dRg"><strong data-page-node-id="u6ZG42fbCvP9JaA8uisJWB">来源等级分布</strong></p>
+<table data-page-node-id="x5T6Pzz8RAd25mEdtEOAub">
+<thead data-page-node-id="dHZdWBajI2RBuwTnU1cmTr">
+<tr data-page-node-id="S6OnxhfUGUSsRBeyrV5QHB">
+<th data-page-node-id="n3PyBTW1C0oKPGs0JS3t45">等级</th>
+<th data-page-node-id="9gWwKXsB93VhhHVzhnQct6">条数</th>
+<th data-page-node-id="zWxGwOMatNQrHqkvyGy9Ug">占比</th>
+</tr>
+</thead>
+<tbody data-page-node-id="T4urRlw0v7POQYk6eFQZvO">
+<tr data-page-node-id="wVyaBpKVhLSUFOMvEFh5aW">
+<td data-page-node-id="T4E2gUkbR3IiOoa3j5UCcc"><span class="lv lv1" data-page-node-id="F3CsAMyuiwMNhX1DwCUQTs">官方原文</span> L1</td>
+<td data-page-node-id="HE0RiERLJi1py4UbkWqrcO">107</td>
+<td data-page-node-id="xrIz4CFbONMNAFnDMfakqr">36.1%</td>
+</tr>
+<tr data-page-node-id="9zlRjUZRPeK99K62ajeEc4">
+<td data-page-node-id="evLCEUhFDmXvFcj1iJCDVC"><span class="lv lv2" data-page-node-id="hO6UcYnE2py5EHGIsyus9x">权威媒体</span> L2</td>
+<td data-page-node-id="c0nXSEOBzgA3pTeB0j4vIy">143</td>
+<td data-page-node-id="hojJKk8Q3VhFFIDNkTCeT9">48.2%</td>
+</tr>
+<tr data-page-node-id="EPH8PeHa27B4GdoErjyI7z">
+<td data-page-node-id="YXAqjoGi1DRn5lpVGhW5aS"><span class="lv lv3" data-page-node-id="AIuGolWEgXtEA1pxX12a2c">二手转述</span> L3</td>
+<td data-page-node-id="03Ft8C8c6YLWHMUs5T2ceK">45</td>
+<td data-page-node-id="tdvTGNAV8PzCiN8qoQcCxb">15.2%</td>
+</tr>
+<tr data-page-node-id="A5z449igQNBo5ELZ9F6tr2">
+<td data-page-node-id="Usk5Y8dIleHuVkO9PdZfXE"><span class="lv lv4" data-page-node-id="PQv4Df5d3ExZ3jwtrBQhga">待核实</span> L4</td>
+<td data-page-node-id="YEPCOHVBvlfc8XFAuyxtuA">1</td>
+<td data-page-node-id="YOqSz9rirJdnlPSvaVYsCe">0.3%</td>
+</tr>
+</tbody>
+</table>
+<blockquote data-page-node-id="4qFqc3rXOgt8Sh0ekBnI7B">
+<p data-page-node-id="pNA2A6o3pt6dga31jFqTdX">注：按各期日报统计表加总（9-8 期等级标注合计与条目数有 1 条差，以各期原表为准）。二手转述集中在搜狗微信通道条目（9-9 起该通道打通）。</p>
+</blockquote>
+<p data-page-node-id="f9vJ3mIfD6TjtcHJOerMA0"><strong data-page-node-id="UbJnYS30ajTGqRgg88UTCa">领域分布（按周报章节归并）</strong></p>
+<table data-page-node-id="a5qXOVHdkg0yy4n5eW8I0B">
+<thead data-page-node-id="liD2ehZnhNIB6qFxzagiDd">
+<tr data-page-node-id="FIHn4I3K1hRccYXKw5NtB4">
+<th data-page-node-id="XeaYA2Or9KpnxWvc1SsK1p">章节</th>
+<th data-page-node-id="MAn7syEI85x8dCkMAYu388">条数</th>
+<th data-page-node-id="98fMqTwUt64z5E0QvVsaAL">章节</th>
+<th data-page-node-id="kpC20yrkGGlwLnn5KrMRpQ">条数</th>
+</tr>
+</thead>
+<tbody data-page-node-id="p09mrnP6ffOcZiNdoj0j63">
+<tr data-page-node-id="kNcI6XmOtJrT9czGE8Hulr">
+<td data-page-node-id="Jr88Ypvg2twXdjQB2WzyFh">四 慈善日/慈善周/久久公益节</td>
+<td data-page-node-id="RNZh3DEZ6OvbSAogqJ3x8O">56</td>
+<td data-page-node-id="hcKnvaZyjgBEPUuLBRPxxJ">九 基金会/平台/资助公示</td>
+<td data-page-node-id="PF0zFD62uGVEA7DSfZ9DjN">20</td>
+</tr>
+<tr data-page-node-id="CTUDgJT3X2pp3JYd3kZxxh">
+<td data-page-node-id="ya1g1a2s29Qp9XHFPHz8iX">五 养老服务体系</td>
+<td data-page-node-id="xGs8rEpJZgiDENJaLN1InW">43</td>
+<td data-page-node-id="CCGpLYCarfQlQ3C25RS8I2">二 登记资质/年检/执法</td>
+<td data-page-node-id="pddjvbaUI6uR3dgnGPtAYX">12</td>
+</tr>
+<tr data-page-node-id="CDSzAUzZJJsrL2FWgO4dAX">
+<td data-page-node-id="kdnDYUgDxdEZLWg0l7IinR">八 表彰/人物/行业建设</td>
+<td data-page-node-id="W1TeDbQbnmtvNbtGzYv0Ia">39</td>
+<td data-page-node-id="szxKHNeOGEdoWKbqNsRBG9">七 社会救助与兜底</td>
+<td data-page-node-id="N9zx4nW4g8uPi6lKQjLxID">10</td>
+</tr>
+<tr data-page-node-id="XswAJzxofyNRYcKAkBxoXt">
+<td data-page-node-id="taSNDxEMMEb4i7rkI47cpD">一 政策法规与标准</td>
+<td data-page-node-id="DBJgslHSRsmBEazjWLJSlr">27</td>
+<td data-page-node-id="DRNM6bFK0c5Et2gSpBLSTx">三 灾害救助与应急</td>
+<td data-page-node-id="FVQ0hUbU14YpJfgtiLSiVY">17</td>
+</tr>
+<tr data-page-node-id="YcB7qrvDpbxHVZhdNfJrCC">
+<td data-page-node-id="p5cAbE42Fuagnxno3g3gOd">十一 其他</td>
+<td data-page-node-id="03HLzT9D8GXkdbrsPgvLHS">27</td>
+<td data-page-node-id="6zwb2bB2TGrbVZDsUPTTYB">十 国际人道与发展</td>
+<td data-page-node-id="3hJmXq8sOaNgQD6a8GyEnZ">22</td>
+</tr>
+<tr data-page-node-id="wcJM4SCv8VmoYDuOUc18as">
+<td data-page-node-id="0AuMDKHPyxVclatGxfcEOU">六 儿童/未保/助学</td>
+<td data-page-node-id="vBpKxYNA2zmdU6QxxMtpnx">24</td>
+<td data-page-node-id="gxMOtctrKUST03Z86i0xP3"></td>
+<td data-page-node-id="Tpm2hx5TPHy6wosmVYXLAS"></td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="kRQp7Rfo3yxHf1CfkCPaXC"><strong data-page-node-id="uBfKBUvB3GMbv6usztFhqd">高风险条目提示</strong></p>
+<table data-page-node-id="95r8u2mwNYuD3QN8qZBnFA">
+<thead data-page-node-id="rVbKcEtKs6T6jzvDVbN2ay">
+<tr data-page-node-id="nEHDx2KKERWmtQ4IUji8bD">
+<th data-page-node-id="EhIbG3OHrVEUMB6VvE7AC2">风险类别</th>
+<th data-page-node-id="FhVn0dBiQEWdS5oFyaDDba">本周条目（事件级）</th>
+<th data-page-node-id="BY2yFf9zf0PtFlczNwASjV">说明</th>
+</tr>
+</thead>
+<tbody data-page-node-id="jHaCZwPUkuZ8FfGvD4om4A">
+<tr data-page-node-id="0nXIHZMdaIHYgdO43ZHGgO">
+<td data-page-node-id="pkvjmxMb9Ubz01vYdM3D70">政策法规</td>
+<td data-page-node-id="71t2DdOFoDIp9wbCW1jBJp">约 24 件（见第一章）</td>
+<td data-page-node-id="oGJEbyz5fP8k2HwLQygK3n">已核验 10 件（民函 60 号、GB 双国标、浙民慈 92 号、江西规范、青海办法、辽宁条例、贵州监管机制、湖南清单、人大执法检查、长宁指引）；其余文号/施行日待核，<strong data-page-node-id="pHlpGSYNh7jGRtNT7I7N6X">均标注禁止据此作合规判断</strong></td>
+</tr>
+<tr data-page-node-id="Crh1igLAluOjwWHi92gind">
+<td data-page-node-id="Qc3vEB5AkL3HFGGaRG5WpB">登记资质</td>
+<td data-page-node-id="QuZrepf5gBkYzVWY4mY72x">7 件</td>
+<td data-page-node-id="GMznBj7IuhpdImyXOAThIk">北京 365 家评估公示、江苏年检 518 家、湖北税前扣除 97 家已比对原文；上海民企基金会、青海注销办法文号、新疆招聘细节待核</td>
+</tr>
+<tr data-page-node-id="ktjSwggTO9nPyePCC9yKfT">
+<td data-page-node-id="BzUhGL1qAdhJAJPtiIczff">行政处罚</td>
+<td data-page-node-id="j0NNtCmaQjUrS7GCqJzFFG">3 件</td>
+<td data-page-node-id="uOflXV7tDAFGyOffrOp8j8">北京国际金融论坛（<strong data-page-node-id="28UBvpCNx3IplZqggzk6Vc">事先告知阶段非生效处罚</strong>）、呼和浩特 8 家撤销登记（公告送达阶段）、吉隆谣言多人被罚（人数待核）——均逐条比对</td>
+</tr>
+<tr data-page-node-id="L4JBc4uMLuhnBNFrdRyPuV">
+<td data-page-node-id="c0xGDCWlcYERjcwZJaXM77">伤亡数字</td>
+<td data-page-node-id="WdG6kXhRHmP5j4OneOimG6">2 件</td>
+<td data-page-node-id="cf53C4LYTDu0YBLRu4wsDD">遂川 12 人（口径差异已双源交叉标注）、尼泊尔 1250+（时点标注）</td>
+</tr>
+<tr data-page-node-id="yaTVbOT4FVAjlcWaTfDij2">
+<td data-page-node-id="jtpFfJPdDVaZv2HZB8bkQi">大额资金</td>
+<td data-page-node-id="lLX6FPzSmafcXYil4SwIAe">约 20 件</td>
+<td data-page-node-id="kFtXBnLXizJDDODPMShRc1">吉隆 6.6 亿（不完全统计口径）、湖北 520 万+70 万信托、衡阳 1070.07 万（历史口径）、仙游 862 万、信丰 28.7 万、腾讯 336 亿/平安 32 亿（企业口径）、怡合达 500 万等——已比对原文或标"金额待核实"，跨口径金额<strong data-page-node-id="EpU8Ctxo8s1mq6pwav6ugU">不得自行相加</strong></td>
+</tr>
+<tr data-page-node-id="HnDn61J7hLJe3GkTG9DU7g">
+<td data-page-node-id="Acw936Hs49LLaQ4DphSZh8">公开募捐</td>
+<td data-page-node-id="Q7hQvfSH6M8002sx6MwPcj">约 15 件</td>
+<td data-page-node-id="4uLUEbLNqiYxJ9ms1UuUaU">日喀则账户、无锡网络捐赠、久久公益节系列倡议等——募捐主体资格与备案号逐条标注待核</td>
+</tr>
+<tr data-page-node-id="VjiFMcstYlgqep5lOeBUFc">
+<td data-page-node-id="Msay8IWZFzaFwvlow3xvCN">机构负面指控</td>
+<td data-page-node-id="IQ48Y2rf2zv6uWRP4uQ5kd">2 件</td>
+<td data-page-node-id="ZYT34n9Rak0ZvTcA6SORj4">吉隆谣言处罚案（已核验）、嘉峪关催捐事件（<strong data-page-node-id="ty0pQlCzgWp4CAjaTpn8go">真实性未证实，不作结论</strong>）</td>
+</tr>
+</tbody>
+</table>
+<hr  data-page-node-id="OaEBmLm5JXzeAIFB6thAGE"/>
+<div class="cov" data-page-node-id="cNZZ8JlEB51kg13oZmR7Ib"><h2 data-page-node-id="iwEHOXLB7t1Y43uGhfsd1t">信源覆盖报告</h2>
+<table data-page-node-id="42BVGF7VmouKEeFWvHgojo">
+<thead data-page-node-id="JwwoDrvyUm6L1zr5vZ5hg3">
+<tr data-page-node-id="Heh28eIwMuHzo4KCJCv5ho">
+<th data-page-node-id="2MTzGSFEP18DME6rhaV2l7">日期</th>
+<th data-page-node-id="tqOe5WeG1gxsMaWiAbo1XI">触达/登记</th>
+<th data-page-node-id="0MmtUJxdOQp0sKJJNzID4Q">原始命中</th>
+<th data-page-node-id="OAYzQq8B9HdaAAGzo70Fbp">成稿</th>
+<th data-page-node-id="33eo7tBXZlWVqCfpImtTpJ">主要未触达原因</th>
+</tr>
+</thead>
+<tbody data-page-node-id="1VTB7EJRaORfFwrzytCs2T">
+<tr data-page-node-id="R6pDljLXeGSN8dFENTeMDL">
+<td data-page-node-id="4LsmvHgNy5HhnN3cFVxNgv">09-07</td>
+<td data-page-node-id="RlJzgqFwVNggcrGd2ZCkwH">47 / 101</td>
+<td data-page-node-id="T2nlOl5VcEwBO3aBHuSFJp">56 候选</td>
+<td data-page-node-id="4cqmLGjuCNddfYorrEomMI">54</td>
+<td data-page-node-id="xbK9dOQzKKexCwcVEjAhor">26 政府源未逐省触达；国际源本环境不可达</td>
+</tr>
+<tr data-page-node-id="WpLKBlRpiwTfXpDouQAXPf">
+<td data-page-node-id="c0rUCwYsYAfThkU8U9DPXZ">09-08</td>
+<td data-page-node-id="uCTs6U5wkJBwwqpG4Azvm1">90 / 101</td>
+<td data-page-node-id="3mJW8SFHWvAkRLmzTsztXl">65 候选</td>
+<td data-page-node-id="5PVYdE7Lt697XWwqGD3BaK">63</td>
+<td data-page-node-id="A2Cptxu7urfgEWAUvmHWtu">搜狗微信空壳页、微博访客墙、10 源不可达</td>
+</tr>
+<tr data-page-node-id="IuMMwhbclOBhDQ86d82H4M">
+<td data-page-node-id="BaB03tpEBSHZ37d0AOs9rv">09-09</td>
+<td data-page-node-id="bi34oAVDGrmDj4VjSw3z4n">95 / 101</td>
+<td data-page-node-id="DKXWocBdDoai5AyzCGyPZZ">99</td>
+<td data-page-node-id="YqrqkQN8pNzDBDNUBCanwa">45</td>
+<td data-page-node-id="gbYJLf12WBEYRgif7pMcvC">受限 6；30 源本环境不可达；微博反爬</td>
+</tr>
+<tr data-page-node-id="vyAE1HAYyg2WDI1WJUFGoh">
+<td data-page-node-id="G3HIm4EysIuFCMPcYWzkax">09-10</td>
+<td data-page-node-id="apSbjr1FxSjiAg4fYfdJoA">95 / 102</td>
+<td data-page-node-id="vfCA2AkbjagRrefR9soh6H">102</td>
+<td data-page-node-id="0SG2Z9HZgH6q3FdfX3lv1v">81</td>
+<td data-page-node-id="GjGskSVIlrXpinrcxODbBn">受限 6；42 源不可达；微博反爬</td>
+</tr>
+<tr data-page-node-id="xSmTDpgxGJmuvtaGaNTo0x">
+<td data-page-node-id="WsB4TfRBVRXQGFviVdl9aB">09-11</td>
+<td data-page-node-id="kUSFX275EESkgSmjyCw4h1">95 / 101</td>
+<td data-page-node-id="yVdjoFCEQ4jy9YNhLepSbG">60</td>
+<td data-page-node-id="DffjNOSkbBEKcBGGiiZqXJ">54</td>
+<td data-page-node-id="wueM6uCA2xQlCcu7H7Ar1A">受限 6；31 源不可达；搜狗 7/16 组被反爬</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="xTZLOfpSjfYQ83AHkCBcQL"><strong data-page-node-id="nok39DcZFTsoByW5UCXbap">周内累计</strong>：五期合计尝试触达 <strong data-page-node-id="KgPYnPbmm6ismBrZn8CCbO">422 源次</strong>；10 大类中，一（政府官方，38 源/日）、二（权威公益媒体）、五（搜狗微信 16 组关键词，9-9 起 3 期有效）、七（联合国新闻/IFRC/FCDO/UN Women 等）为持续有效产出通道；三（平台公益频道）与十（聚合热榜）全周 0 命中（JS 渲染/SSL 失败，如实记录 zero_hit）。</p>
+<p data-page-node-id="QMLG3SJ4w6PMuZuGTKbmwj"><strong data-page-node-id="sh73V9jEiaNOU5XmzRUIHg">全程未自动扫描（受限，仅人工引用，6 源）</strong>：中国社会组织政务服务平台（chinanpo / national_chinanpo）、社会组织信用信息公示平台（xxgs）、慈善中国（cszg）、国家企业信用信息公示系统、信用中国、国家法律法规数据库（flk.npc.gov.cn）、财政部电子票据查验（pjcy.mof.gov.cn）。</p>
+<p data-page-node-id="o3SDAWFpaLs4Qg7WXXRjb7"><strong data-page-node-id="RUCsBjDFjBWQrBWkvYlEt0">持续本环境不可达（待复测，周内反复出现）</strong>：中国发展简报（502）、慈善时报（502）、AmCham China（🔴高优先级，403）、Devex（403）、UNICEF 中国（403）、UNDP 中国（403）、乐施会中国（DNS）、Reuters（401）、AP（403）、BBC、Guardian（间歇）、今日热榜（SSL）、全国志愿服务信息系统（DNS），以及安徽/山东/湖北/河北/甘肃/宁夏/云南/广西等省级民政厅（间歇 403/412/502/DNS，9-10/9-11 部分恢复）。<strong data-page-node-id="2dgzzIF3c0aCEGONYVaNcw">未对任何 受限 / 待复测信源谎报已覆盖。</strong></p>
+<hr  data-page-node-id="3HqBQr67GsXWxUa2nynWkq"/>
+</div><h2 data-page-node-id="2qmFJwDngR8gVo8bCdm2i1">说明</h2>
+<p data-page-node-id="AFPegQPSJ0P7xHbWzfIZHY"><strong data-page-node-id="AK3vJJPPtUL7VRE1JoTte9">一、待核实条目汇总（本周 51 条，按主题聚类列出高频项，逐条明细见各日报「本期限与声明」）</strong></p>
+<ul data-page-node-id="rRypkRw1uGb726B0Cb796K">
+<li data-page-node-id="NMsuzhDJrU5ABbRBMjRSly"><strong data-page-node-id="QBF5KBSzByxcK29JKBDTuS">文号/施行日类</strong>：湖北临时救助办法、陕西乡村公益岗新规、青海临时救助修订与注销登记办法、西宁监管指引、辽宁养老服务条例施行日、三部门社区岗位通知、七部门特教行动计划、江苏困境儿童保障办法（转述）、广东处罚程序规定征求意见期限。</li>
+<li data-page-node-id="9M0BZGU83PVgIgsuPFPmAZ"><strong data-page-node-id="vi3YQV96ac3cAXwh6TGaAw">金额类</strong>：仙游 862 万明细、信丰 28.7 万明细、万山"暖童港湾"资助额、海南两项采购金额、上海启光基金会出资额、怡合达/河南矿山/益源庆（媒体转述口径）、龙华 42 万、红基会三项公示受助人数与金额、泰心医院救治例数。</li>
+<li data-page-node-id="WYeDxRA37SAyToWYjfNbQW"><strong data-page-node-id="QXhARWCrP1RcRFAQpI4ngK">资格/备案类</strong>：无锡网络捐赠公募资格、久久公益节各倡议主体募捐方案备案号、大理州募捐账户（一手链接未取得）。</li>
+<li data-page-node-id="TqcmzOuAIl7lzEx5PVdkvc"><strong data-page-node-id="dOOOCz0OJoCsTZ1AJJ8oCm">口径/日期类</strong>：民政部"1.59 万家/1700 亿"统计时点、遂川伤亡口径差异、福祉博览会 2025/2026 届次、联合国新闻部分条目具体发布日、9-11 期 11 条微信条目（搜狗索引时间，原文未逐条打开）。</li>
+<li data-page-node-id="S7Rv8q7B2v1VOkHeq7gThs"><strong data-page-node-id="oFAAqaEWlA3puRBvuDzH95">事实未定类</strong>：嘉峪关"催捐"事件——官方调查尚无结论，<strong data-page-node-id="phooCoUExQV4ETIA11uRr3">不得当作已证实事实引用</strong>。</li>
+</ul>
+<p data-page-node-id="anOABZ9TrDJ5dkuRixgZPa"><strong data-page-node-id="tzQ4W37zvBVrgFpFYh0kyX">二、政策阶段提示（周度）</strong></p>
+<ul data-page-node-id="aWx9qT2uF28ZY2qy5JaCCG">
+<li data-page-node-id="OyxRFhwoQyZ4tdtCA7BHKV">已发布并生效：民函〔2026〕60 号（抽样调查）、浙民慈〔2026〕92 号（9-1 已施行）。</li>
+<li data-page-node-id="l5ySzaQYXzyMIfk1BWEeLp">已发布未实施（设过渡期）：GB 48013/48014（2027-08-01 实施）；江西救助经办规范（2027-02-01 施行）；辽宁养老服务条例（10-01 施行，施行日待核）。</li>
+<li data-page-node-id="qJAfX6Qr1Jo2SPwrCIuSlb">已印发（文号待核）：青海临时救助修订、青海注销登记办法、西宁综合监管指引、贵州精神卫生监管机制（已核验）、湖南执法清单（已核验）。</li>
+<li data-page-node-id="vl81iG76tYfqbC8uuoFH1R">征求意见阶段：广东《民政行政处罚程序规定》延长有效期。</li>
+<li data-page-node-id="eyoYDkHvs38SqpXpPzXXHl">目标性表述（非现行文件）：长护险 2028 全国覆盖；宁夏"十五五"14 项指标（印发状态待核）。</li>
+<li data-page-node-id="TQc9NDybDs84fwLIDFffdK">监督工作计划（非新规）：全国人大常委会三部法律执法检查。</li>
+<li data-page-node-id="Z9Hj4wjXSuaDLmMtFbtxce">处罚阶段提示：北京国际金融论坛为<strong data-page-node-id="EBRTagZlveTGzxkBIlVFjZ">事先告知</strong>；呼和浩特 8 家为<strong data-page-node-id="jUHneqi7NyduD9cmpIQik8">撤销登记公告送达</strong>——均非"已执行完毕"。</li>
+</ul>
+<p data-page-node-id="QNXo8QBaMTSaSODBbxK0TG"><strong data-page-node-id="mWxtX5Nwb6tyRP8j4m6Xbb">三、金额口径风险提示</strong></p>
+<ul data-page-node-id="umJFUWTBXYxCSeqc0JRIEh">
+<li data-page-node-id="l8zzO40lcMwLhwEAbg0BFT">吉隆 6.6 亿元为"据不完全统计"时点口径（9-5）；大梦龙途 200 万是否计入未确认；衡阳 1070.07 万、崇阳 93 万均为<strong data-page-node-id="4C8DGDQuHkPOpL2UWt7BnG">历史年度累计口径</strong>；腾讯 336 亿、平安 32 亿为企业公开简介口径。跨口径金额一律不得相加。</li>
+</ul>
+<p data-page-node-id="iDZfpQ1FSaG1QM2rRJjxMh"><strong data-page-node-id="w9DMRus7g6GzR3nqKItsji">四、四条铁律执行情况</strong></p>
+<ol data-page-node-id="5IfQUx6T4LxGmq3cOaYaHQ">
+<li data-page-node-id="BsowrGzqCv0ColHlzTHG4D"><strong data-page-node-id="1zeXHlAuwJFyktyz55aMJP">不编造 URL</strong>：全周所有条目给出可点击一手 URL 或「公众号+标题」检索路径；公众号短时效跳转链接一律不伪造直链。</li>
+<li data-page-node-id="kYnyNaqPUz7JmoL1XDUn6k"><strong data-page-node-id="wMD5dllaTxAAfSkqXxi6de">不把推断当事实</strong>：研判性表述与已核验事实分开；嘉峪关事件、上海启光基金会等未定事项均明确标注。</li>
+<li data-page-node-id="4zYSFTnvXJuYMJpdZQ1wsq"><strong data-page-node-id="agNYzJOlJLDeRU0rBXGM6c">查不到就说明查不到</strong>：平台公益频道、聚合热榜全周 0 命中如实记录；约 30 个国际/省级源本环境不可达并列入待复测清单。</li>
+<li data-page-node-id="aiAr3tezaAo65CHkB19EYu"><strong data-page-node-id="hP2xXmCSwd6SE8m6I15Oe1">高风险必过核验</strong>：本周七类高风险条目在日报阶段 100% 复核，周报抽样复测 12 个一手 URL（11 个 200、1 个 412 已注明）。</li>
+</ol>
+<p data-page-node-id="KPa2eopDbY4fRmZJtbNMi8"><strong data-page-node-id="6xSGkuMEfdGD0TeGKBslE2">五、不替代官方查询</strong>：本周报为公开信息汇编，不替代民政部门户网站、慈善中国（cszg.mca.gov.cn）、社会组织信用信息公示平台（xxgs）及各级民政部门官方渠道的正式查询；涉及捐赠汇款、资质认定、处罚状态、募捐资格的判断，请以官方渠道实时信息为准。</p>
+<hr  data-page-node-id="ONHmt5pEFMzHbPjWTR7Ekg"/>
+</main>
+<div class="legend" data-page-node-id="2Eo6tKeDe2S0SoVt4eZwbn">
+  <span class="it" data-page-node-id="BThxenj5TuSjFm34Jyzabj"><span class="sw" style="background:var(--l1rail)" data-page-node-id="aNKtmNm6QtliUYZPYZoYr3"></span>lv1 官方原文</span>
+  <span class="it" data-page-node-id="dqftgA3lE9FniXcZZ16yWY"><span class="sw" style="background:var(--l2rail)" data-page-node-id="NiSKG2GWj6HUYlohCxjOsJ"></span>lv2 权威媒体/官方账号</span>
+  <span class="it" data-page-node-id="gs8UsIo1DD9HBVeyYl1R0i"><span class="sw" style="background:var(--l3rail)" data-page-node-id="hQhkXA5D6mgWvQsV8TkcmO"></span>lv3 聚合/平台/热搜</span>
+  <span class="it" data-page-node-id="WYoW3x2FOwiFCFRUEKyfyU"><span class="sw" style="background:var(--l4rail)" data-page-node-id="5GDaQRictjgVnWuoIeHmB5"></span>lv4 需核验/高风险</span>
+</div>
+<footer class="colophon" data-page-node-id="7TsDXARDbJJoFm9gI22bkr">
+  <div class="org" data-page-node-id="HtUUn8BnHIezz3ceT3dBnG">本周报由公益新闻资讯专家团主理人何主理 · 数据源为本周 5 期日报（成稿 2026-09-08 ~ 2026-09-12） · 周报成稿 2026-09-13</div>
+  <div data-page-node-id="uGpII2G0JfLVNqEPQ1gBon">内容日 　·　成稿 2026-09-13</div>
+</footer>
+</div>
+<button id="tbtn" type="button" data-page-node-id="TMbd5anuDYDVg3JSP7AUUE">深色</button>
+<script>
+(function(){
+  var k='charity-brief-theme';
+  var b=document.getElementById('tbtn');
+  function set(t){
+    document.documentElement.setAttribute('data-theme',t);
+    try{localStorage.setItem(k,t)}catch(e){}
+    if(b) b.textContent = t==='dark' ? '\u6d45\u8272' : '\u6df1\u8272';
+  }
+  var s=null; try{s=localStorage.getItem(k)}catch(e){}
+  if(!s) s='light';
+  set(s);
+  if(b) b.onclick=function(){
+    set(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  };
+})();
+</script>
+</body>
+</html>
