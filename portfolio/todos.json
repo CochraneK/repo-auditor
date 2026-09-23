@@ -55,24 +55,6 @@
       "detail": "统一 participant/user ID、共享资料、管理员数据体系、后端与跨设备同步，并继续 repo-auditor 复审。"
     },
     {
-      "id": "dsh-release",
-      "title": "dsh-gate-game-plugin release",
-      "priority": "P1",
-      "status": "TODO",
-      "area": "Skills",
-      "repo": "dsh-gate-game-plugin",
-      "detail": "完成真实测试后再上线 Hub。"
-    },
-    {
-      "id": "red-map-milestone",
-      "title": "red-map milestone",
-      "priority": "P1",
-      "status": "TODO",
-      "area": "Creative",
-      "repo": "red-map",
-      "detail": "按当前计划在月底前继续完善。"
-    },
-    {
       "id": "todo-page-sync",
       "title": "TODO → Page structured sync",
       "priority": "P1",
