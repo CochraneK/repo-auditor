@@ -1,6 +1,7 @@
 (() => {
   const DATA_URL="./data/registry.json";
-  const SHOWCASE_URL="./showcase/manifest.json";\n  const OVERVIEW_URL="./data/portfolio-overview.json";
+  const SHOWCASE_URL="./showcase/manifest.json";
+  const OVERVIEW_URL="./data/portfolio-overview.json";
   const REPO_BASE="https://github.com/CochraneK/";
   const API_BASE="https://api.github.com/repos/CochraneK/";
   const $=id=>document.getElementById(id);
