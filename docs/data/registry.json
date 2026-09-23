@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "owner": "CochraneK",
-  "snapshot_date": "2026-09-17",
+  "snapshot_date": "2026-09-23",
   "scope": "public-workbench",
   "privacy": {
     "public_repositories_only": true,
@@ -53,33 +53,6 @@
       "last_commit_date": "2026-08-26"
     },
     {
-      "name": "Animal-Age",
-      "visibility": "public",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "已由 Ji-Sui-Le 取代；用户希望后续直接删除，但总控不会自动执行删除。",
-      "last_commit_date": "2026-08-03"
-    },
-    {
-      "name": "anydoor",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 18,
-      "priority_band": "P4-LOW",
-      "reason": "已有烂尾感，当前先放着；保留未来恢复可能。",
-      "last_commit_date": "2026-08-24"
-    },
-    {
-      "name": "ARIS-GCA-Bees",
-      "visibility": "public",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "现阶段已完成，暂不继续投入。",
-      "last_commit_date": "2026-03-16"
-    },
-    {
       "name": "changan",
       "visibility": "public",
       "work_status": "CONTINUE",
@@ -87,78 +60,6 @@
       "priority_band": "P3-LATER",
       "reason": "后续还要继续打磨，但不是近期主线。",
       "last_commit_date": "2026-09-13"
-    },
-    {
-      "name": "cris",
-      "visibility": "public",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "当前已经比较成熟，先不动。",
-      "last_commit_date": "2026-09-14"
-    },
-    {
-      "name": "dsh-gate-game-plugin",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 85,
-      "priority_band": "P1-NEXT",
-      "reason": "尚未完成真实测试；之后要测试并上线 Hub。",
-      "last_commit_date": "2026-09-13"
-    },
-    {
-      "name": "emperor-skill",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 45,
-      "priority_band": "P3-LATER",
-      "reason": "尚未完成，但当前先放着，后续继续。",
-      "last_commit_date": "2026-09-14"
-    },
-    {
-      "name": "fake_type",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 35,
-      "priority_band": "P3-LATER",
-      "reason": "已可用但仍不满意，后续再改。",
-      "last_commit_date": "2026-09-13"
-    },
-    {
-      "name": "FLP-Webui",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 93,
-      "priority_band": "P0-NOW",
-      "reason": "工作需要，下周可能大量操作，时间窗口明确。",
-      "last_commit_date": "2026-07-25"
-    },
-    {
-      "name": "gray-walker",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 25,
-      "priority_band": "P3-LATER",
-      "reason": "当前不完善，但计划以后再改；低优先级保留。",
-      "last_commit_date": "2026-04-13"
-    },
-    {
-      "name": "Ji-Sui-Le",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 30,
-      "priority_band": "P3-LATER",
-      "reason": "主仓保留，完善时间靠后。",
-      "last_commit_date": "2026-08-04"
-    },
-    {
-      "name": "mao-skill",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 25,
-      "priority_band": "P3-LATER",
-      "reason": "当前不完善，后续再改；低优先级保留。",
-      "last_commit_date": "2026-05-01"
     },
     {
       "name": "ming",
@@ -171,33 +72,6 @@
       "latest_audit": "audits/ming-2026-09-17.md"
     },
     {
-      "name": "NaoDao_code",
-      "visibility": "public",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "早期项目作为纪念保留；当前 GitHub 仍为 public，用户希望后续设为 private。",
-      "last_commit_date": "2022-12-06"
-    },
-    {
-      "name": "neuropharm",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 62,
-      "priority_band": "P2-PLANNED",
-      "reason": "已较成熟，但需要系统检查一遍，之后还会持续增加药物。",
-      "last_commit_date": "2026-09-13"
-    },
-    {
-      "name": "NewsMail",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 30,
-      "priority_band": "P3-LATER",
-      "reason": "暂留；未来考虑与 yihot 一并整合到统一公益情报主系统。",
-      "last_commit_date": "2026-04-12"
-    },
-    {
       "name": "persona-test",
       "visibility": "public",
       "work_status": "CONTINUE",
@@ -205,33 +79,6 @@
       "priority_band": "P2-PLANNED",
       "reason": "当前质量不满意，后续需要较大幅度重做。",
       "last_commit_date": "2026-09-14"
-    },
-    {
-      "name": "psy-exp",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 100,
-      "priority_band": "P0-NOW",
-      "reason": "最近主打项目，当前最高优先级。",
-      "last_commit_date": "2026-09-14"
-    },
-    {
-      "name": "pudding-skill",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 72,
-      "priority_band": "P1-NEXT",
-      "reason": "计划过几天不忙后继续完善。",
-      "last_commit_date": "2026-09-15"
-    },
-    {
-      "name": "red-map",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 78,
-      "priority_band": "P1-NEXT",
-      "reason": "计划月底前完善，时间窗口较明确。",
-      "last_commit_date": "2026-05-21"
     },
     {
       "name": "repo-auditor",
@@ -244,79 +91,6 @@
       "latest_audit": "audits/repo-auditor-2026-09-17.md"
     },
     {
-      "name": "RVC_factor",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 93,
-      "priority_band": "P0-NOW",
-      "reason": "工作需要，下周可能大量操作，时间窗口明确。",
-      "last_commit_date": "2026-07-24"
-    },
-    {
-      "name": "scientist-calendar",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 72,
-      "priority_band": "P1-NEXT",
-      "reason": "计划过几天不忙后继续完善。",
-      "last_commit_date": "2026-09-14"
-    },
-    {
-      "name": "Submit-forms-automatically",
-      "visibility": "public",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "早期项目作为纪念保留；当前 GitHub 仍为 public，用户希望后续设为 private。",
-      "last_commit_date": "2022-04-07"
-    },
-    {
-      "name": "survival-game-generator",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 25,
-      "priority_band": "P3-LATER",
-      "reason": "与 gray-walker 同样处理：不完善但以后再改，低优先级保留。",
-      "last_commit_date": "2026-04-14"
-    },
-    {
-      "name": "VA_emotion",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 93,
-      "priority_band": "P0-NOW",
-      "reason": "工作需要，下周可能大量操作，时间窗口明确。",
-      "last_commit_date": "2026-07-25"
-    },
-    {
-      "name": "Voice-compare",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 93,
-      "priority_band": "P0-NOW",
-      "reason": "工作需要，下周可能大量操作，时间窗口明确。",
-      "last_commit_date": "2026-07-20"
-    },
-    {
-      "name": "Voicemod_Portrait",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 93,
-      "priority_band": "P0-NOW",
-      "reason": "工作需要，下周可能大量操作，时间窗口明确。",
-      "last_commit_date": "2026-07-15"
-    },
-    {
-      "name": "we-read",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 58,
-      "priority_band": "P2-PLANNED",
-      "reason": "2026-09-16 repo-auditor：核心产品已成熟；130 tests 双版本全绿，Actions 已 immutable-pin，publication docs 与 legacy A1 已收口。当前仅保留已接受的个人数据风险，以及 LICENSE / branch protection / GitHub profile 等 owner/external 项。",
-      "last_commit_date": "2026-09-16",
-      "latest_audit": "audits/we-read-2026-09-16.md"
-    },
-    {
       "name": "we-read-template",
       "visibility": "public",
       "work_status": "CONTINUE",
@@ -324,24 +98,6 @@
       "priority_band": "P3-LATER",
       "reason": "可复刻的 WeRead sanitized starter 已建立；后续主要随上游 we-read 的接口、隐私策略和兼容性变化维护。",
       "last_commit_date": "2026-09-16"
-    },
-    {
-      "name": "wechat-article-analysis",
-      "visibility": "public",
-      "work_status": "STOP",
-      "priority_score": 0,
-      "priority_band": "STOP",
-      "reason": "当前价值偏低且考虑删除；先停止投入，删除另行决定。",
-      "last_commit_date": "2026-04-12"
-    },
-    {
-      "name": "yihot",
-      "visibility": "public",
-      "work_status": "CONTINUE",
-      "priority_score": 30,
-      "priority_band": "P3-LATER",
-      "reason": "暂留；未来考虑与 NewsMail 一并整合到统一公益情报主系统。",
-      "last_commit_date": "2026-09-15"
     }
   ]
 }
