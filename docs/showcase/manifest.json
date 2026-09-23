@@ -73,6 +73,68 @@
       "slug": "my-skills",
       "source": "my-skills",
       "source_path": "docs/index.html"
+    },
+    {
+      "slug": "survival-game-generator",
+      "source": "survival-game-generator",
+      "source_path": "static browser subset; server excluded"
+    },
+    {
+      "slug": "fake-type",
+      "source": "fake_type",
+      "source_path": "static browser app"
+    }
+  ],
+  "deferred": [
+    {
+      "source": "RVC_factor",
+      "status": "needs-synthetic-fixture",
+      "reason": "Existing GitHub Pages mock adapter states it was derived from a real SQLite database and includes person-like names/file metadata."
+    },
+    {
+      "source": "anydoor",
+      "status": "private-backend",
+      "reason": "Gateway HTML/JS is coupled to authentication/backend secrets and local gateway behavior."
+    },
+    {
+      "source": "yihot",
+      "status": "private-backend",
+      "reason": "Static shell is coupled to CloudBase application logic; publish only after an offline/demo adapter exists."
+    },
+    {
+      "source": "neuropharm",
+      "status": "auth-and-data-bundle",
+      "reason": "Web app includes auth/sync logic and a large drug-data bundle; needs a dedicated public build rather than direct mirroring."
+    },
+    {
+      "source": "pudding-skill",
+      "status": "bundle-pending",
+      "reason": "Built Svelte site requires a large hashed asset graph; mirror atomically as a complete generated bundle."
+    },
+    {
+      "source": "scientist-calendar",
+      "status": "not-standalone",
+      "reason": "Current HTML points to development source /src/main.tsx instead of a deployable static build."
+    },
+    {
+      "source": "emperor-skill",
+      "status": "deep-relative-dependencies",
+      "reason": "Landing page depends on many repository-relative skill/simulation files; copying HTML alone would create a broken public site."
+    },
+    {
+      "source": "ARIS4C",
+      "status": "publication-review",
+      "reason": "Research-control surface and papers require separate publication/IP review; not mirrored by default."
+    },
+    {
+      "source": "wechat-article-analysis",
+      "status": "empty-artifact",
+      "reason": "analysis/report.html resolves as an empty artifact in the repository."
+    },
+    {
+      "source": "CunyiKang_Web / DingWeb / DingLab / dongassi",
+      "status": "out-of-showcase-scope",
+      "reason": "Website repositories are not automatically republished through the project showcase without a separate ownership/content review."
     }
   ]
 }
