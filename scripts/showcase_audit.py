@@ -64,6 +64,18 @@ def audit_manifest(data: dict) -> list[str]:
         index = SHOWCASE / slug / "index.html"
         if not index.exists():
             errors.append(f"missing showcase entrypoint: {index.relative_to(ROOT)}")
+
+    actual = {
+        path.parent.name
+        for path in SHOWCASE.glob("*/index.html")
+        if path.parent != SHOWCASE
+    }
+    unregistered = sorted(actual - seen)
+    missing_dirs = sorted(seen - actual)
+    for slug in unregistered:
+        errors.append(f"unregistered showcase directory: docs/showcase/{slug}")
+    for slug in missing_dirs:
+        errors.append(f"allowlisted showcase directory missing: docs/showcase/{slug}")
     return errors
 
 
