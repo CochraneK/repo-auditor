@@ -237,7 +237,7 @@
   #confetti{position:fixed;inset:0;z-index:60;pointer-events:none;}
 </style>
 </head>
-<body>
+<body><div style="position:sticky;top:0;z-index:99999;padding:8px 12px;text-align:center;background:#211f27;color:#fff;font:12px/1.4 system-ui">PUBLIC SHOWCASE · 离线副本，不读取或写入原项目 CloudBase</div>
 <div class="blob b1"></div>
 <div class="blob b2"></div>
 
@@ -845,7 +845,8 @@ function cheer(msg){
 // 真实落点后端：腾讯云开发 CloudBase（大陆可达 · 免费额度）。
 // 环境 cris-d6gkkzled0d106625（地域 ap-shanghai），已部署云函数 crisApi（Event 函数）+ HTTP 网关路由 /crisApi。
 // 前端仅 fetch 该网关，不暴露任何密钥；跨域白名单已写死 https://cochranek.github.io。
-const API_BASE = 'https://cris-d6gkkzled0d106625-1421328052.ap-shanghai.app.tcloudbase.com/crisApi';
+const API_BASE = 'https://example.invalid/crisApi';
+const REPO_AUDITOR_SHOWCASE_MODE = true;
 let currentResult = null;
 let currentGender = '';
 let myUid = '';   // 匿名码：本人凭它从后台取回自己的明细，随机不可猜
