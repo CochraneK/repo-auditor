@@ -2,26 +2,26 @@
 
 ## Public / Private 分层
 
-### Public layer
+### Public audit layer
 
-`repo-auditor` 控制仓库可以是 Private；**GitHub Pages 公开层仍只能保存和发布 Public 仓库信息**。公开运行时只读取 `docs/data/` 的构建快照，不读取 private GitHub raw content。
+公开审计数据（`portfolio/registry.json`、`PORTFOLIO.md`、`docs/data/`）仍然只记录 **Public repositories**。Private repository 的审计证据、SHA、内部备注、findings 和源码不得进入公开审计 payload。
 
-Public Pages bundle 只允许保存：
+### Public showcase layer
 
-- Public 仓库名称；
-- Public 仓库的工作状态；
-- Public 仓库的优先级；
-- 适合公开的管理备注。
+允许把 Private repository 中**经过明确筛选、适合公开的静态展示产物**镜像到 `docs/showcase/`。这与源仓库 visibility 解耦：
 
-禁止把 Private 仓库名称、备注或其他 Private 总控元数据写入：
+- 源 repository 可以继续保持 Private；
+- 公开层可以出现项目展示名称以及运行该静态页面所必需的 HTML/CSS/JS/公开演示数据；
+- 每个镜像必须进入 `docs/showcase/manifest.json` allowlist；
+- 只发布展示副本，不提供 Private repository URL、Git SHA、内部审计证据、内部 TODO/备注或完整源码；
+- 不发布 secret/token、真实用户或研究数据、患者/客户资料、后台管理面、未审查的研究/IP/专利候选内容；
+- 发现不确定项时 fail closed：不镜像，直到完成公开安全审查。
 
-- `portfolio/registry.json`
-- `PORTFOLIO.md`
-- `docs/` GitHub Pages 资源
+Private 源仓库的静态展示页公开，**不等于源仓库公开**，也不改变其访问权限。
 
-### Private layer
+### Private control layer
 
-当控制仓库为 Private 时，可以在授权边界内审计 Private repository；但 private evidence 不得进入 `docs/`、`portfolio/registry.json` 或其他 Pages payload。`collect_repo_evidence.py --allow-private` 需要显式认证，并禁止把 private evidence 写入 `docs/` 或 `portfolio/`。
+授权审计 Private repositories 时，private evidence 只留在私有/临时控制层。即使某项目有 public showcase，其 Private 审计证据仍不得进入 `docs/data/`、`portfolio/registry.json` 或 showcase bundle。
 
 ## Work status
 
