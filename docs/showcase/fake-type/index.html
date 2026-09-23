@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ebe5d9">
+  <meta name="description" content="Mash random keys and watch a manuscript write itself. Import text, Markdown, or PDF. Runs locally in your browser.">
+  <meta property="og:title" content="FakeType — Mash the keyboard. Write anything.">
+  <meta property="og:description" content="A kinetic fake-typing playground for manuscripts, Markdown and PDFs.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <title>FakeType — Mash the keyboard. Write anything.</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="qa.css">
+</head>
+<body>
+  <canvas id="storm" hidden aria-hidden="true"></canvas>
+
+  <div class="app">
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brandmark" aria-hidden="true">F</div>
+          <div class="brand-copy">
+            <strong>FakeType</strong>
+            <div class="tagline" id="tagline">Mash the keyboard. Write anything.</div>
+          </div>
+        </div>
+
+        <nav class="actions" aria-label="FakeType controls">
+          <button class="btn primary" id="autoBtn" type="button" aria-pressed="false">▶ <span class="label" id="autoLabel">Auto</span></button>
+          <button class="btn" id="presetBtn" type="button">▦ <span class="label" id="presetLabel">Presets</span></button>
+          <button class="btn" id="loadBtn" type="button">＋ <span class="label" id="loadLabel">Load text</span></button>
+          <label class="btn" for="pdfInput">PDF<input id="pdfInput" type="file" accept="application/pdf" hidden></label>
+          <button class="btn" id="demoBtn" type="button" aria-pressed="false">◌ <span class="label" id="demoLabel">Demo</span></button>
+          <button class="btn" id="exportBtn" type="button">↓ <span class="label" id="exportLabel">Export</span></button>
+          <button class="btn" id="cinemaBtn" type="button">▣ <span class="label" id="cinemaLabel">Cinema</span></button>
+          <button class="btn" id="shareBtn" type="button">↗ <span class="label" id="shareLabel">Share</span></button>
+          <button class="btn" id="langBtn" type="button">中文</button>
+          <button class="btn" id="soundBtn" type="button" aria-pressed="true">⌁ <span class="label" id="soundLabel">Sound</span></button>
+          <button class="btn" id="stormBtn" type="button" aria-pressed="false">✦ <span class="label" id="stormLabel">Storm</span></button>
+          <button class="btn danger" id="resetBtn" type="button">↺ <span class="label" id="resetLabel">Reset</span></button>
+          <button class="btn icon-only" id="helpBtn" type="button" aria-label="Help">?</button>
+        </nav>
+      </header>
+
+      <div class="progress" aria-label="manuscript progress"><span id="progressFill"></span></div>
+
+      <div class="stage">
+        <main class="paper-wrap">
+          <article class="paper" id="paper" aria-live="polite">
+            <header class="paper-head">
+              <div class="paper-kicker" id="paperKicker">LIVE MANUSCRIPT</div>
+              <h1 id="paperTitle"></h1>
+              <div class="authors" id="authors"></div>
+            </header>
+            <div class="sections" id="sections"></div>
+          </article>
+        </main>
+
+        <aside class="panel">
+          <section class="card">
+            <h3 id="controlTitle">Controls</h3>
+            <div class="status">
+              <span id="sourceText">Source</span><span id="sourceValue">Built-in draft</span>
+              <span id="phaseText">Phase</span><span id="phaseValue">Title</span>
+              <span id="speedText">Speed</span><span id="speedValue">1.0×</span>
+            </div>
+            <div class="range-row">
+              <label for="tempo" id="tempoText">Tempo</label><span id="tempoValue">64</span>
+              <input id="tempo" type="range" min="24" max="150" value="64">
+            </div>
+            <div class="range-row">
+              <label for="chaos" id="chaosText">Chaos</label><span id="chaosValue">36%</span>
+              <input id="chaos" type="range" min="0" max="100" value="36">
+            </div>
+            <div class="privacy" id="privacy">Imported files stay in your browser. Nothing is uploaded.</div>
+          </section>
+
+          <section class="card" id="pdfProgressCard" hidden>
+            <h3 id="pdfProgressTitle">PDF import</h3>
+            <div class="pdf-progress">
+              <div class="pdf-progress-row"><span id="pdfProgressText">Reading PDF…</span><button class="btn danger" id="cancelPdfBtn" type="button">Cancel import</button></div>
+              <div class="meter" aria-label="PDF import progress"><span id="pdfProgressFill"></span></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h3 id="keyboardTitle">Keyboard pulse</h3>
+            <div class="keyboard" id="keyboard" aria-label="keyboard pulse map"></div>
+          </section>
+
+          <section class="card">
+            <h3 id="feedTitle">Recent edits</h3>
+            <div class="feed" id="feed" aria-live="polite"></div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero" id="hero">
+    <div class="hero-card">
+      <div class="eyebrow">FakeType / kinetic writing</div>
+      <h2 id="heroTitle">Mash the keyboard.<br>Write anything.</h2>
+      <p id="heroText">Every key advances the manuscript. Import your own text or PDF, then type nonsense and watch it become something convincing.</p>
+      <div class="hero-actions">
+        <button class="btn primary" id="startBtn" type="button">Start typing →</button>
+        <button class="btn" id="heroLoadBtn" type="button">Load my text</button>
+        <button class="btn" type="button" onclick="document.getElementById('presetDialog').showModal()">Try a preset</button>
+      </div>
+      <div class="hint" id="heroHint">Tip: you do not need to type the correct letters.</div>
+    </div>
+  </div>
+
+  <dialog id="loadDialog">
+    <form method="dialog" class="dialog-body" id="loadForm">
+      <div class="dialog-head">
+        <div>
+          <h2 id="dialogTitle">Load your text</h2>
+          <p id="dialogText">Paste plain text or Markdown. Headings become manuscript sections.</p>
+        </div>
+        <button class="btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <textarea class="text-input" id="textInput" placeholder="# My paper&#10;&#10;## Abstract&#10;Paste anything here..."></textarea>
+      <div class="drop" id="dropZone">Drop a .txt or .md file here</div>
+      <div class="dialog-actions">
+        <button class="btn" value="cancel" id="cancelBtn">Cancel</button>
+        <button class="btn primary" type="button" id="useTextBtn">Use this text</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="presetDialog">
+    <div class="dialog-body">
+      <div class="dialog-head">
+        <div>
+          <h2 id="presetDialogTitle">Choose a manuscript</h2>
+          <p id="presetDialogText">Load a ready-made manuscript, then mash the keyboard to perform it.</p>
+        </div>
+        <button class="btn" id="presetCloseBtn" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="preset-grid" id="presetGrid"></div>
+    </div>
+  </dialog>
+
+  <dialog id="helpDialog">
+    <div class="dialog-body help-copy">
+      <div class="dialog-head">
+        <div>
+          <h2 id="helpDialogTitle">How to play</h2>
+          <p id="helpDialogText">FakeType treats keys as momentum, not literal characters.</p>
+        </div>
+        <button class="btn" id="helpCloseBtn" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="shortcut-table">
+        <div class="shortcut-head"><span id="shortcutTitle">Shortcuts</span><span id="actionTitle">Actions</span></div>
+        <div id="shortcutRows"></div>
+      </div>
+      <div class="dialog-note" id="exportNote">Export saves the portion currently revealed on the page.</div>
+    </div>
+  </dialog>
+
+  <button class="btn cinema-exit" id="cinemaExit" type="button">Exit cinema</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+  <script src="enhancements.js" defer></script>
+  <script src="qa.js" defer></script>
+</body>
+</html>
