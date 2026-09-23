@@ -1,140 +1,100 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "generated_on": "2026-09-23",
   "policy": "explicit-public-safe-static-mirror",
-  "source_repo_visibility_may_be_private": true,
-  "excludes": [
-    "credentials",
-    "private source code beyond required static assets",
-    "Git SHAs",
-    "private audit evidence",
-    "internal notes",
-    "real user/research data",
-    "admin surfaces",
-    "unreviewed research/IP"
-  ],
+  "source_repository_visibility_may_be_private": true,
+  "publication_boundary": {
+    "exposes": [
+      "project display name",
+      "reviewed static demo assets"
+    ],
+    "excludes": [
+      "private repository URL",
+      "private repository path inventory",
+      "Git SHA",
+      "private audit evidence",
+      "internal notes",
+      "real user/research data",
+      "admin surfaces",
+      "credentials",
+      "unreviewed IP"
+    ]
+  },
   "showcases": [
     {
       "slug": "long-gate",
-      "source": "long-gate",
-      "source_path": "examples/trust-report-demo.html"
+      "title": "Long Gate",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "we-read",
-      "source": "we-read",
-      "source_path": "site/index.html"
+      "title": "We Read",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "red-map",
-      "source": "red-map",
-      "source_path": "front-end subset; admin excluded"
+      "title": "Red Map",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "voicemod-portrait",
-      "source": "Voicemod_Portrait",
-      "source_path": "static front-end subset"
+      "title": "Voicemod Portrait",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "gray-walker",
-      "source": "gray-walker",
-      "source_path": "index.html"
+      "title": "Gray Walker",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "cris",
-      "source": "cris",
-      "source_path": "index.html + browser libraries"
+      "title": "CRIS",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "animal-age",
-      "source": "Animal-Age",
-      "source_path": "index.html"
+      "title": "Animal Age",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "ji-sui-le",
-      "source": "Ji-Sui-Le",
-      "source_path": "web/index.html"
+      "title": "Ji-Sui-Le",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "flp-webui",
-      "source": "FLP-Webui",
-      "source_path": "camera_web/camera_web_gui.html"
+      "title": "FLP WebUI",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "va-emotion",
-      "source": "VA_emotion",
-      "source_path": "docs demo subset"
+      "title": "VA Emotion",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "charity-intelligence",
-      "source": "charity-intelligence",
-      "source_path": "output/2026-W37-公益周报.html"
+      "title": "Charity Intelligence",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "my-skills",
-      "source": "my-skills",
-      "source_path": "docs/index.html"
+      "title": "My Skills",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "survival-game-generator",
-      "source": "survival-game-generator",
-      "source_path": "static browser subset; server excluded"
+      "title": "Survival Game Generator",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "fake-type",
-      "source": "fake_type",
-      "source_path": "static browser app"
+      "title": "Fake Type",
+      "publication": "reviewed-static-mirror"
     },
     {
       "slug": "rvc-factor",
-      "source": "RVC_factor",
-      "source_path": "docs/demo static app with fully synthetic public mock adapter"
-    }
-  ],
-  "deferred": [
-    {
-      "source": "anydoor",
-      "status": "private-backend",
-      "reason": "Gateway HTML/JS is coupled to authentication/backend secrets and local gateway behavior."
-    },
-    {
-      "source": "yihot",
-      "status": "private-backend",
-      "reason": "Static shell is coupled to CloudBase application logic; publish only after an offline/demo adapter exists."
-    },
-    {
-      "source": "neuropharm",
-      "status": "auth-and-data-bundle",
-      "reason": "Web app includes auth/sync logic and a large drug-data bundle; needs a dedicated public build rather than direct mirroring."
-    },
-    {
-      "source": "pudding-skill",
-      "status": "bundle-pending",
-      "reason": "Built Svelte site requires a large hashed asset graph; mirror atomically as a complete generated bundle."
-    },
-    {
-      "source": "scientist-calendar",
-      "status": "not-standalone",
-      "reason": "Current HTML points to development source /src/main.tsx instead of a deployable static build."
-    },
-    {
-      "source": "emperor-skill",
-      "status": "deep-relative-dependencies",
-      "reason": "Landing page depends on many repository-relative skill/simulation files; copying HTML alone would create a broken public site."
-    },
-    {
-      "source": "ARIS4C",
-      "status": "publication-review",
-      "reason": "Research-control surface and papers require separate publication/IP review; not mirrored by default."
-    },
-    {
-      "source": "wechat-article-analysis",
-      "status": "empty-artifact",
-      "reason": "analysis/report.html resolves as an empty artifact in the repository."
-    },
-    {
-      "source": "legacy personal/lab website repositories",
-      "status": "out-of-showcase-scope",
-      "reason": "Website repositories are not automatically republished through the project showcase without a separate ownership/content review."
+      "title": "RVC Factor",
+      "publication": "reviewed-static-mirror"
     }
   ]
 }
