@@ -1,38 +1,19 @@
-# repo-auditor Portfolio Progress Report
+# Public Progress Report
 
-> Generated from the public registry and privacy-safe account aggregate. Progress/priority is an operating signal, not a repository-quality score.
+> Snapshot: 2026-09-23 · Public repositories only
 
-- Registry snapshot: **2026-09-23**
-- Coverage snapshot: **2026-09-23T06:16:24.307626+00:00**
-- Audit coverage: **PARTIAL**
-- Coverage baseline: **lower-bound**
+This report is generated from the public control layer only. Private repositories are represented only by aggregate coverage, never by name, URL, SHA, priority, note, finding, or handoff detail.
 
-## Audit coverage
+## Public inventory
 
-- Observed repositories: **7 / ≥37 baseline**
-- Observed private repositories: **0 / ≥1 baseline**
-- Evidence packages collected: **7**
-- Coverage gaps:
-  - authenticated inventory is smaller than the trusted coverage baseline
-  - private repository coverage is below the trusted coverage baseline
-  - trusted coverage baseline is a lower bound, not an exact verified inventory
-
-## AI-native continuity
-
-- AI-ready repositories: **3 / 7 evidenced**
-- Repositories with AGENTS instructions: **5**
-- Repositories with a handoff entry: **3**
-- Repositories with a full continuity package: **0**
-
-## Public execution queue
-
+- Repositories: **7**
 - CONTINUE: **6**
-- STOP / maintenance-only: **1**
-- P0 · NOW: **2**
-- P1 · NEXT: **0**
-- P2 · PLANNED: **2**
-- P3 · LATER: **2**
-- P4 · LOW: **0**
+- STOP: **1**
+- P0 NOW: **2**
+- P1 NEXT: **0**
+- P2 PLANNED: **2**
+- P3 LATER: **2**
+- P4 LOW: **0**
 
 ## Current public focus
 
@@ -43,22 +24,24 @@
 - **changan** — P3-LATER · 35 priority
 - **we-read-template** — P3-LATER · 35 priority
 
-## Public AI-readiness migration
+## Public AI readiness
 
-- **AI-Ques** — AI_READY · 85/100 · missing validation, quick start
-- **ai-uni** — AI_READY · 85/100 · missing validation, quick start
 - **repo-auditor** — AI_READY · 100/100
-- **persona-test** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
-- **changan** — NOT_READY · 50/100 · missing HANDOFF, STATUS, DECISIONS, architecture
-- **we-read-template** — PARTIAL · 60/100 · missing HANDOFF, STATUS, DECISIONS, quick start
+- **AI-Ques** — AI_READY · 85/100
+- **ai-uni** — AI_READY · 85/100
+- **we-read-template** — PARTIAL · 60/100
+- **changan** — NOT_READY · 50/100
+- **ming** — NOT_READY · 30/100
+- **persona-test** — NOT_READY · 20/100
 
-## Next gates
+## Account-wide audit coverage
 
-- Restore/verify account-wide audit coverage before treating portfolio evidence as complete.
-- Replace the lower-bound inventory baseline with an exact verified aggregate when a credential with complete owner visibility is available.
-- Expand durable agent onboarding: AGENTS, handoff, status/decisions, architecture and validation paths.
-- Reduce mutable GitHub Action references where a pinned immutable ref is appropriate.
+- Status: **PARTIAL**
+- Private identities published: **NO**
+- Coverage is reported only as aggregate evidence; incomplete credentials remain PARTIAL rather than being treated as PASS.
 
-## Interpretation
+## Publication boundary
 
-This report intentionally keeps **Priority**, **Quality**, **Audit Coverage**, **AI Readiness**, and **Semantic Review** separate. A green CI run or a high priority score does not imply complete coverage or high repository quality.
+- Detailed audit sidecars are published only for repositories still verified Public.
+- Reviewed static demos from Private projects may appear under `docs/showcase/` via explicit allowlist.
+- Showcase publication does not publish the source repository, internal audit evidence, private Todo, or research/user data.
