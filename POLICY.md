@@ -126,5 +126,5 @@ The evidence collector refuses private repositories by default. Authenticated pr
 
 ```bash
 python scripts/remediation_queue.py
-python scripts/remediation_queue.py --repository CochraneK/long-gate
+python scripts/remediation_queue.py --repository CochraneK/repo-auditor
 ```
