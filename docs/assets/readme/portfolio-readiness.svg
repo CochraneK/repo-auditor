@@ -6,19 +6,19 @@
 <text x="64" y="126" class="title">Portfolio readiness</text>
 <text x="64" y="164" class="sub">Audit coverage and agent-continuity signals stay separate from repository quality</text>
 <rect x="65" y="220" width="255" height="135" rx="22" class="box"/>
-<text x="87" y="275" class="metric">37/≥37</text>
+<text x="87" y="275" class="metric">7/≥37</text>
 <text x="87" y="315" class="label">Observed</text>
 <rect x="365" y="220" width="255" height="135" rx="22" class="box"/>
-<text x="387" y="275" class="metric">10</text>
+<text x="387" y="275" class="metric">3</text>
 <text x="387" y="315" class="label">AI-ready</text>
 <rect x="665" y="220" width="255" height="135" rx="22" class="box"/>
-<text x="687" y="275" class="metric">16</text>
+<text x="687" y="275" class="metric">5</text>
 <text x="687" y="315" class="label">AGENTS</text>
 <rect x="965" y="220" width="255" height="135" rx="22" class="box"/>
-<text x="987" y="275" class="metric">11</text>
+<text x="987" y="275" class="metric">3</text>
 <text x="987" y="315" class="label">Handoff</text>
 <rect x="1265" y="220" width="255" height="135" rx="22" class="box"/>
-<text x="1287" y="275" class="metric">1</text>
+<text x="1287" y="275" class="metric">0</text>
 <text x="1287" y="315" class="label">Full continuity</text>
 <circle cx="78" cy="410" r="9" fill="#f5b85c"/>
 <text x="100" y="416" class="small">Audit Coverage · PARTIAL · generated from privacy-safe aggregate only</text>
