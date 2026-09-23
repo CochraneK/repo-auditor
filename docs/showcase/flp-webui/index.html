@@ -1,0 +1,2143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FasterLivePortrait Camera Studio</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0d10;
+  --surface: #11161b;
+  --surface-2: #171d22;
+  --surface-3: #20272d;
+  --line: #303941;
+  --line-soft: rgba(255, 255, 255, .08);
+  --text: #f4f0e8;
+  --muted: #99a5aa;
+  --soft: #c9d0cf;
+  --cyan: #55d4c3;
+  --green: #87c979;
+  --amber: #d8a34b;
+  --red: #d9685f;
+  --blue: #7ca9df;
+  --ink: #07090b;
+  --shadow: 0 18px 46px rgba(0, 0, 0, .34);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  color: var(--text);
+  font-family: "Microsoft YaHei", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background:
+    linear-gradient(rgba(255, 255, 255, .026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .022) 1px, transparent 1px),
+    radial-gradient(circle at top left, rgba(85, 212, 195, .11), transparent 32%),
+    linear-gradient(135deg, #0a0c0f 0%, #111317 44%, #15120f 100%);
+  background-size: 32px 32px, 32px 32px, auto, auto;
+  letter-spacing: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  user-select: none;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.rail {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 22px 18px;
+  border-right: 1px solid var(--line-soft);
+  background: rgba(8, 11, 13, .88);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.brand {
+  display: grid;
+  gap: 12px;
+  padding: 2px 2px 8px;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.1;
+  font-weight: 760;
+}
+
+.brand p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.status-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .015));
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 5px rgba(217, 104, 95, .12);
+  flex: 0 0 auto;
+}
+
+.led.on {
+  background: var(--green);
+  box-shadow: 0 0 0 5px rgba(135, 201, 121, .12);
+}
+
+.status-title {
+  font-size: 13px;
+  color: var(--soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-mini {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.rail-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.rail-actions .btn {
+  width: 100%;
+}
+
+.preset-group {
+  display: grid;
+  gap: 8px;
+}
+
+.rail-label {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.preset {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .035);
+  color: var(--soft);
+  text-align: left;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: grid;
+  gap: 3px;
+}
+
+.preset strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.preset span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.preset:hover,
+.preset.active {
+  border-color: rgba(85, 212, 195, .7);
+  background: rgba(85, 212, 195, .08);
+}
+
+.workspace {
+  min-width: 0;
+  padding: 14px 18px 20px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: -14px -18px 8px;
+  padding: 7px 18px;
+  border-bottom: 1px solid var(--line-soft);
+  background: rgba(12, 15, 18, .86);
+  backdrop-filter: blur(18px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.page-title {
+  min-width: 0;
+}
+
+.page-title h2 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.page-title p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actions .btn {
+  min-width: 92px;
+}
+
+.btn {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 13px;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  border-color: rgba(85, 212, 195, .66);
+  background: var(--surface-3);
+}
+
+.btn.primary {
+  border-color: rgba(85, 212, 195, .8);
+  background: linear-gradient(180deg, #68dfcf, #45bcae);
+  color: #06100f;
+  font-weight: 760;
+}
+
+.btn.stop {
+  color: #ffdcd8;
+  border-color: rgba(217, 104, 95, .6);
+  background: rgba(217, 104, 95, .08);
+}
+
+.btn.ghost {
+  background: transparent;
+}
+
+.btn.small {
+  min-height: 36px;
+  min-width: 74px;
+  padding: 0 11px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.stack {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(390px, .94fr);
+  grid-template-rows: minmax(292px, 306px) minmax(340px, 1fr);
+  grid-template-areas:
+    "input record"
+    "switch command";
+  gap: 14px;
+  align-items: stretch;
+  height: calc(100vh - 62px);
+  min-height: 0;
+}
+
+.dashboard > .stack {
+  display: contents;
+}
+
+.dashboard > .stack:first-child > .section:first-child {
+  grid-area: input;
+}
+
+.dashboard > .stack:first-child > .switch-section {
+  grid-area: switch;
+}
+
+.dashboard > .stack:nth-child(2) > .section:first-child {
+  grid-area: record;
+}
+
+.dashboard > .stack:nth-child(2) > .command-section {
+  grid-area: command;
+}
+
+.switch-section,
+.command-section {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.command-section .section-body {
+  min-height: 0;
+  overflow: hidden;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.command-section .command-grid {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.switch-section .section-body {
+  min-height: 0;
+  overflow: auto;
+}
+
+.section {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(17, 22, 27, .92);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.input-section {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.input-section .section-body {
+  min-height: 0;
+  overflow: hidden;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.input-section .form-grid {
+  height: auto;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.input-section .field {
+  min-height: 0;
+  align-content: center;
+}
+
+.section-head {
+  min-height: 42px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line-soft);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, 0));
+}
+
+.section-head h3 {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.section-head p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.tag {
+  min-height: 22px;
+  border: 1px solid rgba(216, 163, 75, .42);
+  border-radius: 6px;
+  padding: 3px 7px;
+  color: #f4ce8c;
+  background: rgba(216, 163, 75, .08);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.section-body {
+  padding: 9px;
+  display: grid;
+  gap: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  color: var(--soft);
+  font-size: 12px;
+}
+
+.field input,
+textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  background: #0d1115;
+  color: var(--text);
+  padding: 6px 8px;
+}
+
+.field input:focus,
+textarea:focus {
+  border-color: rgba(85, 212, 195, .8);
+  box-shadow: 0 0 0 3px rgba(85, 212, 195, .09);
+}
+
+.pathrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.camera-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.camera-row input {
+  text-align: center;
+}
+
+.mode-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+
+.seg {
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #0d1115;
+  color: var(--soft);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+}
+
+.seg strong {
+  font-size: 12px;
+  color: inherit;
+}
+
+.seg span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.seg.active {
+  border-color: rgba(85, 212, 195, .8);
+  background: rgba(85, 212, 195, .09);
+  color: var(--text);
+}
+
+.switch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  align-content: start;
+  align-items: start;
+}
+
+.switch {
+  min-height: 42px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .025);
+  padding: 5px 8px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.switch.has-action {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.switch-action {
+  min-height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #0d1115;
+  color: var(--soft);
+  padding: 0 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.switch-action:hover {
+  border-color: rgba(85, 212, 195, .72);
+  color: var(--text);
+}
+
+.record-section .switch-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.switch-section .switch-grid {
+  height: 100%;
+  gap: 6px;
+  align-content: space-evenly;
+}
+
+.switch-section .switch {
+  min-height: 46px;
+  padding-block: 4px;
+}
+
+.record-section .section-body {
+  gap: 14px;
+  padding: 8px;
+  overflow: hidden;
+  align-content: space-evenly;
+}
+
+.record-section .switch-grid {
+  gap: 10px;
+}
+
+.record-section .switch {
+  min-height: 36px;
+  padding-block: 4px;
+}
+
+.record-section .switch-text span {
+  -webkit-line-clamp: 1;
+}
+
+.record-section .form-grid,
+.record-section .field {
+  gap: 10px;
+}
+
+.record-section .field {
+  gap: 5px;
+}
+
+.record-section .field input {
+  min-height: 28px;
+}
+
+.upload-tile {
+  min-height: 48px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .025);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+}
+
+.upload-tile span {
+  color: var(--muted);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle {
+  width: 30px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid #48525b;
+  background: #0c1014;
+  padding: 2px;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.toggle::after {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7d878e;
+  transition: transform .15s ease, background .15s ease;
+}
+
+.switch input:checked + .toggle {
+  border-color: rgba(85, 212, 195, .78);
+  background: rgba(85, 212, 195, .18);
+}
+
+.switch input:checked + .toggle::after {
+  transform: translateX(14px);
+  background: var(--cyan);
+}
+
+.switch-text {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.switch-text strong {
+  font-size: 12px;
+  line-height: 1.15;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.switch-text span {
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.18;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.param-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.param {
+  min-width: 0;
+  min-height: 72px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .022);
+  padding: 10px;
+  display: grid;
+  grid-template-columns: minmax(132px, .68fr) minmax(160px, 1fr) 86px;
+  gap: 10px;
+  align-items: center;
+}
+
+.param-title {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.param-title strong {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.param-title span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.param input[type="range"] {
+  width: 100%;
+  accent-color: var(--cyan);
+}
+
+.param input[type="number"] {
+  min-height: 36px;
+  padding: 6px 8px;
+  text-align: right;
+}
+
+.command-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
+
+#command {
+  height: 68px;
+  min-height: 68px;
+  max-height: 68px;
+  resize: none;
+  overflow: auto;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 12px;
+}
+
+.log {
+  min-height: 190px;
+  max-height: 340px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #090d10;
+  color: #cdd6d5;
+  padding: 11px;
+  overflow: auto;
+  white-space: pre-wrap;
+  line-height: 1.55;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 12px;
+}
+
+.command-section .log {
+  min-height: 0;
+  max-height: none;
+  height: 100%;
+}
+
+.help-line {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.live-note {
+  border: 1px solid rgba(85, 212, 195, .32);
+  border-radius: 8px;
+  background: rgba(85, 212, 195, .055);
+  color: var(--soft);
+  padding: 10px 11px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.params-section {
+  margin-top: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .rail {
+    position: relative;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line-soft);
+    display: grid;
+    grid-template-columns: minmax(220px, .8fr) minmax(260px, 1fr) minmax(240px, 1fr);
+    align-items: start;
+  }
+
+  .dashboard,
+  .form-grid,
+  .param-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard {
+    height: auto;
+    min-height: auto;
+    grid-template-areas:
+      "input"
+      "record"
+      "switch"
+      "command";
+    grid-template-rows: none;
+  }
+
+  .switch-section,
+  .command-section {
+    height: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    padding: 14px;
+  }
+
+  .topbar {
+    margin: -14px -14px 14px;
+    padding: 12px 14px;
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    justify-content: stretch;
+  }
+
+  .actions .btn {
+    flex: 1 1 120px;
+  }
+
+  .rail {
+    padding: 16px 14px;
+    grid-template-columns: 1fr;
+  }
+
+  .param-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .param {
+    grid-template-columns: 1fr 92px;
+  }
+
+  .param-title,
+  .param input[type="range"] {
+    grid-column: 1 / -1;
+  }
+
+  .mode-row {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <div class="brand">
+      <div>
+        <h1>Camera Studio</h1>
+        
+      </div>
+    </div>
+
+    <div class="status-panel">
+      <div class="status-line">
+        <div class="status-left">
+          <span class="led" id="led"></span>
+          <div>
+            <div class="status-title" id="statusText">未运行</div>
+            <div class="status-mini" id="statusSub">等待启动 Render</div>
+          </div>
+        </div>
+        <span class="tag" id="modeTag">对方脸</span>
+      </div>
+      <div class="rail-actions">
+        <button class="btn primary" id="startBtn" type="button">启动 Render</button>
+        <button class="btn stop" id="stopBtn" type="button">停止</button>
+        <button class="btn ghost" id="copyBtn" type="button">复制命令</button>
+      </div>
+    </div>
+
+    <div class="preset-group">
+      <div class="rail-label">Presets</div>
+      <button class="preset" type="button" data-preset="official">
+        <strong>官方版</strong>
+        <span>接近原始 bat 和 trt 配置默认行为。</span>
+      </button>
+      <button class="preset active" type="button" data-preset="highMotion">
+        <strong>高灵动</strong>
+        <span>默认方案：眼嘴灵活，头动适中，普通小窗口。</span>
+      </button>
+      <button class="preset" type="button" data-preset="beauty">
+        <strong>美颜版</strong>
+        <span>在高灵动上增加轻量磨皮和美白。</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div class="page-title">
+        <h2>实时驱动与录制</h2>
+        
+      </div>
+    </header>
+
+    <div class="dashboard">
+      <div class="stack">
+        <section class="section input-section">
+          <div class="section-head">
+            <div>
+              <h3>输入与显示</h3>
+              <p>选择配置、源照片和摄像头，并控制 Render 窗口显示内容。</p>
+            </div>
+            <span class="tag">基础</span>
+          </div>
+          <div class="section-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="src_image">源图路径</label>
+                <div class="pathrow">
+                  <input id="src_image" value="assets/examples/source/fzy2.jpg" autocomplete="off">
+                  <button class="btn small" type="button" data-pick="src_image" data-kind="source">选择</button>
+                </div>
+              </div>
+
+              <div class="field full mode-field">
+                <label>显示模式</label>
+                <div class="mode-row" id="displayMode">
+                  <button class="seg" type="button" data-value="both"><strong>同时</strong><span>Split</span></button>
+                  <button class="seg" type="button" data-value="render"><strong>对方脸</strong><span>Render</span></button>
+                  <button class="seg" type="button" data-value="driving"><strong>自己脸</strong><span>Camera</span></button>
+                </div>
+              </div>
+
+              <div class="field full mode-field">
+                <label>窗口大小</label>
+                <div class="mode-row" id="renderWindowMode">
+                  <button class="seg" type="button" data-value="normal"><strong>普通窗口</strong><span>默认</span></button>
+                  <button class="seg" type="button" data-value="maximized"><strong>最大窗口</strong><span>Max</span></button>
+                  <button class="seg" type="button" data-value="fullscreen"><strong>全屏</strong><span>Esc 退出</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section switch-section">
+          <div class="section-head">
+            <div>
+              <h3>关键开关</h3>
+              <p>这些开关直接影响脸型稳定、贴回原图和眼嘴动作。</p>
+            </div>
+            <span class="tag">默认已优化</span>
+          </div>
+          <div class="section-body">
+            <div class="switch-grid" id="switches"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="section record-section">
+          <div class="section-head">
+            <div>
+              <h3>录制与背景</h3>
+              <p>录制 Render 画面；勾选“替换新背景”后会弹出图片选择。</p>
+            </div>
+            <span class="tag">MP4</span>
+          </div>
+          <div class="section-body">
+            <div class="switch-grid" id="recordSwitches"></div>
+
+            <div class="form-grid">
+              <div class="field full">
+                <label for="record_path">Render 视频保存路径</label>
+                <input id="record_path" autocomplete="off">
+              </div>
+              <div class="field full">
+                <label for="audio_path">麦克风音频保存路径</label>
+                <input id="audio_path" autocomplete="off">
+              </div>
+              <input id="bg_image" type="hidden" autocomplete="off">
+            </div>
+          </div>
+        </section>
+
+        <section class="section command-section">
+          <div class="section-head">
+            <div>
+              <h3>命令与日志</h3>
+              <p>启动失败、摄像头占用、模型加载等信息会显示在这里。</p>
+            </div>
+            <span class="tag">Console</span>
+          </div>
+          <div class="section-body">
+            <div class="command-grid">
+              <textarea id="command" readonly spellcheck="false"></textarea>
+              <div id="log" class="log">就绪</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section class="section params-section">
+      <div class="section-head">
+        <div>
+          <h3>参数微调</h3>
+          <p>运行中拖动滑杆会即时同步到 Render，适合启动后向下滚动慢慢调。</p>
+        </div>
+        <span class="tag">实时调参</span>
+      </div>
+      <div class="section-body">
+        <div class="param-grid" id="params"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<input class="hidden" id="filePicker" type="file">
+
+<script>
+const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\..+/, "").replace("T", "_");
+const DEFAULT_BG_IMAGE = "data/images/obs_bg.png";
+
+const state = {
+  display_mode: "render",
+  render_window_mode: "normal",
+  background_display_mode: "replace",
+  framing_mode: "head",
+  motion_mode: "driven",
+  activePreset: "highMotion",
+  base_src_image: "assets/examples/source/fzy2.jpg",
+  first_original_src_image: "assets/examples/source/fzy2.jpg",
+  bg_mask_image: "",
+  bg_canvas_image: "",
+  last_preprocess_key: "",
+  switches: {
+    realtime: true,
+    animal: false,
+    paste_back: false,
+    flag_stitching: false,
+    flag_relative_motion: false,
+    flag_crop_driving_video: false,
+    flag_normalize_lip: false,
+    flag_eye_retargeting: true,
+    flag_lip_retargeting: true,
+    realtime_smoothing: false,
+    smooth_rotation: false,
+    smooth_expression: false,
+    smooth_translation: false,
+    smooth_scale: false,
+    smooth_eye_lip: false,
+    record_realtime: false,
+    record_audio: false,
+    bg_remove: true,
+    bg_replace: true,
+  },
+  params: {
+    driving_multiplier: 0.5,
+    eye_retargeting_multiplier: 1.2,
+    lip_retargeting_multiplier: 1.5,
+    src_scale: 2.18,
+    src_vy_ratio: -0.07,
+    dri_scale: 2.35,
+    dri_vy_ratio: -0.10,
+    smooth_mincutoff: 5,
+    smooth_beta: 1,
+    smooth_freq: 30,
+    beauty_strength: 0,
+    whitening_strength: 0,
+  }
+};
+
+const highMotionPresetSwitches = {
+  realtime: true,
+  animal: false,
+  paste_back: false,
+  flag_stitching: false,
+  flag_relative_motion: false,
+  flag_eye_retargeting: true,
+  flag_lip_retargeting: true,
+  flag_normalize_lip: false,
+  realtime_smoothing: false,
+  smooth_rotation: false,
+  smooth_expression: false,
+  smooth_translation: false,
+  smooth_scale: false,
+  smooth_eye_lip: false,
+  record_realtime: false,
+  record_audio: false,
+  bg_remove: true,
+  bg_replace: true,
+};
+
+const highMotionPresetParams = {
+  driving_multiplier: 0.5,
+  eye_retargeting_multiplier: 1.2,
+  lip_retargeting_multiplier: 1.5,
+  smooth_mincutoff: 5,
+  smooth_beta: 1,
+  smooth_freq: 30,
+  src_scale: 2.18,
+  src_vy_ratio: -0.07,
+  dri_scale: 2.35,
+  dri_vy_ratio: -0.10,
+  beauty_strength: 0,
+  whitening_strength: 0,
+};
+
+const officialPresetSwitches = {
+  realtime: true,
+  animal: false,
+  paste_back: false,
+  flag_stitching: true,
+  flag_relative_motion: true,
+  flag_eye_retargeting: false,
+  flag_lip_retargeting: false,
+  flag_normalize_lip: true,
+  realtime_smoothing: true,
+  smooth_rotation: true,
+  smooth_expression: true,
+  smooth_translation: true,
+  smooth_scale: true,
+  smooth_eye_lip: true,
+  record_realtime: false,
+  record_audio: false,
+  bg_remove: false,
+  bg_replace: false,
+};
+
+const officialPresetParams = {
+  driving_multiplier: 0.5,
+  eye_retargeting_multiplier: 1.0,
+  lip_retargeting_multiplier: 1.0,
+  smooth_mincutoff: 1.0,
+  smooth_beta: 0.05,
+  smooth_freq: 30,
+  src_scale: 2.3,
+  src_vy_ratio: -0.125,
+  dri_scale: 2.2,
+  dri_vy_ratio: -0.1,
+  beauty_strength: 0,
+  whitening_strength: 0,
+};
+
+
+const presets = {
+  official: {
+    switches: {...officialPresetSwitches},
+    params: {...officialPresetParams},
+    fields: {src_image: "assets/examples/source/s12.jpg"},
+    display_mode: "both",
+    render_window_mode: "normal",
+    background_display_mode: "original",
+    framing_mode: "head",
+    motion_mode: "driven",
+    clearStaticBackground: true
+  },
+  highMotion: {
+    switches: {...highMotionPresetSwitches},
+    params: {...highMotionPresetParams},
+    fields: {},
+    display_mode: "render",
+    render_window_mode: "normal",
+    background_display_mode: "replace",
+    framing_mode: "head",
+    motion_mode: "driven",
+    clearStaticBackground: false
+  },
+  beauty: {
+    switches: {...highMotionPresetSwitches},
+    params: {...highMotionPresetParams, beauty_strength: 0.42, whitening_strength: 0.42},
+    fields: {},
+    display_mode: "render",
+    render_window_mode: "maximized",
+    background_display_mode: "replace",
+    framing_mode: "head",
+    motion_mode: "driven",
+    clearStaticBackground: true
+  }
+};
+
+const switchSpec = [
+  ["realtime", "实时驱动", "勾选：用摄像头实时驱动；取消：不走实时相机。"],
+  ["animal", "动物模型", "勾选：使用动物模型；人像照片保持关闭。"],
+  ["paste_back", "贴回原图", "勾选：自动开启 stitching，把动画脸贴回原图画幅。"],
+  ["flag_eye_retargeting", "眼部 retargeting", "勾选：眼睛反应更灵敏；太夸张就取消或降眼部强度。"],
+  ["flag_lip_retargeting", "嘴部 retargeting", "勾选：嘴型更贴合说话；取消会更稳但口型弱。"],
+  ["flag_stitching", "stitching 稳定脸型", "勾选：减少脸边错位；取消可能更活但更漂。"],
+  ["flag_relative_motion", "relative motion", "勾选：更贴源图；取消：头部更跟随摄像头。"],
+  ["flag_normalize_lip", "normalize lip", "勾选：抑制默认嘴型异常张合。"],
+  ["realtime_smoothing", "实时平滑", "勾选：压住抖动；取消：反应更快但更晃。"],
+  ["smooth_eye_lip", "眼嘴平滑", "勾选：眼嘴更稳；取消：细节更灵敏。"]
+];
+
+const recordSwitchSpec = [
+  ["record_realtime", "录制 Render 视频", "勾选：保存当前 Render 窗口画面为 mp4。"],
+  ["record_audio", "录制麦克风语音", "勾选：申请麦克风权限，停止后尝试合成音频。"],
+  ["bg_remove", "扣除背景", "勾选：分割人像，背景变黑或用于替换。"],
+  ["bg_replace", "替换新背景", "勾选会弹出选图。"]
+];
+
+const paramSpec = [
+  ["driving_multiplier", "动作强度", "调大：头和表情更明显，也更易抖；调小：更稳但动作变小。", 0.1, 1.5, 0.01],
+  ["eye_retargeting_multiplier", "眼部强度", "调大：睁眼眨眼反应更灵敏；调小：不易瞪眼，但眼神更弱。", 0.0, 1.2, 0.01],
+  ["lip_retargeting_multiplier", "嘴部强度", "调大：嘴型更清楚；调小：更稳，但说话口型不明显。", 0.0, 1.5, 0.01],
+  ["src_scale", "源图裁剪 scale", "重启生效。调大：取更大范围；调小：脸更近，易切边。", 1.0, 4.0, 0.01],
+  ["src_vy_ratio", "源图竖向偏移", "重启生效。调大：脸更靠上；调小：脸更靠下。", -1.0, 1.0, 0.01],
+  ["dri_scale", "驱动裁剪 scale", "调大：摄像头取景更宽更稳；调小：脸更近更敏感。", 1.0, 4.0, 0.01],
+  ["dri_vy_ratio", "驱动竖向偏移", "调大：摄像头脸更靠上；调小：摄像头脸更靠下。", -1.0, 1.0, 0.01],
+  ["smooth_mincutoff", "平滑 mincutoff", "调大：反应更快；调小：更稳，但会慢半拍。", 0.1, 5.0, 0.01],
+  ["smooth_beta", "平滑 beta", "调大：快速动作更灵敏；调小：压抖更强，但反应变钝。", 0.0, 1.0, 0.01],
+  ["smooth_freq", "平滑频率", "一般保持 30；调大更平滑偏慢，调小更灵敏但可能抖。", 1, 120, 1],
+  ["beauty_strength", "美颜强度", "调大：磨皮更明显；2 以上更强；调小：保留更多原始细节。", 0, 3, 0.01],
+  ["whitening_strength", "美白强度", "调大：肤色更亮；调小：更接近原始颜色。", 0, 1, 0.01],
+];
+
+const modeLabels = {
+  render: "对方脸",
+  driving: "自己脸",
+  both: "同时"
+};
+
+let activePick = null;
+let mediaRecorder = null;
+let micStream = null;
+let audioRecordStream = null;
+let audioContext = null;
+let audioSourceNode = null;
+let audioGainNode = null;
+let audioAnalyser = null;
+let audioLevelTimer = null;
+let audioPeakLevel = 0;
+let audioChunks = [];
+let audioMimeType = "audio/webm";
+let audioFlushTimer = null;
+let audioStartedAt = 0;
+let lastAudioPath = "";
+let lastRunning = false;
+let controlSyncTimer = null;
+let bgPreprocessTimer = null;
+
+function qs(id) {
+  return document.getElementById(id);
+}
+
+function initDefaults() {
+  qs("record_path").value = `data/recordings/render_${stamp}.mp4`;
+  qs("audio_path").value = `data/recordings/audio_${stamp}.m4a`;
+  qs("bg_image").value = DEFAULT_BG_IMAGE;
+  state.base_src_image = qs("src_image").value || state.base_src_image;
+  state.first_original_src_image = state.base_src_image;
+  state.bg_canvas_image = DEFAULT_BG_IMAGE;
+}
+
+function setLog(message, append = false) {
+  const log = qs("log");
+  if (append) {
+    log.textContent += `\n${message}`;
+  } else {
+    log.textContent = message || "";
+  }
+  log.scrollTop = log.scrollHeight;
+}
+
+function renderSwitches(targetId, items) {
+  qs(targetId).innerHTML = items.map(([key, title, desc]) => `
+    <label class="switch ${key === "bg_replace" ? "has-action" : ""}">
+      <input type="checkbox" data-switch="${key}" ${state.switches[key] ? "checked" : ""}>
+      <span class="toggle" aria-hidden="true"></span>
+      <span class="switch-text">
+        <strong>${title}</strong>
+        <span>${desc}</span>
+      </span>
+      ${key === "bg_replace" ? `<button class="switch-action" type="button" data-pick-bg>换图</button>` : ""}
+    </label>
+  `).join("");
+}
+
+function renderParams() {
+  qs("params").innerHTML = paramSpec.map(([key, title, desc, min, max, step]) => `
+    <div class="param">
+      <div class="param-title">
+        <strong>${title}</strong>
+        <span>${desc}</span>
+      </div>
+      <input type="range" data-param="${key}" min="${min}" max="${max}" step="${step}" value="${state.params[key]}">
+      <input type="number" data-number="${key}" min="${min}" max="${max}" step="${step}" value="${state.params[key]}">
+    </div>
+  `).join("");
+}
+
+function wireControls() {
+  document.querySelectorAll("[data-param]").forEach(el => {
+    el.addEventListener("input", () => {
+      state.params[el.dataset.param] = Number(el.value);
+      document.querySelector(`[data-number="${el.dataset.param}"]`).value = el.value;
+      state.activePreset = "";
+      renderPresetState();
+      refreshCommand();
+      debouncedSyncRuntimeControl();
+    });
+  });
+
+  document.querySelectorAll("[data-number]").forEach(el => {
+    el.addEventListener("input", () => {
+      state.params[el.dataset.number] = Number(el.value);
+      document.querySelector(`[data-param="${el.dataset.number}"]`).value = el.value;
+      state.activePreset = "";
+      renderPresetState();
+      refreshCommand();
+      debouncedSyncRuntimeControl();
+    });
+  });
+
+  document.querySelectorAll("[data-pick-bg]").forEach(btn => {
+    btn.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      state.switches.bg_remove = true;
+      state.switches.bg_replace = true;
+      state.background_display_mode = "replace";
+      const removeEl = document.querySelector('[data-switch="bg_remove"]');
+      const replaceEl = document.querySelector('[data-switch="bg_replace"]');
+      if (removeEl) removeEl.checked = true;
+      if (replaceEl) replaceEl.checked = true;
+      openPicker("bg_image", "background");
+      refreshCommand();
+      syncRuntimeControl();
+    });
+  });
+
+  document.querySelectorAll("[data-switch]").forEach(el => {
+    el.addEventListener("change", async () => {
+      const key = el.dataset.switch;
+      state.switches[key] = el.checked;
+      if (key === "bg_replace") {
+        if (el.checked) {
+          state.switches.bg_remove = true;
+          state.background_display_mode = "replace";
+          // 勾选“替换新背景”时直接弹出文件选择。
+          // 如果用户取消选择，则仍保留默认背景。
+          openPicker("bg_image", "background");
+        } else {
+          state.background_display_mode = state.switches.bg_remove ? "cutout" : "original";
+        }
+      }
+      if (key === "bg_remove" && el.checked && !state.switches.bg_replace) state.background_display_mode = "cutout";
+      if (key === "bg_remove" && !el.checked) {
+        state.switches.bg_replace = false;
+        state.background_display_mode = "original";
+      }
+      if (key === "paste_back") state.switches.flag_stitching = el.checked;
+      if (key === "flag_stitching" && !el.checked) state.switches.paste_back = false;
+      if (key === "record_realtime" && lastRunning) {
+        setLog(el.checked ? "已请求从当前画面开始录制 Render 视频。" : "已请求停止录制 Render 视频。", true);
+      }
+      if (key === "record_audio" && el.checked) {
+        const ok = await requestMicPermission();
+        if (!ok) {
+          state.switches.record_audio = false;
+        } else if (lastRunning) {
+          await startMicRecording();
+        }
+      }
+      if (key === "record_audio" && !el.checked && mediaRecorder) {
+        await stopMicRecording();
+      }
+      state.activePreset = "";
+      renderAll();
+      refreshCommand();
+      syncRuntimeControl();
+    });
+  });
+}
+
+function renderPresetState() {
+  document.querySelectorAll("[data-preset]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.preset === state.activePreset);
+  });
+}
+
+function renderAll() {
+  renderSwitches("switches", switchSpec);
+  renderSwitches("recordSwitches", recordSwitchSpec);
+  renderParams();
+  wireControls();
+
+  document.querySelectorAll("#displayMode .seg").forEach(x => {
+    x.classList.toggle("active", x.dataset.value === state.display_mode);
+  });
+  document.querySelectorAll("#renderWindowMode .seg").forEach(x => {
+    x.classList.toggle("active", x.dataset.value === state.render_window_mode);
+  });
+
+  qs("modeTag").textContent = modeLabels[state.display_mode] || "对方脸";
+  renderPresetState();
+}
+
+function applyPreset(name) {
+  const preset = presets[name];
+  if (!preset) return;
+  Object.assign(state.switches, preset.switches);
+  Object.assign(state.params, preset.params);
+  if (preset.display_mode) state.display_mode = preset.display_mode;
+  if (preset.render_window_mode) state.render_window_mode = preset.render_window_mode;
+  if (preset.background_display_mode) state.background_display_mode = preset.background_display_mode;
+  if (preset.framing_mode) state.framing_mode = preset.framing_mode;
+  if (preset.motion_mode) state.motion_mode = preset.motion_mode;
+  if (preset.fields) {
+    Object.entries(preset.fields).forEach(([id, value]) => {
+      if (qs(id)) qs(id).value = value;
+      if (id === "src_image") {
+        state.base_src_image = value;
+        state.last_preprocess_key = "";
+      }
+    });
+  }
+  if (preset.clearStaticBackground !== false) {
+    state.bg_mask_image = "";
+    state.bg_canvas_image = "";
+    state.last_preprocess_key = "";
+  }
+  state.activePreset = name;
+  renderAll();
+  refreshCommand();
+  syncRuntimeControl();
+  if (lastRunning) {
+    setLog("预设里的模型参数会在下次启动 Render 时完整生效；显示/背景会实时同步。", true);
+  }
+}
+
+function isTypingTarget(target) {
+  const tag = target?.tagName;
+  return target?.isContentEditable || tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+}
+
+function applyBackgroundMode(mode) {
+  state.background_display_mode = mode;
+  if (mode === "original") {
+    state.switches.bg_remove = false;
+    state.switches.bg_replace = false;
+  } else if (mode === "cutout") {
+    state.switches.bg_remove = true;
+    state.switches.bg_replace = false;
+  } else if (mode === "replace") {
+    state.switches.bg_remove = true;
+    state.switches.bg_replace = true;
+    if (!state.bg_canvas_image && qs("bg_image").value) scheduleBackgroundPreprocess();
+  }
+}
+
+function syncShortcutState(message) {
+  state.activePreset = "";
+  renderAll();
+  refreshCommand();
+  syncRuntimeControl();
+  setLog(message, true);
+}
+
+function cycleBackgroundShortcut() {
+  const modes = ["original", "cutout", "replace"];
+  const labels = {original: "原图背景", cutout: "扣除背景", replace: "默认背景"};
+  const current = modes.includes(state.background_display_mode) ? state.background_display_mode : "original";
+  const next = modes[(modes.indexOf(current) + 1) % modes.length];
+  applyBackgroundMode(next);
+  syncShortcutState(`快捷键 1：${labels[next]}。`);
+}
+
+function toggleFramingShortcut() {
+  state.framing_mode = state.framing_mode === "full" ? "head" : "full";
+  syncShortcutState(`快捷键 2：${state.framing_mode === "full" ? "全身" : "头像"}。`);
+}
+
+function toggleMotionShortcut() {
+  state.motion_mode = state.motion_mode === "static" ? "driven" : "static";
+  syncShortcutState(`快捷键 3：${state.motion_mode === "static" ? "定住" : "跟随摄像头"}。`);
+}
+
+function gatherPayload() {
+  return {
+    cfg: "configs/trt_infer.yaml",
+    src_image: qs("src_image").value,
+    display_mode: state.display_mode,
+    render_window_mode: state.render_window_mode,
+    background_display_mode: state.background_display_mode,
+    framing_mode: state.framing_mode,
+    motion_mode: state.motion_mode,
+    switches: state.switches,
+    params: state.params,
+    record_path: qs("record_path").value,
+    audio_path: qs("audio_path").value,
+    bg_image: qs("bg_image").value,
+    bg_canvas_image: state.bg_canvas_image,
+    bg_mask_image: state.bg_mask_image,
+    original_src_image: state.first_original_src_image || state.base_src_image || qs("src_image").value
+  };
+}
+
+async function uploadFile(file, kind) {
+  const data = new FormData();
+  data.append("kind", kind);
+  data.append("file", file);
+  const res = await fetch("/api/upload", {method: "POST", body: data});
+  const out = await res.json();
+  if (!out.ok) throw new Error(out.message || "上传失败");
+  return out.path;
+}
+
+function setPreprocessBusy(busy) {
+}
+
+async function preprocessSource(mode) {
+  if (mode === "replace" && !qs("bg_image").value) {
+    setLog("先选择一张新背景图，再生成换背景源图。");
+    setTimeout(() => openPicker("bg_image", "background"), 0);
+    return;
+  }
+  const sourceImage = state.base_src_image || qs("src_image").value;
+  const backgroundImage = qs("bg_image").value;
+  const preprocessKey = `${mode}|${sourceImage}|${backgroundImage}`;
+  if (mode === "replace" && state.last_preprocess_key === preprocessKey && state.bg_mask_image && state.bg_canvas_image) {
+    refreshCommand();
+    syncRuntimeControl();
+    return;
+  }
+  setPreprocessBusy(true);
+  setLog(mode === "replace" ? "正在生成换背景源图..." : "正在生成扣背景源图...");
+  try {
+    const res = await fetch("/api/preprocess_source", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        src_image: sourceImage,
+        bg_image: backgroundImage,
+        mode
+      })
+    });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.message || "源图预处理失败");
+    qs("src_image").value = out.path;
+    state.base_src_image = out.original_src_image || out.src_image || state.base_src_image || sourceImage;
+    state.first_original_src_image = state.first_original_src_image || state.base_src_image || sourceImage;
+    state.bg_mask_image = out.mask_path || "";
+    state.bg_canvas_image = out.bg_image || qs("bg_image").value || "";
+    state.last_preprocess_key = preprocessKey;
+    state.switches.bg_remove = true;
+    state.switches.bg_replace = true;
+    state.background_display_mode = "replace";
+    state.activePreset = "";
+    renderAll();
+    refreshCommand();
+    syncRuntimeControl();
+    setLog(`已生成干净人像源图：${out.path}\n背景作为底层画布铺满显示，人像层会盖在背景之上。`);
+  } catch (err) {
+    setLog(`源图预处理失败：${err.message}`);
+  } finally {
+    setPreprocessBusy(false);
+  }
+}
+
+async function refreshCommand() {
+  try {
+    const res = await fetch("/api/command", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(gatherPayload())
+    });
+    const data = await res.json();
+    qs("command").value = data.command || "";
+  } catch (err) {
+    setLog(`命令生成失败：${err.message}`);
+  }
+}
+
+async function syncRuntimeControl() {
+  try {
+    await fetch("/api/control", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(gatherPayload())
+    });
+  } catch (err) {
+    if (lastRunning) setLog(`运行时控制同步失败：${err.message}`, true);
+  }
+}
+
+function debouncedSyncRuntimeControl() {
+  clearTimeout(controlSyncTimer);
+  controlSyncTimer = setTimeout(syncRuntimeControl, 30);
+}
+
+function looksLikeImagePath(path) {
+  return /\.(png|jpe?g|webp|bmp)$/i.test(String(path || "").trim());
+}
+
+function scheduleBackgroundPreprocess() {
+  clearTimeout(bgPreprocessTimer);
+  bgPreprocessTimer = setTimeout(() => {
+    if (looksLikeImagePath(qs("bg_image").value)) preprocessSource("replace");
+  }, 900);
+}
+
+function makeAudioConstraints() {
+  return {
+    audio: {
+      channelCount: 1,
+      echoCancellation: false,
+      noiseSuppression: false,
+      autoGainControl: true
+    }
+  };
+}
+
+async function requestMicPermission() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setLog("当前浏览器不支持麦克风录制。", true);
+    return false;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia(makeAudioConstraints());
+    stream.getTracks().forEach(track => track.stop());
+    await     setLog("麦克风权限已获得，启动 Render 后会开始录音。", true);
+    return true;
+  } catch (err) {
+    setLog(`麦克风权限申请失败：${err.message}`, true);
+    return false;
+  }
+}
+
+function pickAudioMimeType() {
+  const candidates = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4"
+  ];
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+  return candidates.find(type => MediaRecorder.isTypeSupported(type)) || "";
+}
+
+function startAudioLevelMeter() {
+  audioPeakLevel = 0;
+  if (!audioAnalyser) return;
+  const data = new Float32Array(audioAnalyser.fftSize || 2048);
+  audioLevelTimer = setInterval(() => {
+    if (!audioAnalyser) return;
+    try {
+      audioAnalyser.getFloatTimeDomainData(data);
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
+      const rms = Math.sqrt(sum / data.length);
+      if (rms > audioPeakLevel) audioPeakLevel = rms;
+    } catch (_) {}
+  }, 250);
+}
+
+async function startMicRecording() {
+  if (!state.switches.record_audio || mediaRecorder) return true;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setLog("当前浏览器不支持麦克风录制。", true);
+    return false;
+  }
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia(makeAudioConstraints());
+
+    // 用 WebAudio 先放大麦克风再交给 MediaRecorder。
+    // 这可以解决“文件存在但音量太小像没声音”的情况。
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === "suspended") await audioContext.resume();
+    audioSourceNode = audioContext.createMediaStreamSource(micStream);
+    audioGainNode = audioContext.createGain();
+    audioGainNode.gain.value = 1.0;
+    audioAnalyser = audioContext.createAnalyser();
+    audioAnalyser.fftSize = 2048;
+    const destination = audioContext.createMediaStreamDestination();
+
+    audioSourceNode.connect(audioAnalyser);
+    audioSourceNode.connect(audioGainNode);
+    audioGainNode.connect(destination);
+    audioRecordStream = destination.stream;
+
+    audioChunks = [];
+    audioMimeType = pickAudioMimeType() || "audio/webm";
+    const options = audioMimeType ? {mimeType: audioMimeType, audioBitsPerSecond: 192000} : {audioBitsPerSecond: 192000};
+    mediaRecorder = new MediaRecorder(audioRecordStream, options);
+    mediaRecorder.ondataavailable = event => {
+      if (event.data && event.data.size) audioChunks.push(event.data);
+    };
+    mediaRecorder.onerror = event => {
+      setLog(`麦克风录制异常：${event.error?.message || event.message || "未知错误"}`, true);
+    };
+    audioStartedAt = Date.now();
+    startAudioLevelMeter();
+    mediaRecorder.start(500);
+    audioFlushTimer = setInterval(() => {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        try { mediaRecorder.requestData(); } catch (_) {}
+      }
+    }, 1000);
+    setLog("麦克风录制已开始，使用正常增益。", true);
+    return true;
+  } catch (err) {
+    setLog(`麦克风启动失败：${err.message}`, true);
+    return false;
+  }
+}
+
+async function stopMicRecording() {
+  if (!mediaRecorder) return;
+  const recorder = mediaRecorder;
+  mediaRecorder = null;
+  if (audioFlushTimer) {
+    clearInterval(audioFlushTimer);
+    audioFlushTimer = null;
+  }
+
+  await new Promise(resolve => {
+    let resolved = false;
+    const finish = () => {
+      if (!resolved) {
+        resolved = true;
+        setTimeout(resolve, 250);
+      }
+    };
+    recorder.addEventListener("stop", finish, {once: true});
+    recorder.addEventListener("error", finish, {once: true});
+    try {
+      if (recorder.state === "recording") recorder.requestData();
+    } catch (_) {}
+    try {
+      if (recorder.state !== "inactive") recorder.stop();
+      else finish();
+    } catch (_) {
+      finish();
+    }
+  });
+
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+  }
+  if (audioRecordStream) {
+    audioRecordStream.getTracks().forEach(track => track.stop());
+    audioRecordStream = null;
+  }
+  if (audioLevelTimer) {
+    clearInterval(audioLevelTimer);
+    audioLevelTimer = null;
+  }
+  try {
+    if (audioSourceNode) audioSourceNode.disconnect();
+    if (audioGainNode) audioGainNode.disconnect();
+    if (audioAnalyser) audioAnalyser.disconnect();
+  } catch (_) {}
+  audioSourceNode = null;
+  audioGainNode = null;
+  audioAnalyser = null;
+  if (audioContext) {
+    try { await audioContext.close(); } catch (_) {}
+    audioContext = null;
+  }
+
+  const durationSec = audioStartedAt ? ((Date.now() - audioStartedAt) / 1000).toFixed(1) : "0";
+  audioStartedAt = 0;
+
+  if (!audioChunks.length) {
+    setLog("麦克风没有产生有效音频片段。请检查浏览器麦克风权限，或系统是否选中了正确的输入设备。", true);
+    return;
+  }
+
+  const blob = new Blob(audioChunks, {type: audioMimeType || "audio/webm"});
+  audioChunks = [];
+  if (!blob.size) {
+    setLog("麦克风音频文件大小为 0，未能保存。", true);
+    return;
+  }
+
+  const ext = (audioMimeType || "").includes("mp4") ? ".m4a" : ".webm";
+  const rawName = qs("audio_path").value.split(/[\\/]/).pop() || `audio_${stamp}${ext}`;
+  const audioName = rawName.replace(/\.(webm|m4a|mp4|wav)$/i, ext);
+  const rawPath = await uploadFile(new File([blob], audioName, {type: audioMimeType || "audio/webm"}), "recordings");
+  setLog(`浏览器原始音频已保存：${rawPath}，时长约 ${durationSec} 秒，大小 ${(blob.size / 1024).toFixed(1)} KB，输入峰值 ${(audioPeakLevel * 100).toFixed(2)}%。`, true);
+
+  let path = rawPath;
+  const converted = await convertAudioToM4a(rawPath);
+  if (converted.ok && converted.path) {
+    path = converted.path;
+    setLog(`已转换为通用音频：${path}`, true);
+  } else if (converted.message) {
+    setLog(`音频转 m4a 失败，继续使用原始 webm：${converted.message}`, true);
+  }
+
+  lastAudioPath = path;
+  qs("audio_path").value = path;
+  if (audioPeakLevel < 0.003) {
+    setLog("检测到麦克风输入几乎为 0：文件会存在，但内容基本是静音。请检查系统默认麦克风、输入音量，或是否被静音。", true);
+  }
+
+  const audioInfo = await inspectAudioFile(path);
+  if (audioInfo.ok) {
+    const volText = audioInfo.max_volume !== null && audioInfo.max_volume !== undefined ? `，最大音量 ${audioInfo.max_volume} dB` : "";
+    setLog(`音频检测：${audioInfo.duration ? audioInfo.duration.toFixed(2) + " 秒" : "时长未知"}，音频流 ${audioInfo.has_audio ? "存在" : "不存在"}${volText}。`, true);
+    if (audioInfo.has_audio && audioInfo.max_volume !== null && audioInfo.max_volume !== undefined && Number(audioInfo.max_volume) < -50) {
+      setLog("音频流存在，但最大音量低于 -50 dB，基本等于静音。请提高系统输入音量，或检查默认麦克风是否选对。", true);
+    }
+    if (!audioInfo.has_audio) {
+      setLog("已保存音频文件，但 ffprobe 检测不到音频流。请检查浏览器麦克风输入设备。", true);
+      return;
+    }
+  } else if (audioInfo.message) {
+    setLog(`音频检测失败：${audioInfo.message}`, true);
+  }
+
+  await tryMuxAudio();
+}
+
+async function waitForVideoReady(videoPath, timeoutMs = 30000) {
+  const started = Date.now();
+  let lastSize = -1;
+  let stableCount = 0;
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const res = await fetch("/api/file_status", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({path: videoPath})
+      });
+      const out = await res.json();
+      if (out.ok && out.exists && out.size > 0) {
+        if (out.size === lastSize) stableCount += 1;
+        else stableCount = 0;
+        lastSize = out.size;
+        if (stableCount >= 2) return true;
+      }
+    } catch (_) {}
+    await new Promise(resolve => setTimeout(resolve, 600));
+  }
+  return false;
+}
+
+async function inspectAudioFile(audioPath) {
+  try {
+    const res = await fetch("/api/audio_probe", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({path: audioPath})
+    });
+    return await res.json();
+  } catch (err) {
+    return {ok: false, message: err.message};
+  }
+}
+
+async function convertAudioToM4a(audioPath) {
+  try {
+    const res = await fetch("/api/convert_audio", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({path: audioPath})
+    });
+    return await res.json();
+  } catch (err) {
+    return {ok: false, message: err.message};
+  }
+}
+
+async function convertAudioToMp3(audioPath) {
+  try {
+    const res = await fetch("/api/convert_mp3", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({path: audioPath, normalize: true})
+    });
+    return await res.json();
+  } catch (err) {
+    return {ok: false, message: err.message};
+  }
+}
+
+async function tryMuxAudio() {
+  if (!state.switches.record_realtime || !lastAudioPath) {
+    if (lastAudioPath) setLog(`已保存单独音频：${lastAudioPath}。未勾选“录制 Render 视频”，所以不会合成视频。`, true);
+    return;
+  }
+  const videoPath = qs("record_path").value;
+  if (!videoPath) return;
+  setLog("正在等待视频文件释放，准备合成音频...", true);
+  const ready = await waitForVideoReady(videoPath);
+  if (!ready) {
+    setLog("视频文件还没准备好，暂时无法合成音频；请确认 Render 已正常停止并生成视频。", true);
+    return;
+  }
+  const res = await fetch("/api/mux_audio", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({video_path: videoPath, audio_path: lastAudioPath})
+  });
+  const out = await res.json();
+  if (out.ok) {
+    qs("record_path").value = out.path || qs("record_path").value;
+    setLog(`已合成带语音视频：${out.path}`, true);
+    const finalMp3 = await convertAudioToMp3(out.path);
+    if (finalMp3.ok && finalMp3.path) {
+      setLog(`已从最终视频自动提取 MP3：${finalMp3.path}`, true);
+    } else if (finalMp3.message) {
+      setLog(`从视频提取 MP3 失败：${finalMp3.message}`, true);
+    }
+  } else if (out.message) {
+    setLog(`语音合成未完成：${out.message}`, true);
+  }
+}
+
+async function startRun() {
+  const res = await fetch("/api/start", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(gatherPayload())
+  });
+  const data = await res.json();
+  setLog(data.message || "");
+  if (data.ok && state.switches.record_audio) {
+    const micOk = await startMicRecording();
+    if (!micOk) setLog("Render 已启动，但麦克风没有启动成功；本次视频会没有声音。", true);
+  } else if (data.ok && !state.switches.record_audio) {
+    setLog("未勾选“录制麦克风语音”，本次视频不会有声音。", true);
+  }
+  if (!data.ok) await stopMicRecording();
+  pollStatus();
+}
+
+async function stopRun() {
+  const res = await fetch("/api/stop", { method: "POST" });
+  const data = await res.json();
+  setLog(data.message || "");
+  for (let i = 0; i < 10; i++) {
+    await new Promise(resolve => setTimeout(resolve, 400));
+    await pollStatus();
+    if (!lastRunning) break;
+  }
+  await stopMicRecording();
+  pollStatus();
+}
+
+function setRunningUi(running, exitCode) {
+  lastRunning = running;
+  qs("led").classList.toggle("on", running);
+  qs("statusText").textContent = running ? "运行中" : "未运行";
+  qs("statusSub").textContent = running ? "Render 进程正在工作" : (exitCode ? `上次退出码：${exitCode}` : "等待启动 Render");
+  qs("startBtn").disabled = running;
+  qs("stopBtn").disabled = !running;
+}
+
+async function pollStatus() {
+  try {
+    const res = await fetch("/api/status");
+    const data = await res.json();
+    setRunningUi(data.running, data.exit_code);
+    if (data.log_tail) setLog(data.log_tail);
+    if (!data.running && mediaRecorder) await stopMicRecording();
+  } catch (err) {
+    if (lastRunning) setLog(`状态读取失败：${err.message}`);
+    setRunningUi(false, null);
+  }
+}
+
+function pickAccept(kind) {
+  if (kind === "config") return ".yaml,.yml";
+  if (kind === "source" || kind === "background") return "image/*";
+  return "";
+}
+
+function openPicker(target, kind) {
+  activePick = {target, kind};
+  qs("filePicker").accept = pickAccept(kind);
+  qs("filePicker").click();
+}
+
+document.querySelectorAll("#displayMode .seg").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.display_mode = btn.dataset.value;
+    renderAll();
+    refreshCommand();
+    syncRuntimeControl();
+  });
+});
+
+document.querySelectorAll("#renderWindowMode .seg").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.render_window_mode = btn.dataset.value;
+    renderAll();
+    refreshCommand();
+    syncRuntimeControl();
+  });
+});
+
+document.addEventListener("keydown", event => {
+  if (event.ctrlKey || event.altKey || event.metaKey || isTypingTarget(event.target)) return;
+  if (event.key === "1") {
+    event.preventDefault();
+    cycleBackgroundShortcut();
+  } else if (event.key === "2") {
+    event.preventDefault();
+    toggleFramingShortcut();
+  } else if (event.key === "3") {
+    event.preventDefault();
+    toggleMotionShortcut();
+  }
+});
+
+document.querySelectorAll("[data-preset]").forEach(btn => {
+  btn.addEventListener("click", () => applyPreset(btn.dataset.preset));
+});
+
+document.querySelectorAll("[data-pick]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    openPicker(btn.dataset.pick, btn.dataset.kind);
+  });
+});
+
+qs("filePicker").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (!file || !activePick) return;
+  try {
+    const path = await uploadFile(file, activePick.kind);
+    qs(activePick.target).value = path;
+    if (activePick.target === "bg_image") {
+      await preprocessSource("replace");
+      return;
+    }
+    if (activePick.target === "src_image") {
+      state.base_src_image = path;
+      state.first_original_src_image = path;
+      state.bg_mask_image = "";
+      state.bg_canvas_image = "";
+      state.last_preprocess_key = "";
+    }
+    refreshCommand();
+    syncRuntimeControl();
+  } catch (err) {
+    setLog(err.message);
+  } finally {
+    event.target.value = "";
+    activePick = null;
+  }
+});
+
+["src_image", "record_path", "audio_path", "bg_image"].forEach(id => {
+  qs(id).addEventListener("input", () => {
+    if (id === "src_image") {
+      state.base_src_image = qs("src_image").value;
+      state.bg_mask_image = "";
+      state.bg_canvas_image = "";
+      state.last_preprocess_key = "";
+    }
+    if (id === "bg_image") {
+      state.bg_mask_image = "";
+      state.bg_canvas_image = "";
+      state.last_preprocess_key = "";
+      scheduleBackgroundPreprocess();
+    }
+    refreshCommand();
+    if (id === "bg_image" || id === "record_path" || id === "audio_path") syncRuntimeControl();
+  });
+});
+
+qs("bg_image").addEventListener("change", async () => {
+  if (qs("bg_image").value) await preprocessSource("replace");
+});
+
+qs("startBtn").addEventListener("click", startRun);
+qs("stopBtn").addEventListener("click", stopRun);
+
+qs("copyBtn").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(qs("command").value);
+    setLog("命令已复制。");
+  } catch (err) {
+    qs("command").focus();
+    qs("command").select();
+    setLog("浏览器拒绝剪贴板权限，已选中命令文本。");
+  }
+});
+
+initDefaults();
+renderAll();
+setLog("默认已勾选录制视频和录音。首次启动时浏览器会请求麦克风权限。");
+refreshCommand();
+syncRuntimeControl();
+setTimeout(() => {
+  if (state.switches.bg_replace && qs("bg_image").value) preprocessSource("replace");
+}, 200);
+pollStatus();
+setInterval(pollStatus, 1500);
+</script>
+</body>
+</html>
