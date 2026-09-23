@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>王智慧生存游戏生成器</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div id="app" class="app">
+    <!-- 主题选择界面 -->
+    <div id="theme-screen" class="screen active">
+      <div class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+          <div class="game-logo">
+            <div class="logo-icon">🎭</div>
+            <h1 class="logo-title">王智慧生存游戏</h1>
+            <p class="logo-subtitle">生成器</p>
+          </div>
+          <p class="hero-desc">
+            选择一个主题，体验不同人生视角的生存挑战<br>
+            支持 AI 自动生成题库 / 多人团体模式 / 详细复盘报告
+          </p>
+          <div class="hero-hint">↓ 选择你的主题 ↓</div>
+        </div>
+      </div>
+
+      <div class="theme-grid" id="theme-grid">
+        <!-- 动态加载 -->
+        <div class="theme-loading">加载中...</div>
+      </div>
+
+      <div class="footer-info">
+        <p>📖 <a href="https://github.com" target="_blank">开源项目</a> · 任何人可自定义主题</p>
+        <p>💡 直接打开 index.html 即可游玩（内置模拟数据）</p>
+      </div>
+    </div>
+
+    <!-- 游戏设置界面 -->
+    <div id="setup-screen" class="screen">
+      <div class="screen-header">
+        <button id="back-menu-btn" class="btn btn-text">← 返回</button>
+      </div>
+      <div id="setup-container" class="setup-container">
+        <!-- 动态填充 -->
+      </div>
+    </div>
+
+    <!-- 游戏主界面 -->
+    <div id="game-screen" class="screen">
+      <!-- 顶栏 -->
+      <div class="game-header">
+        <div class="header-left">
+          <span id="current-stage" class="stage-badge">童年</span>
+          <span id="progress-text" class="progress-text">回合 1</span>
+        </div>
+        <div class="header-center">
+          <h1 class="game-title">🎭 <span id="game-theme-name">生存游戏</span></h1>
+        </div>
+        <div class="header-right">
+          <button id="toggle-scores-btn" class="btn btn-small">🎭 切换到隐藏模式</button>
+          <button id="judge-panel-btn" class="btn btn-small" style="display:none">👁️ 裁判面板</button>
+        </div>
+      </div>
+
+      <!-- 阶段进度条 -->
+      <div id="phase-progress" class="phase-progress">
+        <div class="phase-flow">
+          <div class="phase-step" id="phase-bystander">
+            <span class="phase-icon">👁️</span>
+            <span class="phase-label">旁观者视角</span>
+            <span class="phase-sublabel">先理解他人的处境</span>
+            <span class="phase-counter" id="bystander-counter">3 轮</span>
+          </div>
+          <div class="phase-arrow">→</div>
+          <div class="phase-step" id="phase-protagonist">
+            <span class="phase-icon">💔</span>
+            <span class="phase-label">主角视角</span>
+            <span class="phase-sublabel">体验切肤之痛</span>
+          </div>
+          <div class="phase-arrow">→</div>
+          <div class="phase-step" id="phase-report">
+            <span class="phase-icon">📋</span>
+            <span class="phase-label">共情复盘</span>
+            <span class="phase-sublabel">深度分析与建议</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 角色标签栏 -->
+      <div id="role-tabs" class="role-tabs">
+        <!-- 动态填充 -->
+      </div>
+
+      <!-- 主内容区 -->
+      <div class="game-main">
+        <!-- 左侧：属性面板 -->
+        <div id="stats-panel" class="stats-panel">
+          <!-- 动态填充 -->
+        </div>
+
+        <!-- 中间：情景内容 -->
+        <div class="content-area">
+          <div id="scenario-container" class="scenario-container">
+            <!-- 动态填充 -->
+          </div>
+        </div>
+
+        <!-- 右侧：历史记录 -->
+        <div id="history-panel" class="history-panel">
+          <div class="panel-header">
+            <h4>📜 决策历史</h4>
+            <span id="history-count">0 条</span>
+          </div>
+          <div id="history-list" class="history-list">
+            <div class="history-empty">暂无决策记录</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI 裁判面板（隐藏模式下显示） -->
+      <div id="ai-judge-box" class="judge-panel" style="display:none">
+        <div class="panel-header">
+          <h4>👁️ 裁判面板（隐藏模式专用）</h4>
+          <button class="btn-close" onclick="this.parentElement.parentElement.style.display='none'">×</button>
+        </div>
+        <div id="judge-content" class="judge-content">
+          <!-- 动态填充 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 复盘报告界面 -->
+    <div id="report-screen" class="screen">
+      <div class="report-container" id="report-container">
+        <!-- 动态填充 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 主题数据内嵌（降级用） -->
+  <script>
+    window.THEME_DATA = {
+      themes: [
+        { id: 'general', name: '原版-女性困境', icon: '🌸', description: '还原李智慧生存游戏原版', stages: ["童年","少年","青年","中年","老年"] },
+        { id: 'depression', name: '抑郁症主题', icon: '🩶', description: '与抑郁共处的生存挑战', stages: ["童年","少年","青年","中年","老年"] },
+        { id: 'schizophrenia', name: '精神分裂主题', icon: '🧠', description: '幻觉与现实交织的挑战', stages: ["童年","少年","青年","中年","老年"] },
+        { id: 'anxiety', name: '焦虑症主题', icon: '😰', description: '持续紧张与恐惧的挑战', stages: ["童年","少年","青年","中年","老年"] },
+        { id: 'bullying', name: '霸凌主题', icon: '💢', description: '被欺凌与自我保护的挑战', stages: ["小学","初中","高中","大学","职场"] }
+      ]
+    };
+  </script>
+
+  <!-- 游戏数据 -->
+  <script src="src/mock-data.js"></script>
+  <!-- 游戏流程引擎 -->
+  <script src="src/game-flow.js"></script>
+  <!-- AI 客户端 -->
+  <script src="src/ai-client.js"></script>
+  <!-- UI 管理 -->
+  <script src="src/ui-manager.js"></script>
+  <!-- 初始化 -->
+  <script src="assets/init.js"></script>
+</body>
+</html>
