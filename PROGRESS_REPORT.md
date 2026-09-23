@@ -3,7 +3,7 @@
 > Generated from the public registry and privacy-safe account aggregate. Progress/priority is an operating signal, not a repository-quality score.
 
 - Registry snapshot: **2026-09-23**
-- Coverage snapshot: **2026-09-23T19:11:29.023653+00:00**
+- Coverage snapshot: **2026-09-23T19:21:22.283794+00:00**
 - Audit coverage: **PARTIAL**
 - Coverage baseline: **lower-bound**
 
