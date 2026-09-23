@@ -51,3 +51,12 @@ Provider/model provenance is recorded. Cross-provider fallback is not automatic 
 Pages may expose AI-readiness details for repositories whose live/public registry identity is already public. The privacy-safe account summary must exclude all Private repository identifiers from the per-repository readiness map.
 
 AI readiness remains an onboarding/continuity dimension. It must not be presented as repository quality, scientific validity, priority, or Audit Coverage.
+
+## 2026-09-23 — Public showcase mirrors from private repositories
+
+- `repo-auditor` is the intended public showcase/control repository.
+- Source repositories may remain Private while selected, reviewed static artifacts are mirrored under `docs/showcase/`.
+- `docs/showcase/manifest.json` is the canonical publication allowlist.
+- Private repo URLs, SHAs, audit evidence, internal notes, credentials, real user/research data, admin surfaces and unreviewed IP are excluded.
+- The public audit registry remains public-repository-only; showcase publication is a separate layer.
+- Repository visibility itself remains an owner/admin action; the current ChatGPT GitHub connector can write files but does not expose the visibility mutation.
