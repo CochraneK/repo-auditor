@@ -30,4 +30,5 @@ Active — GO mode.
 - Added `docs/showcase/` as a public-safe static mirror layer for reviewed artifacts from Private source repositories.
 - Added a showcase hub and publication manifest; sensitive/private evidence remains excluded.
 - Source repository visibility is unchanged.
-- Remaining owner action: switch `CochraneK/repo-auditor` from Private to Public in GitHub Settings so GitHub Free Pages can publish the existing `docs/` site again.
+- `CochraneK/repo-auditor` is now **Public**; GitHub Free can publish its existing `docs/` site.
+- Remaining publication check: confirm GitHub Pages source is still `main /docs` and verify the public Showcase URL after CI is green.
