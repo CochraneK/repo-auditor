@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跨物种年龄换算器 · Cross-Species Age Calculator</title>
+<style>
+:root{
+  --bg:#0b0d12; --bg2:#0f1218; --panel:#151922; --panel2:#1b202b;
+  --line:#252b38; --line2:#323a4c;
+  --tx:#e8ebf2; --tx2:#9aa4bb; --tx3:#69738c;
+  --animal:#f0a24b; --animal-d:#c47c2c;
+  --human:#4fc3f7; --human-d:#2b8cb8;
+  --good:#5ed9a0; --warn:#f2c14e; --bad:#f2705c;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 600px at 12% -8%, rgba(240,162,75,.10), transparent 60%),
+    radial-gradient(1000px 620px at 88% 4%, rgba(79,195,247,.10), transparent 60%),
+    var(--bg);
+  color:var(--tx);
+  font-family:"Inter","PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased;
+  padding:0 0 80px;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+/* ---------- header ---------- */
+header{padding:56px 0 30px;text-align:center}
+.kicker{font-size:12px;letter-spacing:.28em;color:var(--tx3);text-transform:uppercase;margin-bottom:14px}
+h1{font-size:clamp(30px,5vw,50px);font-weight:800;letter-spacing:-.02em;line-height:1.12}
+h1 .g{background:linear-gradient(100deg,var(--animal),#f7d08a 45%,var(--human));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--tx2);max-width:660px;margin:16px auto 0;font-size:15.5px}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.badge{font-size:12px;color:var(--tx2);background:var(--panel);border:1px solid var(--line);padding:5px 12px;border-radius:99px}
+
+/* ---------- panels ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.panel-t{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:16px;font-weight:600}
+
+/* ---------- mode tabs ---------- */
+.modes{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px;width:fit-content;margin:0 auto 30px;flex-wrap:wrap;justify-content:center}
+.mode{padding:9px 20px;border-radius:99px;font-size:14px;font-weight:600;color:var(--tx2);cursor:pointer;border:none;background:none;transition:.18s;white-space:nowrap}
+.mode:hover{color:var(--tx)}
+.mode.on{background:linear-gradient(135deg,var(--animal),var(--animal-d));color:#1a1206}
+
+/* ---------- layout ---------- */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+/* ---------- species picker ---------- */
+.search{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);padding:11px 14px;border-radius:10px;font-size:14px;font-family:inherit;outline:none}
+.search:focus{border-color:var(--animal)}
+.search::placeholder{color:var(--tx3)}
+.cats{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 12px}
+.cat{font-size:12px;padding:5px 11px;border-radius:99px;background:var(--bg2);border:1px solid var(--line);color:var(--tx2);cursor:pointer;transition:.15s}
+.cat:hover{border-color:var(--line2);color:var(--tx)}
+.cat.on{background:rgba(240,162,75,.15);border-color:var(--animal);color:var(--animal)}
+.splist{max-height:290px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px;padding-right:4px}
+.splist::-webkit-scrollbar{width:7px}
+.splist::-webkit-scrollbar-thumb{background:var(--line2);border-radius:4px}
+.splist::-webkit-scrollbar-track{background:var(--bg2);border-radius:4px}
+.sp{display:flex;align-items:center;gap:7px;padding:8px 9px;border-radius:9px;background:var(--bg2);border:1px solid transparent;cursor:pointer;font-size:13px;transition:.14s;text-align:left}
+.sp:hover{background:var(--panel2);border-color:var(--line2)}
+.sp.on{background:rgba(240,162,75,.14);border-color:var(--animal);color:var(--animal)}
+.sp .e{font-size:17px;line-height:1;flex-shrink:0}
+.sp .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- age input ---------- */
+.agebox{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.ageval{font-size:44px;font-weight:800;color:var(--animal);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ageunit{font-size:15px;color:var(--tx2)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;margin:12px 0 4px}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--animal) var(--p,30%),var(--line) var(--p,30%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid var(--animal);margin-top:-7px;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:var(--line)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:4px solid var(--animal)}
+.rlabels{display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);font-variant-numeric:tabular-nums}
+.numrow{display:flex;gap:8px;margin-top:14px;align-items:center}
+.num{flex:1;background:var(--bg2);border:1px solid var(--line);color:var(--tx);padding:9px 12px;border-radius:9px;font-size:15px;font-family:inherit;outline:none;font-variant-numeric:tabular-nums}
+.num:focus{border-color:var(--animal)}
+.unitsel{background:var(--bg2);border:1px solid var(--line);color:var(--tx2);padding:9px 10px;border-radius:9px;font-size:13px;font-family:inherit;outline:none;cursor:pointer}
+
+/* ---------- result ---------- */
+.result{background:linear-gradient(150deg,rgba(79,195,247,.12),rgba(240,162,75,.07) 70%,transparent);border:1px solid var(--line2);border-radius:16px;padding:26px;margin:18px 0}
+.rhead{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--tx2);margin-bottom:8px;flex-wrap:wrap}
+.rhead .emo{font-size:26px}
+.big{font-size:clamp(46px,9vw,76px);font-weight:800;letter-spacing:-.035em;line-height:1;color:var(--human);font-variant-numeric:tabular-nums}
+.big small{font-size:.3em;font-weight:600;color:var(--tx2);margin-left:8px;letter-spacing:0}
+.rdesc{color:var(--tx2);font-size:14.5px;margin-top:12px}
+.rdesc b{color:var(--tx)}
+
+/* ---------- conversion strip ---------- */
+.convstrip{display:flex;align-items:stretch;gap:11px;margin:18px 0 4px;flex-wrap:nowrap}
+@media(max-width:640px){.convstrip{flex-wrap:wrap}}
+.cs-side{flex:1;min-width:0;display:flex;align-items:center;gap:11px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.cs-side.hi{border-color:rgba(79,195,247,.42);background:linear-gradient(135deg,rgba(79,195,247,.12),var(--bg2))}
+.cs-e{font-size:26px;line-height:1;flex-shrink:0}
+.cs-v{font-size:25px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.15;white-space:nowrap}
+.cs-v small{font-size:.52em;font-weight:600;color:var(--tx3);margin-left:3px}
+.cs-l{font-size:11.5px;color:var(--tx3);margin-top:2px;white-space:nowrap}
+.cs-arrow{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0 2px;min-width:78px}
+.cs-ar{font-size:18px;color:var(--tx3);line-height:1}
+.cs-rate{font-size:13.5px;font-weight:800;color:var(--animal);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cs-rl{font-size:10px;color:var(--tx3);white-space:nowrap}
+
+/* ---------- life bar ---------- */
+.lifebar{margin-top:20px}
+.lb-track{height:11px;border-radius:99px;background:var(--bg2);border:1px solid var(--line);overflow:hidden;display:flex}
+.lb-seg{height:100%}
+.lb-marks{display:flex;justify-content:space-between;margin-top:7px;font-size:11px;color:var(--tx3)}
+.stagechip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 13px;border-radius:99px;margin-top:2px}
+
+/* ---------- chart ---------- */
+.chartwrap{position:relative}
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--tx2);margin-top:12px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;color:var(--tx3);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--panel2)}
+.mono{font-variant-numeric:tabular-nums}
+.tag{font-size:10.5px;padding:2px 7px;border-radius:5px;background:var(--panel2);color:var(--tx3);border:1px solid var(--line);white-space:nowrap}
+.tag.est{background:rgba(242,193,78,.12);color:var(--warn);border-color:rgba(242,193,78,.3)}
+.tag.off{background:rgba(94,217,160,.12);color:var(--good);border-color:rgba(94,217,160,.3)}
+
+/* ---------- compare grid ---------- */
+.cmpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:9px;max-height:440px;overflow-y:auto;padding-right:5px}
+.cmpgrid::-webkit-scrollbar{width:7px}
+.cmpgrid::-webkit-scrollbar-thumb{background:var(--line2);border-radius:4px}
+.cmpcard{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:12px}
+.cmpcard.self{border-color:var(--animal);background:rgba(240,162,75,.09)}
+.cmpcard .top{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tx2);margin-bottom:7px}
+.cmpcard .top .e{font-size:17px}
+.cmpcard .v{font-size:23px;font-weight:800;color:var(--tx);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cmpcard .v small{font-size:.5em;font-weight:600;color:var(--tx3);margin-left:3px}
+.cmpcard .x{font-size:11px;color:var(--tx3);margin-top:3px}
+
+/* ---------- dual track (dog/cat) ---------- */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.dual{grid-template-columns:1fr}}
+.track{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:15px}
+.track h4{font-size:13px;color:var(--tx);margin-bottom:3px}
+.track .m{font-size:11.5px;color:var(--tx3);margin-bottom:10px;line-height:1.5}
+.track .v{font-size:32px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sizesel{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.szbtn{font-size:12px;padding:6px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);color:var(--tx2);cursor:pointer;transition:.15s}
+.szbtn:hover{border-color:var(--line2)}
+.szbtn.on{background:rgba(240,162,75,.15);border-color:var(--animal);color:var(--animal)}
+
+/* ---------- notes / sources ---------- */
+.note{font-size:13px;color:var(--tx2);background:var(--bg2);border-left:3px solid var(--warn);padding:11px 14px;border-radius:0 9px 9px 0;margin-top:14px;line-height:1.65}
+.note.info{border-left-color:var(--human)}
+.note.sci{border-left-color:var(--good)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-top:14px;overflow:hidden}
+summary{padding:16px 20px;cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"＋";color:var(--tx3);font-weight:400;font-size:18px}
+details[open] summary::after{content:"−"}
+summary:hover{background:var(--panel2)}
+.dbody{padding:2px 20px 20px;font-size:13.8px;color:var(--tx2);line-height:1.75}
+.dbody h5{color:var(--tx);font-size:14px;margin:16px 0 7px}
+.dbody code{background:var(--bg2);padding:2px 7px;border-radius:5px;font-size:12.5px;color:var(--animal);font-family:ui-monospace,Menlo,Consolas,monospace}
+.dbody ul{margin:8px 0 8px 20px}
+.dbody li{margin:5px 0}
+.dbody a{color:var(--human);text-decoration:none;border-bottom:1px dotted var(--human-d)}
+.ref{font-size:12.5px;color:var(--tx3);padding:7px 0;border-bottom:1px solid var(--line)}
+.ref:last-child{border:none}
+.ref b{color:var(--tx2);font-weight:600}
+
+.sect{margin-top:34px}
+.sect-h{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sect-h h2{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.sect-h p{font-size:13px;color:var(--tx3)}
+.fact{display:flex;gap:11px;align-items:flex-start;background:linear-gradient(135deg,rgba(94,217,160,.09),transparent);border:1px solid rgba(94,217,160,.22);border-radius:11px;padding:14px 16px;margin-top:14px}
+.fact .i{font-size:19px;line-height:1.3}
+.fact .t{font-size:13.5px;color:var(--tx2);line-height:1.65}
+.fact .t b{color:var(--good)}
+footer{margin-top:50px;padding-top:24px;border-top:1px solid var(--line);text-align:center;color:var(--tx3);font-size:12.5px;line-height:1.9}
+.hide{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Cross-Species Age Calculator</div>
+  <h1>如果它是人，<span class="g">该有多少岁？</span></h1>
+  <p class="sub">覆盖 <b>103 种</b>动物的双向年龄换算。基于性成熟、平均寿命、最大寿命三个生理锚点对齐，猫犬采用兽医学界官方对照表。每个结论都可追溯到出处。</p>
+  <div class="badges">
+    <span class="badge">🐕 AKC 体型分级表</span>
+    <span class="badge">🐈 AAFP / AAHA 指南</span>
+    <span class="badge">🧬 表观遗传时钟</span>
+    <span class="badge">📊 AnAge 老龄化数据库</span>
+  </div>
+</header>
+
+<div class="modes">
+  <button class="mode on" data-mode="a2h">动物 → 人类</button>
+  <button class="mode" data-mode="h2a">人类 → 动物</button>
+  <button class="mode" data-mode="cross">跨物种对照</button>
+</div>
+
+<div class="grid">
+  <!-- LEFT: picker -->
+  <div class="panel">
+    <div class="panel-t" id="pickerTitle">选择物种</div>
+    <input class="search" id="search" placeholder="搜索动物名称…  例如 猫 / 大象 / 鹦鹉">
+    <div class="cats" id="cats"></div>
+    <div class="splist" id="splist"></div>
+  </div>
+
+  <!-- RIGHT: input -->
+  <div class="panel">
+    <div class="panel-t" id="inputTitle">输入年龄</div>
+    <div class="agebox">
+      <span class="ageval" id="ageVal">3</span>
+      <span class="ageunit" id="ageUnit">岁</span>
+    </div>
+    <input type="range" id="slider" min="0" max="100" step="1" value="30">
+    <div class="rlabels"><span>0</span><span id="rMid"></span><span id="rMax"></span></div>
+    <div class="numrow">
+      <input class="num" id="numIn" type="number" step="0.1" min="0" value="3">
+      <select class="unitsel" id="unitSel">
+        <option value="y">岁</option>
+        <option value="m">月</option>
+        <option value="d">天</option>
+      </select>
+    </div>
+
+    <!-- dog size selector -->
+    <div id="dogSize" class="hide" style="margin-top:18px">
+      <div class="panel-t" style="margin-bottom:9px">犬只体型（影响很大）</div>
+      <div class="sizesel">
+        <button class="szbtn on" data-sz="0">小型 &lt;9kg</button>
+        <button class="szbtn" data-sz="1">中型 9–23kg</button>
+        <button class="szbtn" data-sz="2">大型 23–45kg</button>
+        <button class="szbtn" data-sz="3">超大型 &gt;45kg</button>
+      </div>
+    </div>
+
+    <div id="spMeta" style="margin-top:18px"></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="result" id="result"></div>
+
+<!-- DUAL TRACK -->
+<div id="dualWrap" class="sect hide">
+  <div class="sect-h"><h2>两套口径对照</h2><p>不同研究方法给出的答案不一样，这本身就是科学现状</p></div>
+  <div class="panel"><div class="dual" id="dual"></div><div id="dualNote"></div></div>
+</div>
+
+<!-- CHART -->
+<div class="sect">
+  <div class="sect-h"><h2>一生的年龄映射曲线</h2><p id="chartSub"></p></div>
+  <div class="panel chartwrap">
+    <svg class="chart" id="chart" viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+
+<!-- CROSS SPECIES -->
+<div class="sect">
+  <div class="sect-h"><h2>同一「生命进度」下的众生相</h2><p id="cmpSub"></p></div>
+  <div class="panel">
+    <input class="search" id="cmpSearch" placeholder="在结果中筛选物种…" style="margin-bottom:14px">
+    <div class="cmpgrid" id="cmpgrid"></div>
+  </div>
+</div>
+
+<!-- FUN FACT -->
+<div id="factBox"></div>
+
+<!-- METHOD -->
+<div class="sect">
+  <div class="sect-h"><h2>方法与数据出处</h2><p>可以核查的才叫科学</p></div>
+
+  <details open>
+    <summary>换算模型是怎么算的？</summary>
+    <div class="dbody">
+      <p>跨物种年龄换算<b>不存在通用公式</b>。网上流传的"狗一岁等于人七岁"是把犬类平均寿命除以人类平均寿命得来的粗糙比值，它最大的错误在于忽略了一个基本事实：<b>动物的衰老速度不是匀速的</b>——绝大多数动物在生命早期发育极快，之后才放缓。一只 1 岁的狗已经性成熟、可以繁殖，而 7 岁的人类还是儿童。</p>
+
+      <h5>本站采用：生命阶段锚点对齐法</h5>
+      <p>思路是不去比较"过了多少年"，而是比较"走到了生命的哪个位置"。对每个物种取三个有生物学意义的节点，与人类的对应节点对齐：</p>
+      <ul>
+        <li><code>出生 0</code> ←→ 人类 <b>0 岁</b></li>
+        <li><code>性成熟年龄</code> ←→ 人类 <b>13 岁</b>（青春期，获得生育能力）</li>
+        <li><code>平均寿命</code> ←→ 人类 <b>80 岁</b>（发达地区预期寿命量级）</li>
+        <li><code>最大记录寿命</code> ←→ 人类 <b>122 岁</b>（Jeanne Calment，122 岁 164 天，人类有据可查的最高寿命）</li>
+      </ul>
+      <p>四个锚点之间做<b>分段线性插值</b>。超出最大记录寿命的部分沿用末段斜率外推，并标注"已超出记录"。</p>
+
+      <h5>为什么用线性插值而不是更复杂的曲线？</h5>
+      <p>因为可解释、可复核。任何更花哨的拟合都会引入无法被数据支撑的假设。分段线性的每一段斜率都有明确含义——斜率越陡，说明该物种在这个生命阶段"老得越快"。曲线图里那几个折点，就是锚点。</p>
+
+      <h5>一个自洽性检验</h5>
+      <p>用通用锚点法算猫：性成熟 0.6 岁、平均寿命 14 岁 → 1 岁猫 = 人类 <b>15.0</b> 岁。AAFP 官方对照表给的是 <b>15</b> 岁。算狗：性成熟 0.75 岁、平均寿命 12 岁 → 1 岁狗 = 人类 <b>14.5</b> 岁，AKC 表给 <b>15</b> 岁。通用模型在有官方答案的两个物种上都对上了，这是它可以外推到其他物种的信心来源。</p>
+
+      <h5>猫和犬为什么走单独分支？</h5>
+      <p>因为这两个物种有兽医学界的官方对照表，精度高于任何通用模型，直接采用官方数据而非自行推算。犬类还额外提供表观遗传时钟公式作为第二口径对照。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>犬类：两套口径为什么会打架？</summary>
+    <div class="dbody">
+      <h5>口径一：AKC 体型分级表（临床/兽医口径）</h5>
+      <p>美国犬业俱乐部（AKC）依据美国兽医协会（AVMA）的通用规则发布，按体重分四档。核心规律是：<b>体型越大，老得越快</b>。这在哺乳动物里是个反常现象——跨物种比较时通常是体型越大越长寿（大象比老鼠长寿），但在犬这个<b>同一物种内部</b>，规律完全反转。5 岁时小型犬约合人类 36 岁，超大型犬已经 45 岁；到 13 岁，小型犬 68 岁，超大型犬 100 岁。</p>
+
+      <h5>口径二：DNA 甲基化表观遗传时钟</h5>
+      <p>Wang T, Ma J, Hogan AN, et al. <i>Quantitative Translation of Dog-to-Human Aging by Conserved Remodeling of the DNA Methylome.</i> <b>Cell Systems</b> 2020;11(2):176–185.</p>
+      <p>研究团队测定 104 只黄色拉布拉多寻回犬（5 周龄至 16 岁）与 320 名人类（1–103 岁）的血液 DNA 甲基化图谱，找到两个物种间保守变化的位点，拟合出：</p>
+      <p style="text-align:center;font-size:17px;margin:14px 0"><code style="font-size:17px;padding:9px 16px">人类年龄 = 16 × ln(犬龄) + 31</code></p>
+      <p>校验锚点相当漂亮：8 周龄幼犬 ≈ 人类 9 个月大（两者同处乳牙萌出期）；拉布拉多平均寿命 12 年 ≈ 人类全球平均预期寿命 70 岁。</p>
+
+      <h5>为什么两者对不上？该信哪个？</h5>
+      <p>5 岁拉布拉多：表观遗传公式给 <b>57 岁</b>，AKC 大型犬表给 <b>36 岁</b>，差了 21 年。原因是两者测量的东西根本不同——表观遗传时钟测的是<b>分子层面的生物学衰老程度</b>，AKC 表反映的是<b>临床功能状态与疾病风险窗口</b>。前者说"细胞已经很老了"，后者说"身体功能还行"。</p>
+      <p><b>建议：日常判断健康管理阶段用 AKC 表，理解衰老生物学用表观遗传公式。</b></p>
+      <p>该公式的已知局限：① 仅基于单一品种（黄色拉布拉多），作者本人明确表示其他品种需后续验证；② 公式不含体型变量，会给吉娃娃和大丹犬完全相同的结果，而这两者实际寿命差近一倍；③ 自然对数在犬龄趋近 0 时发散，8 周龄以下外推不可靠。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>猫类：官方表的版本陷阱</summary>
+    <div class="dbody">
+      <p>这里有个很容易搞错的地方。<b>常被引用的"AAFP 2021 版指南"里其实没有人类年龄对照表</b>——2021 版（Quimby J, et al. <i>2021 AAHA/AAFP Feline Life Stage Guidelines</i>, JAAHA 57(2):51–72）只定义了生命阶段划分。</p>
+      <p>完整的人龄对照表出自 <b>2010 年版</b>：Hoyumpa Vogt A, et al. <i>AAFP–AAHA Feline Life Stage Guidelines</i>, J Feline Med Surg 2010;12:43–54。本站使用的就是这一版的数据。</p>
+
+      <h5>民间口诀准不准？</h5>
+      <p>流传很广的"猫 1 岁 = 15 人年，2 岁 = 24 人年，之后每年 +4"——经核对，在 <b>2 岁以上区间与官方表完全一致</b>，官方表本身就满足 24 + 4×(n−2)。差异只在第一年内：口诀无法给出亚成年阶段的分辨率，而官方表细到 3 月龄≈2–4 岁、6 月龄≈10 岁、7 月龄≈12 岁、18 月龄≈21 岁。所以口诀对成年猫可以放心用，幼猫阶段请看本站的细分数值。</p>
+
+      <h5>生命阶段用哪版？</h5>
+      <p>本站阶段划分采用 <b>2021 现行版</b>：幼猫 0–1 岁 / 青年 1–6 岁 / 成熟 7–10 岁 / 老年 &gt;10 岁。人龄换算采用 <b>2010 版</b>表格。两版并用是刻意的，各取所长。</p>
+
+      <h5>关于"室内猫 15–17 年、室外猫 2–5 年"</h5>
+      <p>这个流传极广的数字<b>找不到可追溯的原始同行评议出处</b>，只见于科普网站的二手转引，本站不采用。可用的实证数据是：英国家猫总体中位寿命 <b>14.0 岁</b>（IQR 9.0–17.0，n=4009；O'Neill DG, et al. <i>J Feline Med Surg</i> 2015）；出生时预期寿命 <b>11.74 岁</b>（Teng KT, et al. <i>JFMS</i> 2024，VetCompass，n=7936）。同一研究显示 5 岁以下死亡猫的首位死因是创伤（全年龄占 12.2%），这确实间接支持"户外通道抬高早期死亡风险"，但支撑不了那组具体年份数字。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>数据准确性说明：哪些是实测，哪些是估算</summary>
+    <div class="dbody">
+      <p>必须坦白一件事：<b>AnAge 数据库绝大多数物种只记录"性成熟年龄"和"最大记录寿命"，"平均寿命"字段普遍缺失。</b>而锚点法需要这三个数。</p>
+      <p>处理方式：有权威平均寿命数据的直接采用；没有的，用最大记录寿命乘以经验系数估算，并在界面上用 <span class="tag est">平均寿命为估算</span> 标签明确标出。<b>凡是带这个标签的物种，其换算结果的精度显著低于猫、犬等有实测数据的物种。</b></p>
+
+      <h5>需要特殊对待的几类物种</h5>
+      <ul>
+        <li><b>真社会性昆虫</b>（蜜蜂、蚂蚁）：同一物种不同品级寿命差几十倍，蜂后可活 8 年而夏季工蜂只有几周。已拆分为独立条目。工蜂/工蚁终生不育，"性成熟"锚点改用羽化出房时间。</li>
+        <li><b>灯塔水母</b> <i>Turritopsis dohrnii</i>：遭遇胁迫时可由水母型转分化回水螅型，生命周期可逆，理论上无限循环。它<b>没有"最大寿命"这个概念</b>，锚点法完全失效，本站将其标为不可换算。</li>
+        <li><b>可忽略衰老型物种</b>（格陵兰睡鲨、北极蛤、珊瑚、海绵）：衰老速率与人类不成线性对应关系，把 500 岁的北极蛤压缩到 122 岁人类刻度上，结果仅供娱乐。</li>
+        <li><b>单次繁殖后死亡</b>（普通章鱼、欧洲鳗）：性成熟到死亡几乎连续，换算曲线极陡。</li>
+        <li><b>成虫/幼体寿命割裂</b>（蜉蝣、帝王蝶）：蜉蝣稚虫期 1–3 年而成虫仅数天。本站按完整生命周期计算并注明。</li>
+        <li><b>腔棘鱼</b>：AnAge 旧值 48 年已被推翻，本站采用 Mahé K, et al. <i>Current Biology</i> 2021 修正值约 100 年、性成熟 40–69 岁。</li>
+      </ul>
+
+      <h5>极端长寿物种的不确定性</h5>
+      <ul>
+        <li><b>格陵兰睡鲨</b>：Nielsen J, et al. <i>Science</i> 2016 用眼晶状体蛋白放射性碳定年，最大寿命 392±120 年（95.4% 区间 272–512 年），雌性性成熟 156±22 年。这是<b>已知最长寿的脊椎动物</b>。量级高度可信，具体数字不确定性大。</li>
+        <li><b>北极蛤"Ming"</b>：Butler PG, et al. 2013 用生长纹层定年确认 507 岁，这是<b>确定计数值</b>而非估算，但仅代表单一极值个体，种群平均远低于此。</li>
+        <li><b>弓头鲸</b>：211 岁，George JC, et al. 1999 天冬氨酸消旋法测定。</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>完整参考文献</summary>
+    <div class="dbody">
+      <div class="ref"><b>Wang T, Ma J, Hogan AN, et al.</b> Quantitative Translation of Dog-to-Human Aging by Conserved Remodeling of the DNA Methylome. <i>Cell Systems</i> 2020;11(2):176–185.</div>
+      <div class="ref"><b>Creevy KE, Grady J, Little SE, et al.</b> 2019 AAHA Canine Life Stage Guidelines. <i>J Am Anim Hosp Assoc</i> 2019;55(6):267–290.</div>
+      <div class="ref"><b>Hoyumpa Vogt A, Rodan I, Brown M, et al.</b> AAFP–AAHA Feline Life Stage Guidelines. <i>J Feline Med Surg</i> 2010;12:43–54.（人龄对照表来源）</div>
+      <div class="ref"><b>Quimby J, Gowland S, Carney HC, et al.</b> 2021 AAHA/AAFP Feline Life Stage Guidelines. <i>J Am Anim Hosp Assoc</i> 2021;57(2):51–72.（生命阶段划分来源）</div>
+      <div class="ref"><b>American Kennel Club.</b> How to Calculate Dog Years to Human Years（体型分级对照表）</div>
+      <div class="ref"><b>Tacutu R, Thornton D, Johnson E, et al.</b> Human Ageing Genomic Resources: new and updated databases — <i>AnAge Database of Animal Ageing and Longevity</i>. <i>Nucleic Acids Res</i> 2018;46(D1):D1083–D1090.（绝大多数物种的性成熟与最大寿命数据来源）</div>
+      <div class="ref"><b>Weigl R.</b> Longevity of Mammals in Captivity: from the Living Collections of the World. Kleine Senckenberg-Reihe 48, 2005.（大量圈养哺乳动物寿命记录）</div>
+      <div class="ref"><b>Nielsen J, Hedeholm RB, Heinemeier J, et al.</b> Eye lens radiocarbon reveals centuries of longevity in the Greenland shark. <i>Science</i> 2016;353(6300):702–704.</div>
+      <div class="ref"><b>Butler PG, Wanamaker AD, Scourse JD, et al.</b> Variability of marine climate on the North Icelandic Shelf... <i>Palaeogeogr Palaeoclimatol Palaeoecol</i> 2013;373:141–151.（北极蛤 507 岁）</div>
+      <div class="ref"><b>Mahé K, Ernande B, Herbin M.</b> New scale analyses reveal centenarian African coelacanths. <i>Current Biology</i> 2021;31(16):3621–3628.</div>
+      <div class="ref"><b>George JC, Bada J, Zeh J, et al.</b> Age and growth estimates of bowhead whales via aspartic acid racemization. <i>Can J Zool</i> 1999;77:571–580.</div>
+      <div class="ref"><b>O'Neill DG, Church DB, McGreevy PD, et al.</b> Longevity and mortality of cats attending primary care veterinary practices in England. <i>J Feline Med Surg</i> 2015;17(2):125–133.</div>
+      <div class="ref"><b>Teng KT, Brodbelt DC, Church DB, O'Neill DG.</b> Life tables of annual life expectancy and risk factors for mortality in cats in the UK. <i>J Feline Med Surg</i> 2024;26(5).</div>
+      <div class="ref"><b>Piraino S, Boero F, Aeschbach B, Schmid V.</b> Reversing the life cycle: medusae transforming into polyps. <i>Biol Bull</i> 1996;190:302–312.（灯塔水母）</div>
+      <div class="ref"><b>Quesenberry KE, Orcutt CJ, Mans C, Carpenter JW (eds).</b> Ferrets, Rabbits, and Rodents: Clinical Medicine and Surgery, 4th ed. Elsevier, 2021.（小宠数据）</div>
+    </div>
+  </details>
+</div>
+
+<footer>
+  数据截至 2026 年，以 AnAge 数据库与同行评议文献为准 · 带「估算」标签的数值精度有限，请勿用于临床决策<br>
+  宠物健康问题请咨询执业兽医 · 本工具仅用于科普与趣味参考
+</footer>
+
+</div>
+
+<script>
+/* ============================================================
+   物种数据库
+   m = 性成熟年龄(岁), l = 平均寿命(岁), x = 最大记录寿命(岁)
+   est: true 表示平均寿命为估算值
+   sp: 特殊处理标记
+   ============================================================ */
+const CATS = {
+  pet:      {n:'伴侣宠物', c:'#f0a24b'},
+  farm:     {n:'家畜农场', c:'#d9a441'},
+  primate:  {n:'灵长类',   c:'#c78bd9'},
+  wild:     {n:'陆生野生', c:'#e0705c'},
+  marine:   {n:'海洋哺乳', c:'#4fc3f7'},
+  bird:     {n:'鸟类',     c:'#5ed9a0'},
+  reptile:  {n:'爬行类',   c:'#8fbf5f'},
+  amphib:   {n:'两栖类',   c:'#5fbfa8'},
+  fish:     {n:'鱼类',     c:'#6b9fe0'},
+  invert:   {n:'无脊椎',   c:'#b0879e'},
+};
+
+const SP = [
+// ---------- 伴侣宠物 ----------
+{id:'dog',  n:'狗',      e:'🐕', c:'pet', m:0.75, l:12,  x:29.5, sp:'dog', src:'AKC / AVMA 对照表；最长寿犬 Bluey 29岁5月',
+  f:'犬类是唯一「体型越大越短命」规律极显著的哺乳动物。跨物种时大象比老鼠长寿，但在犬这个物种内部，规律彻底反转——大丹犬平均只有 7–10 年，吉娃娃能到 15–17 年。'},
+{id:'cat',  n:'猫',      e:'🐈', c:'pet', m:0.6,  l:14,  x:38,   sp:'cat', src:'AAFP–AAHA 2010 对照表；O\'Neill 2015 中位寿命 14.0 岁；最长寿猫 Creme Puff 38岁',
+  f:'猫的第一年相当于人类 15 年，第二年再加 9 年——两年就走完人类前 24 年。之后骤降到每年 4 年，这个「先冲刺后匀速」的曲线在哺乳动物里相当典型。'},
+{id:'rabbit',n:'兔子',   e:'🐇', c:'pet', m:0.5,  l:9,   x:13,   src:'Merck 兽医手册（性成熟 4–6 月）；AnAge 最大 13 年',
+  f:'家兔精心饲养可活 10–12 年，但很多人以为兔子只能活两三年——这个误解让大量家兔得不到应有的老年照护。'},
+{id:'gpig', n:'豚鼠',    e:'🐹', c:'pet', m:0.18, l:6,   x:12,   src:'AnAge：性成熟 66 天（♀）；MSD：宠物寿命 4–8 年',
+  f:'豚鼠和人类、灵长类一样无法自行合成维生素 C，必须从食物摄取，否则会得坏血病。这在哺乳动物中很罕见。'},
+{id:'hamster',n:'仓鼠',  e:'🐹', c:'pet', m:0.13, l:2,   x:3.9,  src:'AnAge：性成熟 48 天，最大 3.9 年（叙利亚仓鼠）',
+  f:'一只 2 岁的仓鼠已是高龄。它出生 48 天就性成熟——按锚点法，出生 7 周就相当于人类 13 岁。'},
+{id:'chin', n:'龙猫',    e:'🐭', c:'pet', m:0.66, l:10,  x:17.2, src:'AnAge：性成熟 240 天，最大 17.2 年',
+  f:'龙猫是啮齿类里的长寿冠军之一，17 年记录远超同体型的仓鼠（3.9 年）——体型相近寿命差 4 倍多。'},
+{id:'ferret',n:'雪貂',   e:'🦡', c:'pet', m:0.5,  l:7,   x:11, est:true, src:'MSD：宠物寿命 6–10 年，性成熟为出生后第一个春季',
+  f:'雪貂的性成熟由光照周期触发，而非单纯年龄——出生后遇到的第一个春季才会成熟。'},
+{id:'hedge',n:'刺猬',    e:'🦔', c:'pet', m:0.7,  l:7.5, x:11.7, src:'AnAge：欧刺猬最大 11.7 年',
+  f:'非洲四趾刺猬的动物园记录可达 11.4 年，但宠物饲养环境下多在 5–7 年。'},
+{id:'gerbil',n:'沙鼠',   e:'🐁', c:'pet', m:0.12, l:3.5, x:6.3,  src:'AnAge：性成熟 43 天（♀），最大 6.3 年'},
+{id:'mouse',n:'小鼠',    e:'🐁', c:'pet', m:0.115,l:2,   x:4,    src:'AnAge：性成熟 42 天，最大 4 年',
+  f:'实验小鼠是衰老研究的主力模型，正因为它 2 年就走完一生——研究者能在一次课题周期内观察完整的衰老过程。'},
+{id:'rat',  n:'大鼠',    e:'🐀', c:'pet', m:0.25, l:2.5, x:3.8,  src:'AnAge：性成熟 90 天（♀），最大 3.8 年（Turturro 1999 大样本）'},
+
+// ---------- 家畜 ----------
+{id:'horse',n:'马',      e:'🐴', c:'farm',m:2.5,  l:27,  x:57,   src:'AnAge：性成熟 2.5 年，最大 57 年（冰岛矮马 Tulle）',
+  f:'马的牙齿终生生长并按固定速率磨损，所以看牙就能判断年龄——「不要看赠马的牙口」这句谚语正来源于此。'},
+{id:'donkey',n:'驴',     e:'🫏', c:'farm',m:1.9,  l:27,  x:47,   src:'AnAge：性成熟 1.9 年；Nowak 1999 最大 47 年'},
+{id:'cow',  n:'牛',      e:'🐄', c:'farm',m:1.5,  l:16,  x:20,   src:'AnAge：性成熟 1.5 年，最大 20 年',
+  f:'奶牛自然寿命可达 20 年，但商业养殖中通常 5–6 岁即被淘汰——这是产业寿命与生物学寿命的巨大落差。'},
+{id:'pig',  n:'猪',      e:'🐖', c:'farm',m:0.9,  l:17,  x:27,   src:'AnAge：性成熟 0.9 年（♀），最大 27 年（Weigl 2005）',
+  f:'猪的自然寿命可达 15–20 年，而肉猪出栏通常只有 6 个月——按锚点法，那相当于人类不到 10 岁。'},
+{id:'sheep',n:'绵羊',    e:'🐑', c:'farm',m:1.5,  l:11,  x:22.8, src:'AnAge：性成熟 1.5 年，最大 22.8 年'},
+{id:'goat', n:'山羊',    e:'🐐', c:'farm',m:1.1,  l:15,  x:20.8, src:'AnAge：性成熟 1.1 年（♀），最大 20.8 年'},
+{id:'alpaca',n:'羊驼',   e:'🦙', c:'farm',m:1.2,  l:20,  x:25.8, src:'AnAge：性成熟 1.2 年（♀），最大 25.8 年'},
+{id:'chicken',n:'鸡',    e:'🐓', c:'farm',m:0.5,  l:7,   x:30, est:true, src:'AnAge：最大 30 年（圈养保守值）；散养母鸡典型 5–10 年',
+  f:'家鸡最大寿命记录达 30 年，但肉鸡出栏仅 6 周——工业化育种把生长速度推到了极限，代价是骨骼和心肺常常跟不上。'},
+
+// ---------- 灵长类 ----------
+{id:'chimp',n:'黑猩猩',  e:'🐵', c:'primate',m:9.2,l:35, x:68,   src:'AnAge：性成熟 9.2 年（♀），最大 68 年',
+  f:'黑猩猩与人类基因组相似度约 98.8%，但最大寿命只有人类的一半多一点。这个差距是衰老生物学最引人入胜的谜题之一。'},
+{id:'gorilla',n:'大猩猩',e:'🦍', c:'primate',m:7.8,l:37, x:60.1, src:'AnAge：性成熟 7.8 年（♀），最大 60.1 年（雌性 Colo）'},
+{id:'orang',n:'红毛猩猩',e:'🦧', c:'primate',m:7,  l:37, x:59,   src:'AnAge：性成熟 7 年，最大 59 年',
+  f:'红毛猩猩的生育间隔长达 8–9 年，是所有哺乳动物中最长的——这也是它们种群恢复极其缓慢的原因。'},
+{id:'baboon',n:'狒狒',   e:'🐒', c:'primate',m:4.1,l:25, x:37.5, src:'AnAge：性成熟 4.1 年（♀），最大 37.5 年'},
+{id:'macaque',n:'猕猴',  e:'🐒', c:'primate',m:3.4,l:22, x:40,   src:'AnAge：性成熟 3.4 年（♀），最大 40 年'},
+{id:'lemur',n:'环尾狐猴',e:'🦝', c:'primate',m:1.6,l:16, x:37.3, src:'AnAge：性成熟 1.6 年（♀），最大 37.3 年'},
+{id:'marmoset',n:'狨猴', e:'🐒', c:'primate',m:1.3,l:11, x:22.8, src:'AnAge：性成熟 1.3 年（♀），最大 22.8 年'},
+
+// ---------- 陆生野生 ----------
+{id:'afelephant',n:'非洲象',e:'🐘',c:'wild',m:11,l:56,x:65, src:'AnAge：性成熟 11 年；Clubb 2008：野外雌象中位寿命 56 年',
+  f:'大象一生更换 6 套臼齿，最后一套磨光后就无法进食——很多野生象的死因不是疾病或天敌，而是「牙用完了」。'},
+{id:'aselephant',n:'亚洲象',e:'🐘',c:'wild',m:11.7,l:50,x:60, src:'AnAge：性成熟 11.7 年（♀），最大 60 年'},
+{id:'giraffe',n:'长颈鹿',e:'🦒', c:'wild',m:3.5,l:22, x:39.5, src:'AnAge：性成熟 3.5 年（♀），最大 39.5 年'},
+{id:'hippo',n:'河马',    e:'🦛', c:'wild',m:3.5,l:45, x:61.2, src:'AnAge：性成熟 3.5 年，最大 61.2 年'},
+{id:'rhino',n:'白犀牛',  e:'🦏', c:'wild',m:4.5,l:40, x:45,   src:'AnAge：性成熟 4.5 年（♀），最大 45 年'},
+{id:'lion', n:'狮子',    e:'🦁', c:'wild',m:3,  l:12, x:28,   src:'AnAge：性成熟 3 年；野外 10–14 年，圈养最大 28 年',
+  f:'野生雄狮很少活过 12 岁——不是因为衰老，而是失去族群统治权后往往难以独自存活。'},
+{id:'tiger',n:'老虎',    e:'🐅', c:'wild',m:3.5,l:11, x:26.3, src:'AnAge：性成熟 3.5 年（♀），最大 26.3 年'},
+{id:'leopard',n:'豹',    e:'🐆', c:'wild',m:2.6,l:11, x:27.3, src:'AnAge：性成熟 2.6 年（♀），最大 27.3 年'},
+{id:'brownbear',n:'棕熊',e:'🐻', c:'wild',m:3.6,l:25, x:40,   src:'AnAge：性成熟 3.6 年，最大 40 年'},
+{id:'polarbear',n:'北极熊',e:'🐻‍❄️',c:'wild',m:4.8,l:18,x:43.8,src:'AnAge：性成熟 4.8 年；野外 15–20 年，圈养最大 43.8 年'},
+{id:'panda',n:'大熊猫',  e:'🐼', c:'wild',m:6,  l:20, x:36.8, src:'AnAge：性成熟 6 年，最大 36.8 年',
+  f:'大熊猫圈养寿命（约 25 年）远超野外（约 15 年）——这是保育工作最直观的成效指标之一。'},
+{id:'wolf', n:'狼',      e:'🐺', c:'wild',m:1.8,l:10, x:20.6, src:'AnAge：性成熟 1.8 年；野外约 10 年，圈养最大 20.6 年'},
+{id:'fox',  n:'赤狐',    e:'🦊', c:'wild',m:0.8,l:4,  x:21.3, src:'AnAge：性成熟 0.8 年；野外 2–5 年，圈养最大 21.3 年',
+  f:'赤狐野外平均只有 2–5 年，圈养却能到 21 年——5 倍以上的落差，说明野外死亡几乎全部来自外部风险而非衰老。'},
+{id:'kangaroo',n:'红大袋鼠',e:'🦘',c:'wild',m:1.4,l:17,x:25, src:'AnAge：性成熟 1.4 年（♀），最大 25 年'},
+{id:'koala',n:'考拉',    e:'🐨', c:'wild',m:1.8,l:12, x:22.1, src:'AnAge：性成熟 1.8 年（♀），最大 22.1 年'},
+{id:'sloth',n:'树懒',    e:'🦥', c:'wild',m:3.5,l:25, x:36.8, src:'AnAge：二趾树懒性成熟 3.5 年，最大 36.8 年',
+  f:'树懒代谢率只有同体型哺乳动物的 40–45%，消化一片叶子要两周。「慢」是它的长寿策略。'},
+{id:'squirrel',n:'松鼠', e:'🐿️', c:'wild',m:0.8,l:4,  x:14.8, src:'AnAge：红松鼠性成熟 0.8 年，最大 14.8 年'},
+{id:'opossum',n:'负鼠',  e:'🐀', c:'wild',m:0.5,l:2.5,x:6.6,  src:'AnAge：北美负鼠性成熟 0.5 年，最大 6.6 年',
+  f:'负鼠是衰老研究的经典案例：生活在无天敌岛屿上的种群，几代之后衰老速度明显变慢——证明衰老速率本身会被自然选择塑造。'},
+{id:'nmr',  n:'裸鼹鼠',  e:'🐁', c:'wild',m:0.6,l:25, x:31,   src:'AnAge：性成熟 0.6 年，最大 31 年（Buffenstein）',
+  f:'裸鼹鼠是衰老研究的圣杯：同体型小鼠只活 4 年，它能活 31 年，几乎不患癌症，且死亡风险不随年龄上升——违背了 Gompertz 死亡率定律。'},
+{id:'bat',  n:'布氏鼠耳蝠',e:'🦇',c:'wild',m:1,l:20,x:41, est:true, src:'AnAge：野外环志最大 41 年（Podlutsky 2005）；性成熟与平均寿命为估计',
+  f:'一只体重仅 7 克的蝙蝠活了 41 年。按体重推算它「应该」只活 4 年——它是所有哺乳动物中寿命/体型比的绝对冠军。'},
+
+// ---------- 海洋哺乳 ----------
+{id:'dolphin',n:'宽吻海豚',e:'🐬',c:'marine',m:7.8,l:40,x:51.6,src:'AnAge：性成熟 7.8 年（♀），最大 51.6 年'},
+{id:'orca', n:'虎鲸',    e:'🐋', c:'marine',m:10.4,l:50,x:90,  src:'AnAge：性成熟 10.4 年（♀）；野外雌性 50–80 年，最大 90 年（Foote 2008）',
+  f:'虎鲸是极少数有「绝经期」的动物之一。雌鲸 40 岁左右停止生育，却还能再活 40 年——祖母承担着传递觅食知识的角色，这是「祖母假说」的关键证据。'},
+{id:'humpback',n:'座头鲸',e:'🐋',c:'marine',m:4.5,l:48,x:95,  src:'AnAge：性成熟 4.5 年，最大 95 年'},
+{id:'bowhead',n:'弓头鲸',e:'🐋', c:'marine',m:22.5,l:150,x:211,src:'AnAge / George 1999：天冬氨酸消旋法测定最大 211 年',
+  f:'弓头鲸是已知最长寿的哺乳动物。19 世纪的石制鱼叉头曾在活体弓头鲸身上被发现——它挨了那一下之后又活了一个多世纪。'},
+{id:'sperm',n:'抹香鲸',  e:'🐳', c:'marine',m:8,  l:65, x:77,  src:'AnAge：性成熟 8 年（♀），最大 77 年（Carey & Judge 2000）'},
+{id:'seal', n:'斑海豹',  e:'🦭', c:'marine',m:3,  l:27, x:47.6,src:'AnAge：性成熟 3 年（♀），最大 47.6 年'},
+{id:'otter',n:'海獭',    e:'🦦', c:'marine',m:2.7,l:17, x:27,  src:'AnAge：性成熟 2.7 年（♀），最大 27 年'},
+{id:'dugong',n:'儒艮',   e:'🦭', c:'marine',m:9.5,l:55, x:73,  src:'AnAge：性成熟 9.5 年，最大 73 年（Nowak 1999）'},
+
+// ---------- 鸟类 ----------
+{id:'pigeon',n:'鸽子',   e:'🕊️', c:'bird',m:0.38,l:6, x:35, est:true, src:'AnAge：性成熟 140 天，最大 35 年；野化鸽典型 3–6 年'},
+{id:'macaw',n:'金刚鹦鹉',e:'🦜', c:'bird',m:4, l:22, x:33, est:true, src:'AnAge：最大 33 年（圈养常有 40–50 年报道但未获确证）',
+  f:'大型鹦鹉的寿命长到需要写进遗嘱——很多主人不得不为宠物安排「继承人」。'},
+{id:'grey', n:'非洲灰鹦鹉',e:'🦜',c:'bird',m:5, l:30, x:49.7, est:true, src:'AnAge：性成熟约 5 年，最大 49.7 年',
+  f:'非洲灰鹦鹉 Alex 掌握约 100 个单词并能进行简单推理，改变了学界对鸟类认知能力的判断。它活了 31 岁。'},
+{id:'budgie',n:'虎皮鹦鹉',e:'🦜',c:'bird',m:0.5,l:8, x:21,  src:'AnAge：性成熟 180 天，最大 21 年'},
+{id:'raven',n:'渡鸦',    e:'🐦‍⬛', c:'bird',m:3, l:13, x:69, est:true, src:'AnAge：性成熟 3 年，最大 69 年（圈养）；野外典型 10–15 年',
+  f:'渡鸦能制造和使用工具、理解因果关系、记住谁欺骗过它。它的认知测试成绩可与大猩猩比肩。'},
+{id:'sparrow',n:'麻雀',  e:'🐦', c:'bird',m:0.42,l:3, x:23,  src:'AnAge：性成熟 152 天（♀），最大 23 年（野外环志）'},
+{id:'swan', n:'疣鼻天鹅',e:'🦢', c:'bird',m:3,  l:12, x:40,  src:'AnAge：性成熟 3 年，最大 40 年（野外）'},
+{id:'ostrich',n:'鸵鸟',  e:'🦤', c:'bird',m:2.7,l:35, x:50,  src:'AnAge：性成熟 2.7 年（♀），最大 50 年'},
+{id:'penguin',n:'帝企鹅',e:'🐧', c:'bird',m:5,  l:20, x:40, est:true, src:'AnAge 无最大寿命记录；文献平均约 20 年，最大寿命为估计值'},
+{id:'albatross',n:'漂泊信天翁',e:'🕊️',c:'bird',m:10,l:30,x:50, est:true, src:'AnAge：性成熟约 10 年（♀），最大 50 年（野外）',
+  f:'名为 Wisdom 的黑背信天翁至少 70 余岁仍在产卵，是已知最年长的野生鸟类——远超本物种的记录寿命。'},
+{id:'vulture',n:'秃鹫',  e:'🦅', c:'bird',m:4,  l:25, x:41.4,src:'AnAge：欧亚兀鹫性成熟 4 年，最大 41.4 年'},
+{id:'owl',  n:'雕鸮',    e:'🦉', c:'bird',m:2,  l:20, x:68,  src:'AnAge：性成熟 2 年，最大 68 年（圈养）'},
+{id:'hummingbird',n:'蜂鸟',e:'🐦',c:'bird',m:1, l:4,  x:9.1, src:'AnAge：红玉喉蜂鸟性成熟 1 年，最大 9.1 年（野外）',
+  f:'蜂鸟心率可达每分钟 1200 次，代谢率是所有恒温动物之最。它靠夜间进入蛰伏状态压低代谢才能撑到天亮。'},
+{id:'crane',n:'丹顶鹤',  e:'🦩', c:'bird',m:3,  l:18, x:25.2,est:true, src:'AnAge：性成熟 3 年，最大 25.2 年（民间「鹤寿千年」及 70 年说法均未获确证）'},
+
+// ---------- 爬行类 ----------
+{id:'galtortoise',n:'加拉帕戈斯象龟',e:'🐢',c:'reptile',m:20,l:100,x:177,src:'AnAge：性成熟约 20 年，最大 177 年',
+  f:'达尔文 1835 年在加拉帕戈斯见到的象龟，理论上有个体活到了 20 世纪。名为 Harriet 的个体 2006 年去世，据信约 175 岁。'},
+{id:'slider',n:'巴西龟', e:'🐢', c:'reptile',m:6,l:25,x:41.3,src:'AnAge：性成熟 8 年（♀）/4 年（♂），最大 41.3 年'},
+{id:'gator',n:'美洲短吻鳄',e:'🐊',c:'reptile',m:12,l:40,x:77,src:'AnAge：性成熟 12 年，最大 77 年'},
+{id:'nilecroc',n:'尼罗鳄',e:'🐊',c:'reptile',m:19,l:40,x:56,src:'AnAge：性成熟约 19 年（♀），最大 56 年'},
+{id:'komodo',n:'科莫多巨蜥',e:'🦎',c:'reptile',m:5,l:25,x:62,est:true,src:'AnAge：性成熟 5 年，最大 62 年（数据质量存疑）'},
+{id:'python',n:'球蟒',   e:'🐍', c:'reptile',m:5,l:20,x:47.5,src:'AnAge：性成熟 5 年，最大 47.5 年'},
+{id:'gecko',n:'豹纹守宫',e:'🦎', c:'reptile',m:1.1,l:12,x:28.5,src:'AnAge：性成熟 400 天，最大 28.5 年'},
+{id:'chameleon',n:'高冠变色龙',e:'🦎',c:'reptile',m:0.4,l:5,x:8,est:true,src:'饲养资料：性成熟 4–5 月，雄 5–8 年 / 雌 4–6 年；无 AnAge 条目',
+  f:'变色龙雌性寿命明显短于雄性——产卵对身体消耗极大，这在爬行类中是常见模式。'},
+{id:'iguana',n:'绿鬣蜥', e:'🦎', c:'reptile',m:4.5,l:12,x:19.8,src:'AnAge：性成熟 4.5 年，最大 19.8 年'},
+
+// ---------- 两栖类 ----------
+{id:'bullfrog',n:'牛蛙', e:'🐸', c:'amphib',m:3.5,l:8,x:16, src:'AnAge：性成熟 3.5 年（♀）/2 年（♂），最大 16 年'},
+{id:'xenopus',n:'非洲爪蟾',e:'🐸',c:'amphib',m:0.5,l:15,x:30.3,src:'AnAge：性成熟 183 天（♀），最大 30.3 年',
+  f:'非洲爪蟾曾被用作人类妊娠检测——注射孕妇尿液会诱导它排卵。这个方法在 20 世纪中叶用了几十年。'},
+{id:'axolotl',n:'美西螈',e:'🦎', c:'amphib',m:1.5,l:12,x:21, src:'AnAge：性成熟 548 天，最大 21 年',
+  f:'美西螈终生保持幼体形态却能繁殖（幼态延续），并且能完整再生四肢、脊髓甚至部分脑组织——再生医学的头号研究对象。野外已极度濒危。'},
+{id:'giantsala',n:'日本大鲵',e:'🦎',c:'amphib',m:5,l:30,x:55,src:'AnAge：性成熟 5 年，最大 55 年'},
+
+// ---------- 鱼类 ----------
+{id:'goldfish',n:'金鱼', e:'🐠', c:'fish',m:1,l:12,x:41, est:true, src:'AnAge：最大 41 年；良好饲养典型 10–15 年',
+  f:'金鱼「记忆只有七秒」是彻底的谣言。实验证明金鱼能记住数月前的训练内容，还能分辨不同人脸。'},
+{id:'koi',  n:'锦鲤',    e:'🐟', c:'fish',m:3,l:30,x:47, est:true, src:'无独立权威条目，沿用鲤鱼 Cyprinus carpio 数据（AnAge 最大 47 年）',
+  f:'日本名为「花子」的锦鲤据称活了 226 年，靠鱼鳞年轮判定——但该结论未经现代同行评议验证，本站不采用。'},
+{id:'carp', n:'鲤鱼',    e:'🐟', c:'fish',m:3,l:25,x:47, src:'AnAge：性成熟 3 年，最大 47 年'},
+{id:'gshark',n:'格陵兰睡鲨',e:'🦈',c:'fish',m:156,l:250,x:392, sp:'extreme', est:true,
+  src:'Nielsen et al. Science 2016：眼晶状体放射性碳定年，最大 392±120 年（95.4% 区间 272–512），雌性性成熟 156±22 年',
+  f:'它要活到 150 岁左右才性成熟——今天海里游着的成年格陵兰睡鲨，出生时清朝还没灭亡。它是已知最长寿的脊椎动物。'},
+{id:'sturgeon',n:'湖鲟', e:'🐟', c:'fish',m:26,l:60,x:152,src:'AnAge：性成熟 26 年（♀），最大 152 年（野生）'},
+{id:'coelacanth',n:'腔棘鱼',e:'🐟',c:'fish',m:50,l:70,x:100,src:'Mahé et al. Current Biology 2021：最大约 100 年，性成熟 40–69 年（AnAge 旧值 48 年已过时）',
+  f:'腔棘鱼一度被认为在 6600 万年前随恐龙灭绝，1938 年在南非重新发现活体。它的妊娠期长达 5 年。'},
+{id:'clownfish',n:'小丑鱼',e:'🐠',c:'fish',m:1.5,l:12,x:30, est:true, src:'Buston 2007：野生雌鱼寿命预期约 30 年；无 AnAge 条目',
+  f:'小丑鱼群里体型最大的是雌性。雌鱼死后，最大的雄鱼会性转变成雌性接替——《海底总动员》如果尊重生物学，尼莫的爸爸会变成妈妈。'},
+{id:'zebrafish',n:'斑马鱼',e:'🐟',c:'fish',m:0.25,l:3,x:5.5,src:'AnAge：最大 5.5 年'},
+{id:'eel',  n:'欧洲鳗',  e:'🐍', c:'fish',m:12.5,l:25,x:88, sp:'semel', src:'AnAge：性成熟 12.5 年（♀），最大 88 年（圈养，未完成繁殖周期）',
+  f:'欧洲鳗一生只繁殖一次，游到马尾藻海产卵后即死亡。圈养个体因为永远等不到迁徙信号，反而能活到 88 岁。'},
+
+// ---------- 无脊椎 ----------
+{id:'octopus',n:'普通章鱼',e:'🐙',c:'invert',m:1,l:1.5,x:2, sp:'semel', src:'Animal Diversity Web：12–24 月，单次繁殖后死亡',
+  f:'雌章鱼产卵后停止进食、守护卵直至孵化然后死去。切除其视腺可让它继续进食并延长寿命——衰老在这里由一个腺体开关控制。'},
+{id:'lobster',n:'美洲螯龙虾',e:'🦞',c:'invert',m:5,l:50,x:100, est:true, src:'AnAge：最大 100 年（野生估计值）',
+  f:'龙虾常被说成「永生」，这不准确。它确实端粒酶活性终生保持、几乎不显衰老，但每次蜕壳耗能巨大，最终会死于蜕壳失败或壳病。'},
+{id:'beequeen',n:'蜂后', e:'🐝', c:'invert',m:0.04,l:3,x:8, src:'AnAge：蜂后最大 8 年',
+  f:'蜂后和工蜂基因完全相同，命运却差几十倍——唯一区别是幼虫期是否持续吃蜂王浆。这是表观遗传学最震撼的自然实验。'},
+{id:'beeworker',n:'工蜂',e:'🐝', c:'invert',m:0.058,l:0.3,x:0.9, sp:'caste', src:'AnAge：夏季工蜂 0.2–0.4 年，越冬蜂约 0.9 年；终生不育，成熟锚点采用羽化出房（21 天）'},
+{id:'antqueen',n:'蚁后', e:'🐜', c:'invert',m:0.5,l:15,x:28, src:'AnAge：黑毛蚁蚁后最大 28 年'},
+{id:'antworker',n:'工蚁',e:'🐜', c:'invert',m:0.06,l:1.5,x:2, sp:'caste', src:'AnAge：黑毛蚁工蚁 1–2 年；终生不育'},
+{id:'tarantula',n:'捕鸟蛛（雌）',e:'🕷️',c:'invert',m:10,l:25,x:40, est:true, src:'常见 20–30 年，最高报道 40 年；无 AnAge 条目',
+  f:'雌性捕鸟蛛能活 20–40 年，雄性性成熟后通常只剩 1–2 年——这是动物界最悬殊的性别寿命差之一。'},
+{id:'monarch',n:'帝王蝶',e:'🦋', c:'invert',m:0.08,l:0.15,x:0.75, sp:'gen', src:'USFWS：夏季世代 2–5 周；越冬迁徙世代 6–9 月',
+  f:'帝王蝶迁徙要跨越 4 个世代才能完成往返，没有任何一只蝴蝶走完全程。最后一代「超级世代」寿命是前几代的 8 倍。'},
+{id:'mayfly',n:'蜉蝣',   e:'🪰', c:'invert',m:1,l:1.5,x:3, sp:'gen', src:'稚虫期 1–3 年，成虫仅数小时至数天；本站按完整生命周期计算',
+  f:'「朝生暮死」只说对了一半。蜉蝣绝大部分生命是在水下作为稚虫度过的（1–3 年），成虫阶段确实只有几小时到几天，且没有口器、无法进食。'},
+{id:'roach',n:'蟑螂',    e:'🪳', c:'invert',m:0.75,l:1.2,x:2.5, src:'Animal Diversity Web：美洲大蠊雌成虫约 440 天，最大 913 天'},
+{id:'snail',n:'罗马蜗牛',e:'🐌', c:'invert',m:3,l:10,x:35, est:true, src:'常见 10–20 年，最大记录 35 年；雌雄同体'},
+{id:'quahog',n:'北极蛤', e:'🦪', c:'invert',m:12.5,l:200,x:507, sp:'extreme', est:true,
+  src:'Butler et al. 2013：个体「Ming」经生长纹层定年确认 507 岁，是已确认最长寿的非群体动物个体',
+  f:'那只叫 Ming 的蛤出生于 1499 年，明朝弘治年间。研究者为了数它的年轮把它打开了——然后才发现自己杀死了地球上已知最年长的动物。'},
+{id:'jellyfish',n:'灯塔水母',e:'🎐',c:'invert',m:0,l:0,x:0, sp:'immortal',
+  src:'Piraino et al. Biol Bull 1996：水母型可转分化回水螅型，生命周期可逆',
+  f:'它遇到饥饿、受伤或环境胁迫时，会把自己「倒带」回幼年的水螅型态重新长大，理论上可无限循环。它没有「最大寿命」这个概念——所以本站算不了它。'},
+];
+
+/* ---------- 官方对照表 ---------- */
+// AKC 体型分级：[小型<9kg, 中型9-23, 大型23-45, 超大型>45]，索引=犬龄(1..16)
+const AKC = {
+ 1:[15,15,15,12], 2:[24,24,24,22], 3:[28,28,28,31], 4:[32,32,32,38],
+ 5:[36,36,36,45], 6:[40,42,45,49], 7:[44,47,50,56], 8:[48,51,55,64],
+ 9:[52,56,61,71], 10:[56,60,66,79], 11:[60,65,72,86], 12:[64,69,77,93],
+ 13:[68,74,82,100],14:[72,78,88,107],15:[76,83,93,114],16:[80,87,99,121]
+};
+// AAFP-AAHA 2010 猫龄对照（<2岁细分）
+const CATTBL = [[0,0],[0.083,0.5],[0.25,3],[0.33,7],[0.5,10],[0.583,12],[1,15],[1.5,21],[2,24]];
+
+/* ---------- 人类锚点 ---------- */
+const H_MAT = 13, H_MED = 80, H_MAX = 122;
+
+/* ============================================================
+   核心换算
+   ============================================================ */
+function lerp(x, x0, x1, y0, y1){
+  if (x1 === x0) return y0;
+  return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+}
+
+// 动物年龄 -> 人类等价年龄（通用锚点法）
+function anchorToHuman(s, a){
+  if (a <= 0) return 0;
+  if (a <= s.m)  return lerp(a, 0,   s.m, 0,     H_MAT);
+  if (a <= s.l)  return lerp(a, s.m, s.l, H_MAT, H_MED);
+  if (a <= s.x)  return lerp(a, s.l, s.x, H_MED, H_MAX);
+  // 超出最大记录，沿末段斜率外推
+  const k = (H_MAX - H_MED) / (s.x - s.l);
+  return H_MAX + (a - s.x) * k;
+}
+
+// 犬：AKC 表
+function dogAKC(a, sz){
+  if (a <= 0) return 0;
+  if (a < 1){
+    const pts = [[0,0],[0.25,5],[0.5,10],[0.75,13],[1,AKC[1][sz]]];
+    for (let i=1;i<pts.length;i++){
+      if (a <= pts[i][0]) return lerp(a, pts[i-1][0], pts[i][0], pts[i-1][1], pts[i][1]);
+    }
+  }
+  if (a >= 16){
+    const k = AKC[16][sz] - AKC[15][sz];
+    return AKC[16][sz] + (a - 16) * k;
+  }
+  const lo = Math.floor(a), hi = lo + 1;
+  return lerp(a, lo, hi, AKC[lo][sz], AKC[hi][sz]);
+}
+// 犬：表观遗传时钟
+function dogEpi(a){
+  if (a < 0.08) return 0;
+  return 16 * Math.log(a) + 31;
+}
+// 猫：AAFP 2010
+function catAAFP(a){
+  if (a <= 0) return 0;
+  if (a >= 2) return 24 + 4 * (a - 2);
+  for (let i=1;i<CATTBL.length;i++){
+    if (a <= CATTBL[i][0]) return lerp(a, CATTBL[i-1][0], CATTBL[i][0], CATTBL[i-1][1], CATTBL[i][1]);
+  }
+  return 24;
+}
+
+// 统一入口
+function toHuman(s, a, sz){
+  if (s.sp === 'immortal') return null;
+  if (s.sp === 'dog') return dogAKC(a, sz ?? 0);
+  if (s.sp === 'cat') return catAAFP(a);
+  return anchorToHuman(s, a);
+}
+// 当前阶段的瞬时换算倍率：动物过 1 年 ≈ 人类过多少年
+function rateAt(s, a, sz){
+  if (s.sp === 'immortal') return null;
+  const e = Math.max(a * 1e-3, 1e-5);
+  const lo = Math.max(a - e, 0), hi = a + e;
+  const r = (toHuman(s, hi, sz) - toHuman(s, lo, sz)) / (hi - lo);
+  return isFinite(r) ? r : null;
+}
+
+// 逆运算：人类年龄 -> 动物年龄（二分，函数单调递增）
+function toAnimal(s, h, sz){
+  if (s.sp === 'immortal') return null;
+  if (h <= 0) return 0;
+  let lo = 0, hi = Math.max(s.x * 3, 10);
+  for (let i=0;i<80;i++){
+    const mid = (lo + hi) / 2;
+    (toHuman(s, mid, sz) < h) ? lo = mid : hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+// 生命阶段（基于人类等价年龄）
+const STAGES = [
+  {max:13,  n:'幼年期',  c:'#5ed9a0', d:'尚未性成熟，处于快速发育阶段'},
+  {max:20,  n:'青春期',  c:'#8fd96b', d:'刚获得繁殖能力，身体仍在成型'},
+  {max:40,  n:'青年期',  c:'#f2c14e', d:'体能与繁殖力的巅峰阶段'},
+  {max:60,  n:'壮年期',  c:'#f0a24b', d:'机能开始缓慢下降，但仍处于稳定期'},
+  {max:80,  n:'老年期',  c:'#f2705c', d:'已达到该物种的典型寿命区间'},
+  {max:999, n:'超高龄',  c:'#c78bd9', d:'远超同类平均水平，属于极少数长寿个体'},
+];
+function stageOf(h){ return STAGES.find(s => h < s.max) || STAGES[STAGES.length-1]; }
+
+function fmt(n, p){
+  if (n === null || !isFinite(n)) return '—';
+  if (p === undefined) p = (Math.abs(n) < 10 ? 1 : 0);
+  return n.toFixed(p).replace(/\.0$/,'');
+}
+// 小年龄转人性化描述
+function humanizeAge(y){
+  if (y >= 1) return fmt(y,1) + ' 岁';
+  const mo = y * 12;
+  if (mo >= 1) return fmt(mo,1) + ' 个月';
+  return fmt(y*365, 0) + ' 天';
+}
+
+/* ============================================================
+   状态与渲染
+   ============================================================ */
+const S = { mode:'a2h', spId:'dog', age:3, hAge:30, sz:0, cat:'all', q:'', cmpQ:'' };
+const $ = id => document.getElementById(id);
+const cur = () => SP.find(s => s.id === S.spId);
+
+/* ----- 物种列表 ----- */
+function renderCats(){
+  const keys = ['all', ...Object.keys(CATS)];
+  $('cats').innerHTML = keys.map(k =>
+    `<div class="cat ${S.cat===k?'on':''}" data-c="${k}">${k==='all'?'全部 '+SP.length:CATS[k].n}</div>`
+  ).join('');
+  $('cats').querySelectorAll('.cat').forEach(el => el.onclick = () => { S.cat = el.dataset.c; renderCats(); renderList(); });
+}
+function renderList(){
+  const list = SP.filter(s =>
+    (S.cat === 'all' || s.c === S.cat) &&
+    (!S.q || s.n.includes(S.q) || s.id.includes(S.q.toLowerCase()))
+  );
+  $('splist').innerHTML = list.length ? list.map(s =>
+    `<button class="sp ${s.id===S.spId?'on':''}" data-id="${s.id}"><span class="e">${s.e}</span><span class="n">${s.n}</span></button>`
+  ).join('') : `<div style="color:var(--tx3);font-size:13px;padding:16px">没有匹配的物种</div>`;
+  $('splist').querySelectorAll('.sp').forEach(el => el.onclick = () => {
+    const prev = S.spId; S.spId = el.dataset.id; onSpeciesChange(prev);
+  });
+}
+
+/* ----- 物种元信息 ----- */
+function renderMeta(){
+  const s = cur();
+  const official = (s.sp === 'dog' || s.sp === 'cat');
+  let rows = '';
+  if (s.sp !== 'immortal'){
+    rows = `
+    <table style="margin-top:4px">
+      <tr><td style="color:var(--tx3);width:38%">性成熟年龄</td><td class="mono">${humanizeAge(s.m)}</td></tr>
+      <tr><td style="color:var(--tx3)">平均寿命</td><td class="mono">${fmt(s.l,1)} 岁 ${s.est?'<span class="tag est">估算</span>':''}</td></tr>
+      <tr><td style="color:var(--tx3)">最大记录寿命</td><td class="mono">${fmt(s.x,1)} 岁</td></tr>
+      <tr><td style="color:var(--tx3)">换算依据</td><td>${official?'<span class="tag off">官方对照表</span>':'<span class="tag">锚点插值法</span>'}</td></tr>
+    </table>`;
+  }
+  $('spMeta').innerHTML = `<div class="panel-t" style="margin-bottom:6px">${s.n} · 生理参数</div>${rows}
+    <div class="note info" style="font-size:12.5px">${s.src}</div>`;
+}
+
+/* ----- 结果卡 ----- */
+function renderResult(){
+  const s = cur();
+  if (s.sp === 'immortal'){
+    $('result').innerHTML = `
+      <div class="rhead"><span class="emo">${s.e}</span><span>${s.n} · Turritopsis dohrnii</span></div>
+      <div class="big" style="color:var(--tx2);font-size:40px">不适用年龄换算</div>
+      <div class="rdesc">${s.f}</div>
+      <div class="note">这不是数据缺失，而是<b>这个物种确实没有「年龄」这个概念</b>。锚点法依赖性成熟、平均寿命、最大寿命三个点，而它三个都不存在。</div>`;
+    $('dualWrap').classList.add('hide');
+    return;
+  }
+
+  const a = (S.mode === 'h2a') ? toAnimal(s, S.hAge, S.sz) : S.age;
+  const h = (S.mode === 'h2a') ? S.hAge : toHuman(s, a, S.sz);
+  const st = stageOf(h);
+  const prog = Math.min(a / s.l * 100, 100);
+  const over = a > s.x;
+
+  // 生命进度条分段
+  const segW = [
+    [s.m / s.x * 100, STAGES[0].c],
+    [(s.l - s.m) / s.x * 100, STAGES[2].c],
+    [(s.x - s.l) / s.x * 100, STAGES[4].c],
+  ];
+  const bar = segW.map(([w,c]) => `<div class="lb-seg" style="width:${w}%;background:${c};opacity:.45"></div>`).join('');
+  const markPct = Math.min(a / s.x * 100, 100);
+
+  const mainLabel = (S.mode === 'h2a')
+    ? `一个 ${fmt(S.hAge,0)} 岁的人，相当于 ${s.n}`
+    : `${humanizeAge(a)} 的${s.n}，相当于人类`;
+  const mainVal = (S.mode === 'h2a') ? humanizeAge(a) : fmt(h,1) + ' <small>岁</small>';
+
+  // 换算对照条：让「输入 → 输出」和倍率永远显式可见
+  const rate = rateAt(s, a, S.sz);
+  const rTxt = (rate === null) ? '—'
+    : (rate >= 100 ? '×' + fmt(rate,0) : (rate >= 1 ? '×' + fmt(rate,2) : '×' + rate.toFixed(rate<0.1?3:2)));
+  const strip = `
+    <div class="convstrip">
+      <div class="cs-side">
+        <span class="cs-e">${s.e}</span>
+        <div><div class="cs-v" style="color:var(--animal)">${humanizeAge(a).replace(/ (岁|个月|天)/,'<small>$1</small>')}</div>
+        <div class="cs-l">${s.n}实际年龄</div></div>
+      </div>
+      <div class="cs-arrow">
+        <span class="cs-ar">──▶</span>
+        <span class="cs-rate">${rTxt}</span>
+        <span class="cs-rl">当前阶段倍率</span>
+      </div>
+      <div class="cs-side hi">
+        <span class="cs-e">🧑</span>
+        <div><div class="cs-v" style="color:var(--human)">${fmt(h,1)}<small>岁</small></div>
+        <div class="cs-l">人类等价年龄</div></div>
+      </div>
+    </div>`;
+
+  // 仅当「输入与结果两个数字真的接近」时才解释，避免被误认为没换算
+  let sameNote = '';
+  if (a > 0 && h > 0 && Math.abs(h - a) / Math.max(h, a) < 0.22 && rate !== null){
+    sameNote = `<div class="note samenote">两个数字接近，<b>不是因为没有换算</b>。${s.n}要到 <b>${humanizeAge(s.m)}</b> 才性成熟（对应人类 13 岁），所以在这个阶段它的衰老节奏恰好和人类相仿——每 1 年约等于人类 ${fmt(rate,2)} 年。把年龄往大调，差距立刻会拉开。</div>`;
+  }
+
+  $('result').innerHTML = `
+    <div class="rhead">
+      <span class="emo">${s.e}</span><span>${mainLabel}</span>
+      ${(s.sp==='dog')?`<span class="tag off">AKC ${['小型','中型','大型','超大型'][S.sz]}犬</span>`:''}
+      ${(s.sp==='cat')?`<span class="tag off">AAFP 2010</span>`:''}
+      ${s.est?`<span class="tag est">平均寿命为估算</span>`:''}
+    </div>
+    <div class="big">${mainVal}</div>
+    ${strip}
+    <div class="rdesc" style="margin-top:16px">
+      <span style="color:var(--tx3)">此刻每过 <b style="color:var(--tx2)">1 ${s.n}年</b>，相当于人类衰老 <b style="color:var(--animal)">${rate===null?'—':fmt(rate,2)} 年</b>。</span><br>
+      <span class="stagechip" style="background:${st.c}22;color:${st.c};border:1px solid ${st.c}44">${st.n}</span>
+      &nbsp;${st.d}。已走过该物种平均寿命的 <b>${fmt(prog,0)}%</b>。
+      ${over?'<br><span style="color:var(--warn)">⚠ 已超出该物种有记录的最大寿命，换算结果为外推值。</span>':''}
+    </div>
+    <div class="lifebar">
+      <div class="lb-track" style="position:relative">${bar}
+        <div style="position:absolute;left:${markPct}%;top:-4px;width:3px;height:19px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.7);transform:translateX(-50%)"></div>
+      </div>
+      <div class="lb-marks">
+        <span>出生</span>
+        <span>性成熟 ${humanizeAge(s.m)}</span>
+        <span>平均寿命 ${fmt(s.l,0)}岁</span>
+        <span>最长 ${fmt(s.x,0)}岁</span>
+      </div>
+    </div>
+    ${sameNote}`;
+
+  renderDual(s, a);
+}
+
+/* ----- 犬猫双口径 ----- */
+function renderDual(s, a){
+  if (s.sp !== 'dog'){ $('dualWrap').classList.add('hide'); return; }
+  $('dualWrap').classList.remove('hide');
+  const akc = dogAKC(a, S.sz), epi = dogEpi(a);
+  const diff = epi - akc;
+  $('dual').innerHTML = `
+    <div class="track">
+      <h4>AKC 体型分级表</h4>
+      <div class="m">美国犬业俱乐部 / AVMA · 临床功能口径 · 区分体型</div>
+      <div class="v" style="color:var(--animal)">${fmt(akc,1)} <span style="font-size:.45em;color:var(--tx3)">岁</span></div>
+    </div>
+    <div class="track">
+      <h4>DNA 甲基化表观遗传时钟</h4>
+      <div class="m">Wang et al. Cell Systems 2020 · 分子衰老口径 · 不区分体型</div>
+      <div class="v" style="color:var(--human)">${fmt(epi,1)} <span style="font-size:.45em;color:var(--tx3)">岁</span></div>
+    </div>`;
+  $('dualNote').innerHTML = `<div class="note">两者相差 <b>${fmt(Math.abs(diff),1)} 岁</b>（${diff>0?'表观遗传时钟更老':'AKC 表更老'}）。这不是谁算错了——<b>它们测的是不同的东西</b>。表观遗传时钟读取的是细胞层面的分子衰老程度，AKC 表反映的是临床功能状态和疾病风险窗口。日常健康管理看 AKC，理解衰老生物学看甲基化。<br><span style="color:var(--tx3);font-size:12.5px">注：甲基化公式仅基于 104 只黄色拉布拉多拟合，不含体型变量，会给吉娃娃和大丹犬相同结果。</span></div>`;
+}
+
+/* ----- 曲线图 ----- */
+function renderChart(){
+  const s = cur();
+  const svg = $('chart');
+  if (s.sp === 'immortal'){
+    svg.innerHTML = `<text x="450" y="190" fill="#69738c" font-size="16" text-anchor="middle">该物种生命周期可逆，无法绘制年龄映射曲线</text>`;
+    $('legend').innerHTML = ''; $('chartSub').textContent = '';
+    return;
+  }
+  const W=900,H=380,pl=56,pr=24,pt=22,pb=48;
+  const iw=W-pl-pr, ih=H-pt-pb;
+  const xMax = s.x * 1.05;
+  const yMax = Math.max(140, toHuman(s, xMax, S.sz) * 1.05);
+  const X = v => pl + v / xMax * iw;
+  const Y = v => pt + ih - v / yMax * ih;
+
+  // 网格
+  let g = '';
+  const yStep = yMax > 300 ? 100 : (yMax > 150 ? 40 : 20);
+  for (let v=0; v<=yMax; v+=yStep){
+    g += `<line x1="${pl}" y1="${Y(v)}" x2="${W-pr}" y2="${Y(v)}" stroke="#252b38" stroke-width="1"/>
+          <text x="${pl-9}" y="${Y(v)+4}" fill="#69738c" font-size="11" text-anchor="end">${v}</text>`;
+  }
+  const xStep = niceStep(xMax);
+  for (let v=0; v<=xMax; v+=xStep){
+    g += `<line x1="${X(v)}" y1="${pt}" x2="${X(v)}" y2="${pt+ih}" stroke="#252b38" stroke-width="1"/>
+          <text x="${X(v)}" y="${pt+ih+20}" fill="#69738c" font-size="11" text-anchor="middle">${fmt(v,0)}</text>`;
+  }
+
+  // 主曲线
+  const N=200; let d='';
+  for (let i=0;i<=N;i++){
+    const a = xMax * i / N;
+    const h = toHuman(s, a, S.sz);
+    d += (i?'L':'M') + X(a).toFixed(1) + ' ' + Y(h).toFixed(1) + ' ';
+  }
+  // 参考线：人类自身（1:1）
+  let d2 = `M${X(0)} ${Y(0)} L${X(Math.min(xMax,yMax))} ${Y(Math.min(xMax,yMax))}`;
+
+  // 犬类第二条曲线
+  let d3 = '';
+  if (s.sp === 'dog'){
+    for (let i=1;i<=N;i++){
+      const a = xMax*i/N; if (a < 0.1) continue;
+      const h = dogEpi(a);
+      d3 += (d3?'L':'M') + X(a).toFixed(1) + ' ' + Y(h).toFixed(1) + ' ';
+    }
+  }
+
+  // 锚点
+  let pts = '';
+  if (!s.sp || s.sp === 'extreme' || s.sp === 'semel' || s.sp === 'caste' || s.sp === 'gen'){
+    [[s.m,H_MAT,'性成熟'],[s.l,H_MED,'平均寿命'],[s.x,H_MAX,'最长记录']].forEach(([ax,hy,lab])=>{
+      pts += `<circle cx="${X(ax)}" cy="${Y(hy)}" r="4.5" fill="#0b0d12" stroke="#f0a24b" stroke-width="2"/>
+              <text x="${X(ax)}" y="${Y(hy)-11}" fill="#9aa4bb" font-size="10.5" text-anchor="middle">${lab}</text>`;
+    });
+  }
+
+  // 当前点
+  const a0 = (S.mode==='h2a') ? toAnimal(s, S.hAge, S.sz) : S.age;
+  const h0 = toHuman(s, a0, S.sz);
+  const cx = X(Math.min(a0,xMax)), cy = Y(Math.min(h0,yMax));
+  const marker = `
+    <line x1="${cx}" y1="${pt}" x2="${cx}" y2="${pt+ih}" stroke="#4fc3f7" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>
+    <line x1="${pl}" y1="${cy}" x2="${W-pr}" y2="${cy}" stroke="#4fc3f7" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>
+    <circle cx="${cx}" cy="${cy}" r="7" fill="#4fc3f7" opacity=".22"/>
+    <circle cx="${cx}" cy="${cy}" r="4" fill="#4fc3f7" stroke="#0b0d12" stroke-width="1.5"/>`;
+
+  svg.innerHTML = `
+    ${g}
+    <path d="${d2}" stroke="#323a4c" stroke-width="1.5" fill="none" stroke-dasharray="5 5"/>
+    ${d3?`<path d="${d3}" stroke="#4fc3f7" stroke-width="2" fill="none" opacity=".8"/>`:''}
+    <path d="${d}" stroke="#f0a24b" stroke-width="2.6" fill="none" stroke-linejoin="round"/>
+    ${pts}${marker}
+    <text x="${pl+iw/2}" y="${H-6}" fill="#69738c" font-size="11.5" text-anchor="middle">${s.n}实际年龄（岁）</text>
+    <text x="14" y="${pt+ih/2}" fill="#69738c" font-size="11.5" text-anchor="middle" transform="rotate(-90 14 ${pt+ih/2})">人类等价年龄（岁）</text>`;
+
+  $('legend').innerHTML = `
+    <span><i style="background:#f0a24b"></i>${s.n} → 人类等价年龄</span>
+    ${s.sp==='dog'?'<span><i style="background:#4fc3f7"></i>表观遗传时钟（Cell Systems 2020）</span>':''}
+    <span><i style="background:#323a4c"></i>1:1 参考线（人类自身）</span>`;
+  $('chartSub').textContent = `曲线越陡，说明该阶段衰老越快。折点即为生理锚点所在。`;
+}
+function niceStep(m){
+  const raw = m/8, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const n = raw/mag;
+  return (n<=1?1:n<=2?2:n<=5?5:10)*mag;
+}
+
+/* ----- 跨物种对照 ----- */
+function renderCompare(){
+  const s = cur();
+  const a0 = (S.mode==='h2a') ? toAnimal(s, S.hAge, S.sz) : S.age;
+  const h0 = (S.mode==='h2a') ? S.hAge : toHuman(s, a0, S.sz);
+  if (h0 === null){ $('cmpgrid').innerHTML=''; $('cmpSub').textContent=''; return; }
+
+  $('cmpSub').textContent = `以「人类 ${fmt(h0,1)} 岁」为基准，各物种处于对应生命位置时的实际年龄`;
+
+  const items = SP.filter(x => x.sp !== 'immortal' && (!S.cmpQ || x.n.includes(S.cmpQ)));
+  // 按类别分组排序
+  const order = Object.keys(CATS);
+  items.sort((p,q)=> order.indexOf(p.c) - order.indexOf(q.c));
+
+  $('cmpgrid').innerHTML = items.map(x => {
+    const a = toAnimal(x, h0, x.id==='dog'?S.sz:0);
+    const over = a > x.x;
+    return `<div class="cmpcard ${x.id===S.spId?'self':''}">
+      <div class="top"><span class="e">${x.e}</span><span>${x.n}</span></div>
+      <div class="v">${humanizeAge(a).replace(/ (岁|个月|天)/,'<small>$1</small>')}</div>
+      <div class="x" style="${over?'color:var(--warn)':''}">${over?'超出最长记录':'平均寿命 '+fmt(x.l,0)+' 岁'}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ----- 趣味事实 ----- */
+function renderFact(){
+  const s = cur();
+  $('factBox').innerHTML = s.f
+    ? `<div class="fact"><span class="i">💡</span><span class="t"><b>关于${s.n}</b> · ${s.f}</span></div>` : '';
+}
+
+/* ============================================================
+   交互
+   ============================================================ */
+function syncSlider(){
+  const s = cur();
+  if (S.mode === 'h2a'){
+    $('slider').min = 0; $('slider').max = 122; $('slider').step = 1;
+    $('slider').value = S.hAge;
+    $('ageVal').textContent = fmt(S.hAge,0);
+    $('ageUnit').textContent = '岁（人类）';
+    $('numIn').value = fmt(S.hAge,1);
+    $('rMid').textContent = '61'; $('rMax').textContent = '122';
+    $('slider').style.setProperty('--p', (S.hAge/122*100)+'%');
+  } else {
+    const mx = s.sp==='immortal' ? 10 : Math.ceil(s.x);
+    const step = mx > 60 ? 1 : (mx > 12 ? 0.5 : (mx>3?0.1:0.01));
+    $('slider').min = 0; $('slider').max = mx; $('slider').step = step;
+    $('slider').value = Math.min(S.age, mx);
+    $('ageVal').textContent = S.age >= 1 ? fmt(S.age,1) : humanizeAge(S.age).replace(/ .*/,'');
+    $('ageUnit').textContent = S.age >= 1 ? '岁' : humanizeAge(S.age).replace(/^[\d.]+ /,'');
+    $('numIn').value = fmt(S.age,2);
+    $('rMid').textContent = fmt(mx/2,0); $('rMax').textContent = mx;
+    $('slider').style.setProperty('--p', (S.age/mx*100)+'%');
+  }
+}
+function renderAll(){ renderMeta(); renderResult(); renderChart(); renderCompare(); renderFact(); syncSlider(); }
+
+function onSpeciesChange(prevId){
+  const s = cur();
+  $('dogSize').classList.toggle('hide', s.sp !== 'dog');
+
+  // 切换物种时保留「生命位置」而非原始数字。
+  // 否则 3 岁的狗切到大象还是 3 岁 —— 那只是头幼崽，换算结果自然和 3 接近，
+  // 看上去就像没换算。保留人类等价年龄，切过去才是同一生命阶段的对照。
+  if (prevId && prevId !== s.id && S.mode !== 'h2a'){
+    const prev = SP.find(x => x.id === prevId);
+    if (prev && prev.sp !== 'immortal' && s.sp !== 'immortal'){
+      const h = toHuman(prev, S.age, S.sz);
+      if (h !== null && isFinite(h)){
+        const mapped = toAnimal(s, h, S.sz);
+        if (isFinite(mapped) && mapped > 0) S.age = Math.min(mapped, s.x * 1.2);
+      }
+    }
+  }
+  if (!(S.age > 0)) S.age = s.l * 0.3;
+  if (S.age > s.x * 1.2) S.age = s.l;
+
+  renderList(); renderAll();
+}
+
+// mode tabs
+document.querySelectorAll('.mode').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  S.mode = b.dataset.mode;
+  const cross = S.mode === 'cross';
+  $('inputTitle').textContent = S.mode==='h2a' ? '输入人类年龄' : '输入年龄';
+  $('pickerTitle').textContent = S.mode==='h2a' ? '换算到哪个物种' : (cross?'选择基准物种':'选择物种');
+  $('unitSel').classList.toggle('hide', S.mode==='h2a');
+  renderAll();
+  if (cross) document.getElementById('cmpgrid').scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+// slider
+$('slider').oninput = e => {
+  const v = parseFloat(e.target.value);
+  if (S.mode === 'h2a') S.hAge = v; else S.age = v;
+  renderAll();
+};
+// number input
+$('numIn').oninput = e => {
+  let v = parseFloat(e.target.value); if (isNaN(v) || v < 0) return;
+  if (S.mode === 'h2a'){ S.hAge = v; }
+  else {
+    const u = $('unitSel').value;
+    S.age = u==='y' ? v : (u==='m' ? v/12 : v/365);
+  }
+  renderMeta(); renderResult(); renderChart(); renderCompare(); renderFact();
+  const s = cur(), mx = Math.ceil(s.x);
+  $('slider').value = S.mode==='h2a' ? S.hAge : Math.min(S.age, mx);
+  $('ageVal').textContent = S.mode==='h2a' ? fmt(S.hAge,0) : (S.age>=1?fmt(S.age,1):humanizeAge(S.age).replace(/ .*/,''));
+  $('ageUnit').textContent = S.mode==='h2a' ? '岁（人类）' : (S.age>=1?'岁':humanizeAge(S.age).replace(/^[\d.]+ /,''));
+};
+$('unitSel').onchange = () => $('numIn').dispatchEvent(new Event('input'));
+
+// dog size
+document.querySelectorAll('.szbtn').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.szbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); S.sz = +b.dataset.sz; renderAll();
+});
+
+// search
+$('search').oninput = e => { S.q = e.target.value.trim(); renderList(); };
+$('cmpSearch').oninput = e => { S.cmpQ = e.target.value.trim(); renderCompare(); };
+
+// init
+renderCats(); renderList(); onSpeciesChange();
+</script>
+</body>
+</html>
