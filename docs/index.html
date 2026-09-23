@@ -1,152 +1,132 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#080b12">
-  <meta name="description" content="repo-auditor — CochraneK repository audit and remediation control plane.">
-  <title>repo-auditor · Audit Terminal</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f3f1ea">
+  <meta name="description" content="repo-auditor — a calm repository quality and remediation control center.">
+  <title>repo-auditor · Repository Control Center</title>
   <link rel="stylesheet" href="./styles.css">
-  <style>html{overflow-wrap:anywhere}</style>
 </head>
 <body>
-  <div id="loading" class="loading-card"><span class="spinner"></span><strong>正在建立公开审计视图…</strong></div>
-  <div id="error" class="error-card hidden"></div>
+  <div id="loading" class="state-card"><span class="spinner"></span><strong>Loading public repository state…</strong></div>
+  <div id="error" class="state-card error hidden"></div>
 
-  <div id="app" class="app-shell hidden">
-    <aside id="sidebar" class="sidebar" aria-label="审计导航">
-      <div class="brand">
-        <span class="brand-mark">RA</span>
-        <div><strong>repo-auditor</strong><span>Audit terminal</span></div>
+  <div id="app" class="app hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="identity">
+        <span class="avatar">RA</span>
+        <div><strong>repo-auditor</strong><span>Repository control center</span></div>
       </div>
 
-      <nav class="nav">
-        <a class="nav-item active" href="#overview" data-section="overview"><span>⌂</span>Overview</a>
-        <a class="nav-item" href="#focus" data-section="focus"><span>⌁</span>Focus</a>
-        <a class="nav-item" href="#attention" data-section="attention"><span>!</span>Attention</a>
-        <a class="nav-item" href="#audit-actions" data-section="audit-actions"><span>◇</span>Audit actions</a>
-        <a class="nav-item" href="#priority" data-section="priority"><span>≋</span>Priority board</a>
+      <nav class="nav" aria-label="Repository navigation">
+        <a class="nav-item is-active" href="#overview" data-section="overview"><span>◉</span>Overview</a>
         <a class="nav-item" href="#repositories" data-section="repositories"><span>□</span>Repositories</a>
+        <a class="nav-item" href="#audits" data-section="audits"><span>◇</span>Audits</a>
+        <a class="nav-item" href="#showcases" data-section="showcases"><span>↗</span>Showcases</a>
       </nav>
 
       <div class="sidebar-spacer"></div>
       <div class="privacy-note">
-        <span class="privacy-icon">●</span>
-        <div><strong>Private-safe publication</strong><p>私有仓库可参与授权审计；公开 Page 不发布其名称、URL、SHA、备注或具体 findings。</p></div>
+        <i></i>
+        <div><strong>Public-safe surface</strong><span>Private repository names, URLs, SHAs and findings stay out of this Page.</span></div>
       </div>
       <div class="sidebar-links">
-        <a href="./showcase/">Public showcases ↗</a>
-        <a href="https://github.com/CochraneK/repo-auditor" target="_blank" rel="noreferrer">Open control repository ↗</a>
-        <a href="https://github.com/CochraneK/repo-auditor/tree/main/audits" target="_blank" rel="noreferrer">Structured audits ↗</a>
-        <a href="https://cochranek.github.io/ARIS4C/" target="_blank" rel="noreferrer">Sibling · ARIS4C Research Bridge ↗</a>
+        <a href="https://github.com/CochraneK/repo-auditor" target="_blank" rel="noreferrer">Source ↗</a>
+        <a href="https://cochranek.github.io/ARIS4C/" target="_blank" rel="noreferrer">ARIS4C ↗</a>
       </div>
     </aside>
 
-    <section class="main-shell">
+    <section class="workspace">
       <header class="topbar">
-        <div class="topbar-title"><span class="status-dot"></span><span id="snapshotText">Public audit snapshot</span></div>
+        <div class="breadcrumbs"><span>Repository portfolio</span><span>/</span><strong id="currentView">Overview</strong></div>
         <div class="topbar-actions">
-          <button id="commandButton" class="command-button" type="button"><span>⌕</span>Find repository <kbd>/</kbd></button>
-          <button id="themeToggle" class="icon-button" type="button" aria-label="切换主题">◐</button>
-          <button id="sidebarToggle" class="icon-button mobile-only" type="button" aria-label="切换导航">☰</button>
+          <button id="findButton" class="find-button" type="button"><span>⌕</span><span>Find repository</span><kbd>/</kbd></button>
+          <button id="themeToggle" class="icon-button" type="button" aria-label="Toggle theme">◐</button>
+          <button id="sidebarToggle" class="icon-button mobile-only" type="button" aria-label="Toggle navigation">☰</button>
         </div>
       </header>
 
-      <main>
+      <main class="content">
         <section id="overview" class="page-section hero-section">
           <div class="hero">
-            <div class="hero-copy">
-              <div class="hero-kicker"><span class="live-pill">EVIDENCE CONTROL PLANE</span><span>Audit → Fix → Re-audit</span></div>
-              <h1>Repository quality, <span>without collapsing it to one score.</span></h1>
-              <p>Priority answers what deserves time now. Quality dimensions answer how mature a repository is. Findings, remediation classes and freshness show what evidence-backed action comes next.</p>
-              <div class="hero-actions">
-                <a class="button primary" href="#audit-actions">Review audit actions</a>
-                <a class="button secondary" href="#repositories">Browse repositories</a>
-              </div>
+            <p class="eyebrow">RA · REPOSITORY CONTROL</p>
+            <h1>Repository quality,<br><span>kept visible.</span></h1>
+            <p class="hero-copy">Audit repositories, surface meaningful issues, and keep remediation traceable — without turning every signal into another dashboard.</p>
+            <div class="hero-actions">
+              <a class="button primary" href="#repositories">Browse repositories</a>
+              <a class="button" href="#audits">Review audits</a>
             </div>
-            <aside id="heroFocus" class="hero-focus" aria-label="当前最高优先级仓库"></aside>
           </div>
 
-          <div class="metrics-grid">
-            <article class="metric-card"><span class="metric-label">Public repositories</span><strong id="totalCount">0</strong></article>
-            <article class="metric-card"><span class="metric-label">P0 · Now</span><strong id="nowCount">0</strong></article>
-            <article class="metric-card"><span class="metric-label">Continue</span><strong id="continueCount">0</strong></article>
-            <article class="metric-card"><span class="metric-label">Don't touch</span><strong id="stopCount">0</strong></article>
-            <article class="metric-card highlight"><span class="metric-label">Average priority</span><strong id="avgScore">0</strong><small>Priority ≠ quality</small></article>
+          <div class="metrics" aria-label="Portfolio summary">
+            <article><strong id="repoCount">—</strong><span>repositories</span></article>
+            <article><strong id="attentionCount">—</strong><span>need attention</span></article>
+            <article><strong id="freshAuditCount">—</strong><span>fresh audits</span></article>
+            <article><strong id="showcaseCount">—</strong><span>showcases</span></article>
           </div>
 
-          <div id="aiReadinessStrip" class="ai-readiness-strip" aria-label="AI readiness aggregate"></div>
-
-          <div class="overview-grid">
-            <section class="panel">
-              <div class="panel-head"><div><div class="section-kicker">PRIORITY SHAPE</div><h2>Portfolio distribution</h2></div></div>
-              <div id="priorityDistribution" class="distribution"></div>
-            </section>
-            <section class="panel">
-              <div class="panel-head"><div><div class="section-kicker">HEARTBEAT</div><h2>Recent activity</h2></div></div>
-              <div id="recentActivity" class="recent-list"></div>
-            </section>
-          </div>
-        </section>
-
-        <section id="focus" class="page-section">
-          <div class="section-header"><div><div class="section-kicker">FOCUS</div><h2>What deserves attention now</h2><p class="section-note">优先级是投入时序，不是仓库质量。</p></div></div>
-          <div id="focusGrid" class="focus-grid"></div>
-        </section>
-
-        <section id="attention" class="page-section">
-          <div class="section-header"><div><div class="section-kicker">PORTFOLIO SIGNALS</div><h2>Stale high-priority work</h2><p class="section-note">把优先级与提交心跳结合，发现“重要但没有推进”的仓库。</p></div></div>
-          <div id="attentionGrid" class="attention-grid"></div>
-        </section>
-
-        <section id="audit-actions" class="page-section">
-          <div class="section-header">
-            <div><div class="section-kicker">AUDIT LENS</div><h2>Evidence-backed next actions</h2><p class="section-note">借鉴 ARIS4C 的 Next Gate 语义：每个开放 finding 显示严重度、remediation class、下一动作和证据入口。</p></div>
-            <span id="auditActionMeta" class="section-meta"></span>
-          </div>
-          <div id="auditActions" class="audit-actions-grid"></div>
-        </section>
-
-        <section id="priority" class="page-section">
-          <div class="section-header"><div><div class="section-kicker">PRIORITY BOARD</div><h2>Time allocation, not quality ranking</h2><p class="section-note">P0–P4 与 STOP 只回答“什么时候投入”。</p></div></div>
-          <div id="priorityBoard" class="priority-board"></div>
+          <section class="section-block attention-block">
+            <div class="section-head">
+              <div><p class="eyebrow">NOW</p><h2>Needs attention</h2><p>Only the few items worth looking at next.</p></div>
+              <span id="snapshotDate" class="meta"></span>
+            </div>
+            <div id="attentionList" class="attention-list"></div>
+          </section>
         </section>
 
         <section id="repositories" class="page-section">
-          <div class="repository-header">
-            <div><div class="section-kicker">PUBLIC PORTFOLIO</div><h2>Repository evidence surface</h2><p class="section-note">Audit freshness、开放 P0/P1 与九个 quality dimensions 保持正交，不计算总质量分。</p></div>
-            <div class="view-switcher">
-              <button id="cardViewButton" class="view-button active" type="button">Cards</button>
-              <button id="tableViewButton" class="view-button" type="button">Table</button>
-            </div>
+          <div class="section-head">
+            <div><p class="eyebrow">PUBLIC PORTFOLIO</p><h2>Repositories</h2><p>One quiet list. Deeper audit evidence stays one click away.</p></div>
+            <span id="resultCount" class="meta"></span>
           </div>
 
-          <div class="filter-bar">
-            <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search repository / note…" autocomplete="off"></label>
-            <select id="statusFilter" aria-label="工作状态"><option value="all">All status</option><option value="CONTINUE">Continue</option><option value="STOP">Don't touch</option></select>
-            <select id="priorityFilter" aria-label="优先级"><option value="all">All priorities</option><option value="P0-NOW">P0 · Now</option><option value="P1-NEXT">P1 · Next</option><option value="P2-PLANNED">P2 · Planned</option><option value="P3-LATER">P3 · Later</option><option value="P4-LOW">P4 · Low</option><option value="STOP">Don't touch</option></select>
-            <select id="sortFilter" aria-label="排序"><option value="priority">Priority</option><option value="recent">Recent commit</option><option value="name">Name</option></select>
-            <button id="clearFilters" class="text-button" type="button">Reset</button>
-            <span id="resultCount" class="section-meta"></span>
+          <div class="filters">
+            <label class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search repositories…" autocomplete="off"></label>
+            <select id="statusFilter" aria-label="Status">
+              <option value="all">All status</option>
+              <option value="CONTINUE">Continue</option>
+              <option value="STOP">Maintenance</option>
+            </select>
+            <select id="sortFilter" aria-label="Sort">
+              <option value="priority">Priority</option>
+              <option value="recent">Recent</option>
+              <option value="name">Name</option>
+            </select>
           </div>
-
-          <div id="repoCards" class="repo-grid"></div>
-          <div id="tableWrap" class="table-wrap hidden">
-            <table>
-              <thead><tr><th>Priority</th><th>Repository / audit</th><th>Band</th><th>Status</th><th>Note</th><th>Last commit</th><th>Actions</th></tr></thead>
-              <tbody id="repoRows"></tbody>
-            </table>
-          </div>
+          <div id="repoList" class="repo-list"></div>
         </section>
+
+        <section id="audits" class="page-section">
+          <div class="section-head">
+            <div><p class="eyebrow">AUDIT EVIDENCE</p><h2>Open findings</h2><p>Severity, next action and evidence — nothing more until you ask for it.</p></div>
+            <span id="auditMeta" class="meta"></span>
+          </div>
+          <div id="auditList" class="audit-list"></div>
+        </section>
+
+        <section id="showcases" class="page-section">
+          <div class="section-head">
+            <div><p class="eyebrow">PUBLIC DEMOS</p><h2>Showcases</h2><p>Reviewed static demonstrations, separated from repository internals.</p></div>
+          </div>
+          <a class="showcase-card" href="./showcase/">
+            <div><span class="showcase-mark">↗</span><p class="eyebrow">SHOWCASE INDEX</p><h3>Public showcases</h3><p>Open the reviewed demo collection.</p></div>
+            <strong id="showcaseCountLarge">—</strong>
+          </a>
+        </section>
+
+        <footer>
+          <span>repo-auditor</span><span>·</span><span>public-safe control surface</span><span>·</span><span id="footerDate">—</span>
+        </footer>
       </main>
     </section>
   </div>
 
-  <div id="commandPalette" class="command-overlay hidden" role="dialog" aria-modal="true" aria-label="Repository command palette">
-    <div class="command-panel">
-      <label class="command-search"><span>⌕</span><input id="commandInput" type="search" placeholder="Type repository name or note…" autocomplete="off"></label>
-      <div id="commandResults" class="command-results"></div>
+  <div id="palette" class="palette hidden" role="dialog" aria-modal="true" aria-label="Find repository">
+    <div class="palette-panel">
+      <label><span>⌕</span><input id="paletteInput" type="search" placeholder="Type a repository name…" autocomplete="off"></label>
+      <div id="paletteResults"></div>
     </div>
   </div>
 

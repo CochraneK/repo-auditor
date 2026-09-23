@@ -1,700 +1,194 @@
 (() => {
-  const DATA_URL = "./data/registry.json";
-  const OVERVIEW_URL = "./data/portfolio-overview.json";
-  const REPO_BASE = "https://github.com/CochraneK/";
-  const AUDIT_RAW_BASE = "./data/";
-  const AUDIT_REPORT_BASE = "./data/";
-  const GITHUB_API_BASE = "https://api.github.com/repos/CochraneK/";
-  const BAND_LABELS = {
-    "P0-NOW": "P0 · NOW",
-    "P1-NEXT": "P1 · NEXT",
-    "P2-PLANNED": "P2 · PLANNED",
-    "P3-LATER": "P3 · LATER",
-    "P4-LOW": "P4 · LOW",
-    "STOP": "DON'T TOUCH"
+  const DATA_URL="./data/registry.json";
+  const SHOWCASE_URL="./showcase/manifest.json";
+  const REPO_BASE="https://github.com/CochraneK/";
+  const API_BASE="https://api.github.com/repos/CochraneK/";
+  const $=id=>document.getElementById(id);
+  let data={repositories:[]}, showcases={items:[]};
+
+  const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const repoUrl=name=>REPO_BASE+encodeURIComponent(name);
+  const ageDays=date=>{
+    if(!date||!data.snapshot_date)return null;
+    return Math.max(0,Math.round((new Date(data.snapshot_date+"T00:00:00Z")-new Date(date+"T00:00:00Z"))/86400000));
   };
-  const BOARD_ORDER = ["P0-NOW","P1-NEXT","P2-PLANNED","P3-LATER","P4-LOW","STOP"];
-  const QUALITY_LABELS = {
-    purpose_scope: "Purpose",
-    correctness: "Correctness",
-    security_privacy: "Security",
-    supply_chain: "Supply chain",
-    reproducibility: "Reproducibility",
-    release_engineering: "Release",
-    documentation_onboarding: "Docs",
-    maintainability: "Maintainability",
-    community_surface: "Community"
+  const ageLabel=date=>{
+    const d=ageDays(date); if(d===null)return "—"; if(d===0)return "today"; if(d===1)return "1 day ago";
+    if(d<30)return d+" days ago"; if(d<365)return Math.round(d/30)+" months ago"; return (d/365).toFixed(1)+" years ago";
   };
+  const scoreSort=(a,b)=>(b.priority_score-a.priority_score)||a.name.localeCompare(b.name);
 
-  const $ = id => document.getElementById(id);
-  let data = null;
-  let overview = null;
-  let currentView = localStorage.getItem("repo-auditor-view") || "cards";
-
-  function esc(value = "") {
-    return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+  function initTheme(){
+    const saved=localStorage.getItem("repo-auditor-theme-v2");
+    document.documentElement.dataset.theme=saved||"light";
   }
+  function setTheme(theme){document.documentElement.dataset.theme=theme;localStorage.setItem("repo-auditor-theme-v2",theme)}
 
-  function repoUrl(name, suffix = "") {
-    return REPO_BASE + encodeURIComponent(name) + suffix;
-  }
-
-  function scoreSort(a, b) {
-    return (b.priority_score - a.priority_score) || a.name.localeCompare(b.name);
-  }
-
-  function recentSort(a, b) {
-    return String(b.last_commit_date || "").localeCompare(String(a.last_commit_date || "")) || scoreSort(a,b);
-  }
-
-  function dateToUtc(value) {
-    return new Date(value + "T00:00:00Z");
-  }
-
-  function ageDays(value) {
-    if (!value || !data?.snapshot_date) return null;
-    return Math.max(0, Math.round((dateToUtc(data.snapshot_date) - dateToUtc(value)) / 86400000));
-  }
-
-  function ageLabel(value) {
-    const days = ageDays(value);
-    if (days === null) return "无提交日期";
-    if (days === 0) return "今天";
-    if (days === 1) return "1 天前";
-    if (days < 30) return days + " 天前";
-    if (days < 365) return Math.round(days / 30) + " 个月前";
-    return (days / 365).toFixed(1) + " 年前";
-  }
-
-  function setTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("repo-auditor-theme", theme);
-  }
-
-  function initTheme() {
-    const saved = localStorage.getItem("repo-auditor-theme");
-    if (saved) return setTheme(saved);
-    const light = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-    setTheme(light ? "light" : "dark");
-  }
-
-  function assertPublicOnly(repos) {
-    const leaked = repos.filter(r => r.visibility !== "public");
-    if (leaked.length) throw new Error("Public registry contains non-public repository records.");
-  }
-
-  function badgeClass(band) {
-    if (band === "STOP") return "stop";
-    if (band === "P0-NOW") return "now";
-    return "";
-  }
-
-  function auditReportUrl(repo) {
-    return repo.latest_audit ? AUDIT_REPORT_BASE + repo.latest_audit.replace(/\.md$/i, ".json") : "";
-  }
-
-  function qualityChip(repo) {
-    const dims = repo._audit?.qualityDimensions;
-    if (!dims || typeof dims !== "object") return "";
-    const rows = Object.entries(QUALITY_LABELS).map(([key, label]) => {
-      const score = dims[key]?.score;
-      const value = Number.isInteger(score) ? score + "/5" : "—";
-      return label + " " + value;
-    });
-    const scored = Object.values(dims).filter(item => Number.isInteger(item?.score)).length;
-    const title = "Quality dimensions (no total score): " + rows.join(" · ");
-    return `<span class="badge" title="${esc(title)}">Quality · ${scored}D</span>`;
-  }
-
-  function auditChip(repo) {
-    if (!repo.latest_audit) return "";
-    const audit = repo._audit;
-    if (!audit) return '<span class="badge audit unknown">Audit · loading</span>';
-    const displayState = audit.state === "current-equivalent" ? "current" : audit.state;
-    const label =
-      audit.state === "current" ? "Current" :
-      audit.state === "current-equivalent" ? "Current*" :
-      audit.state === "stale" ? "Stale" : "Unknown";
-    const title = audit.error
-      ? audit.error
-      : audit.state === "current-equivalent"
-        ? `Audit ${audit.auditDate || "—"} · baseline ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)} · only explicitly ignored audit/portfolio metadata changed`
-        : `Audit ${audit.auditDate || "—"} · audited ${audit.auditedCommit.slice(0,12)} · head ${audit.headCommit.slice(0,12)}`;
-    return `<span class="badge audit ${esc(displayState)}" title="${esc(title)}">Audit · ${label} · ${audit.openP0} P0 · ${audit.openP1} P1</span>`;
-  }
-
-  function auditQuickLink(repo) {
-    return repo.latest_audit
-      ? `<a class="quick-link" href="${auditReportUrl(repo)}" target="_blank" rel="noreferrer">Audit ↗</a>`
-      : "";
-  }
-
-  function enrichAIReadiness(repos) {
-    const rows = Array.isArray(overview?.public_ai_readiness) ? overview.public_ai_readiness : [];
-    const byName = new Map(rows.map(row => [row?.name, row]));
-    repos.forEach(repo => {
-      const readiness = byName.get(repo.name);
-      if (readiness) repo._aiReadiness = readiness;
-    });
-  }
-
-  function aiReadinessChip(repo) {
-    const readiness = repo._aiReadiness;
-    if (!readiness) return "";
-    const state = readiness.ai_readiness_state || "UNKNOWN";
-    const score = Number.isInteger(readiness.ai_readiness_score) ? readiness.ai_readiness_score : "—";
-    const label =
-      state === "AI_READY" ? "Ready" :
-      state === "PARTIAL" ? "Partial" :
-      state === "NOT_READY" ? "Not ready" : "Unknown";
-    const klass =
-      state === "AI_READY" ? "ready" :
-      state === "PARTIAL" ? "partial" :
-      state === "NOT_READY" ? "not-ready" : "unknown";
-    const missing = [
-      ["AGENTS", readiness.agents],
-      ["HANDOFF", readiness.handoff],
-      ["STATUS", readiness.status_file],
-      ["DECISIONS", readiness.decisions],
-      ["architecture", readiness.architecture_doc],
-      ["validation", readiness.validation_documented],
-      ["README visual", readiness.readme_visual],
-      ["quick start", readiness.readme_quickstart]
-    ].filter(([, ok]) => !ok).map(([name]) => name);
-    const title = "AI Readiness · " + score + "/100" +
-      (missing.length ? " · missing: " + missing.join(", ") : " · core handoff checks present");
-    return `<span class="badge ai-readiness ${klass}" title="${esc(title)}">AI · ${label} · ${score}</span>`;
-  }
-
-  function auditIgnorePatterns(sidecar) {
-    const value = sidecar?.freshness?.ignore_paths;
-    return Array.isArray(value) ? value.filter(item => typeof item === "string" && item.trim()) : [];
-  }
-
-  function pathMatchesIgnore(path, pattern) {
-    if (pattern.endsWith("/**")) {
-      const prefix = pattern.slice(0, -3);
-      return path === prefix || path.startsWith(prefix + "/");
-    }
-    return path === pattern;
-  }
-
-  async function metadataAwareAuditState(repoName, auditedCommit, headCommit, patterns) {
-    if (auditedCommit === headCommit) return "current";
-    if (!patterns.length) return "stale";
-
-    const url =
-      GITHUB_API_BASE + encodeURIComponent(repoName) +
-      "/compare/" + encodeURIComponent(auditedCommit) + "..." + encodeURIComponent(headCommit);
-    const response = await fetch(url, {
-      cache: "no-store",
-      headers: { Accept: "application/vnd.github+json" }
-    });
-    if (!response.ok) throw new Error("GitHub compare HTTP " + response.status);
-    const comparison = await response.json();
-    const files = Array.isArray(comparison?.files)
-      ? comparison.files.map(item => item?.filename).filter(Boolean)
-      : [];
-
-    if (!files.length) return "stale";
-    return files.every(path => patterns.some(pattern => pathMatchesIgnore(path, pattern)))
-      ? "current-equivalent"
-      : "stale";
-  }
-
-  async function loadAuditStatus(repo) {
-    if (!repo.latest_audit) return;
-    try {
-      const sidecarPath = repo.latest_audit.replace(/\.md$/i, ".json");
-      const [auditResponse, headResponse] = await Promise.all([
-        fetch(AUDIT_RAW_BASE + sidecarPath + "?t=" + Date.now(), { cache: "no-store" }),
-        fetch(GITHUB_API_BASE + encodeURIComponent(repo.name) + "/commits?per_page=1", {
-          cache: "no-store",
-          headers: { Accept: "application/vnd.github+json" }
-        })
+  async function loadAudit(repo){
+    if(!repo.latest_audit)return;
+    try{
+      const path=repo.latest_audit.replace(/\.md$/i,".json");
+      const [a,h]=await Promise.all([
+        fetch("./data/"+path+"?t="+Date.now(),{cache:"no-store"}),
+        fetch(API_BASE+encodeURIComponent(repo.name)+"/commits?per_page=1",{cache:"no-store",headers:{Accept:"application/vnd.github+json"}})
       ]);
-      if (!auditResponse.ok) throw new Error("audit sidecar HTTP " + auditResponse.status);
-      if (!headResponse.ok) throw new Error("GitHub HEAD HTTP " + headResponse.status);
-
-      const sidecar = await auditResponse.json();
-      const commits = await headResponse.json();
-      const auditedCommit = sidecar.audited_commit || "";
-      const headCommit = Array.isArray(commits) && commits[0]?.sha ? commits[0].sha : "";
-      if (!auditedCommit) throw new Error("Audit sidecar has no audited_commit");
-      if (!headCommit) throw new Error("Could not resolve repository HEAD");
-
-      const patterns = auditIgnorePatterns(sidecar);
-      const state = await metadataAwareAuditState(repo.name, auditedCommit, headCommit, patterns);
-      const open = (sidecar.findings || []).filter(f => f.status === "open");
-      repo._audit = {
-        state,
-        auditDate: sidecar.audit_date || "",
-        auditedCommit,
-        headCommit,
-        openP0: open.filter(f => f.severity === "P0").length,
-        openP1: open.filter(f => f.severity === "P1").length,
-        openFindings: open,
-        qualityDimensions: sidecar.quality_dimensions || null,
-        publicationGate: sidecar.publication_gate || null,
-        limitations: sidecar.limitations || []
+      if(!a.ok)throw new Error("audit "+a.status);
+      const sidecar=await a.json();
+      let head="";
+      if(h.ok){const commits=await h.json();head=Array.isArray(commits)&&commits[0]?.sha||""}
+      const audited=sidecar.audited_commit||"";
+      const open=(sidecar.findings||[]).filter(f=>f.status==="open");
+      repo._audit={
+        state:head&&audited&&head===audited?"current":"stale",
+        open,
+        date:sidecar.audit_date||"",
+        report:"./data/"+path,
+        p0:open.filter(f=>f.severity==="P0").length,
+        p1:open.filter(f=>f.severity==="P1").length
       };
-    } catch (error) {
-      repo._audit = {
-        state: "unknown",
-        auditDate: "",
-        auditedCommit: "",
-        headCommit: "",
-        openP0: 0,
-        openP1: 0,
-        openFindings: [],
-        qualityDimensions: null,
-        publicationGate: null,
-        limitations: [],
-        error: String(error?.message || error)
-      };
+    }catch(e){repo._audit={state:"unknown",open:[],date:"",report:"",p0:0,p1:0}}
+  }
+
+  function attentionRepos(){
+    return data.repositories.map(r=>{
+      const age=ageDays(r.last_commit_date)||0;
+      const audit=r._audit;
+      const urgentAudit=(audit?.p0||0)+(audit?.p1||0);
+      const staleHigh=r.work_status==="CONTINUE"&&((r.priority_score>=70&&age>=30)||(r.priority_score>=50&&age>=90));
+      return {...r,_attention:urgentAudit?3:staleHigh?2:(audit?.state==="stale"?1:0),_age:age};
+    }).filter(r=>r._attention>0).sort((a,b)=>b._attention-a._attention||scoreSort(a,b));
+  }
+
+  function attentionReason(r){
+    if((r._audit?.p0||0)+(r._audit?.p1||0)>0)return `${r._audit.p0} P0 · ${r._audit.p1} P1 open findings`;
+    if(r._attention===2)return "High-priority work has gone quiet";
+    if(r._audit?.state==="stale")return "Recorded audit is behind repository HEAD";
+    return "Review recommended";
+  }
+
+  function renderMetrics(){
+    const repos=data.repositories||[];
+    const attention=attentionRepos();
+    const fresh=repos.filter(r=>r._audit?.state==="current").length;
+    const count=(showcases.items||[]).length;
+    $("repoCount").textContent=repos.length;
+    $("attentionCount").textContent=attention.length;
+    $("freshAuditCount").textContent=fresh;
+    $("showcaseCount").textContent=count;
+    $("showcaseCountLarge").textContent=count;
+    $("snapshotDate").textContent="Snapshot · "+(data.snapshot_date||"—");
+    $("footerDate").textContent=data.snapshot_date||"—";
+  }
+
+  function renderAttention(){
+    const items=attentionRepos().slice(0,3);
+    $("attentionList").innerHTML=items.length?items.map(r=>`
+      <a class="attention-card" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
+        <div class="attention-top"><span class="attention-name">${esc(r.name)}</span><span class="attention-tag">ATTENTION</span></div>
+        <p>${esc(attentionReason(r))}</p>
+        <div class="attention-bottom"><span>${esc(r.priority_band)}</span><span>${esc(ageLabel(r.last_commit_date))} →</span></div>
+      </a>`).join(""):`<div class="empty">No high-signal attention items right now.</div>`;
+  }
+
+  function filteredRepos(){
+    const q=$("searchInput").value.trim().toLowerCase(), status=$("statusFilter").value, sort=$("sortFilter").value;
+    const rows=(data.repositories||[]).filter(r=>{
+      const hay=(r.name+" "+(r.reason||"")).toLowerCase();
+      return (!q||hay.includes(q))&&(status==="all"||r.work_status===status);
+    });
+    if(sort==="recent")return rows.sort((a,b)=>String(b.last_commit_date||"").localeCompare(String(a.last_commit_date||"")));
+    if(sort==="name")return rows.sort((a,b)=>a.name.localeCompare(b.name));
+    return rows.sort(scoreSort);
+  }
+
+  function statusLabel(r){return r.work_status==="STOP"?"Maintenance":"Continue"}
+  function bandClass(r){return r.priority_band==="P0-NOW"?"now":r.work_status==="STOP"?"stop":"active"}
+
+  function renderRepositories(){
+    const repos=filteredRepos();
+    $("resultCount").textContent=repos.length+" / "+data.repositories.length;
+    $("repoList").innerHTML=repos.map(r=>`
+      <article class="repo-row">
+        <div class="repo-title">
+          <a href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)}</a>
+          <small>${esc(ageLabel(r.last_commit_date))}</small>
+        </div>
+        <div class="repo-note">${esc(r.reason||"No note.")}</div>
+        <span class="pill ${bandClass(r)}">${esc(statusLabel(r))}</span>
+        <a class="repo-arrow" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer" aria-label="Open ${esc(r.name)}">→</a>
+      </article>`).join("")||`<div class="empty">No repositories match this view.</div>`;
+  }
+
+  function renderAudits(){
+    const audited=(data.repositories||[]).filter(r=>r._audit);
+    const findings=audited.flatMap(r=>(r._audit.open||[]).map(f=>({repo:r,f})));
+    const rank={P0:0,P1:1,P2:2,P3:3};
+    findings.sort((a,b)=>(rank[a.f.severity]??9)-(rank[b.f.severity]??9)||b.repo.priority_score-a.repo.priority_score);
+    const fresh=audited.filter(r=>r._audit.state==="current").length;
+    $("auditMeta").textContent=`${audited.length} audited · ${fresh} fresh`;
+    $("auditList").innerHTML=findings.slice(0,8).map(({repo,f})=>`
+      <article class="audit-row">
+        <span class="severity ${esc(f.severity||"P3")}">${esc(f.severity||"P3")}</span>
+        <span class="audit-repo">${esc(repo.name)}</span>
+        <div class="audit-copy"><strong>${esc(f.title||"Open finding")}</strong><p>${esc(f.recommendation||"Review evidence and remediate.")}</p></div>
+        <a class="audit-link" href="${repo._audit.report}" target="_blank" rel="noreferrer">Evidence ↗</a>
+      </article>`).join("")||`<div class="empty">No open structured findings in the published audit set.</div>`;
+  }
+
+  function renderPalette(q=""){
+    q=q.trim().toLowerCase();
+    const rows=(data.repositories||[]).filter(r=>!q||(r.name+" "+(r.reason||"")).toLowerCase().includes(q)).sort(scoreSort).slice(0,10);
+    $("paletteResults").innerHTML=rows.map(r=>`
+      <a class="palette-result" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
+        <span><strong>${esc(r.name)}</strong><span>${esc(r.priority_band)} · ${esc(statusLabel(r))}</span></span><span>→</span>
+      </a>`).join("")||`<div class="empty" style="padding:16px">No match.</div>`;
+  }
+
+  function openPalette(){$("palette").classList.remove("hidden");$("paletteInput").value="";renderPalette();requestAnimationFrame(()=>$("paletteInput").focus())}
+  function closePalette(){$("palette").classList.add("hidden")}
+
+  function wire(){
+    ["searchInput","statusFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",renderRepositories));
+    $("themeToggle").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+    $("sidebarToggle").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+    $("findButton").addEventListener("click",openPalette);
+    $("paletteInput").addEventListener("input",e=>renderPalette(e.target.value));
+    $("palette").addEventListener("click",e=>{if(e.target===$("palette"))closePalette()});
+    document.addEventListener("keydown",e=>{
+      const tag=document.activeElement?.tagName?.toLowerCase(), typing=["input","textarea","select"].includes(tag);
+      if(e.key==="/"&&!typing&&$("palette").classList.contains("hidden")){e.preventDefault();openPalette()}
+      if(e.key==="Escape")closePalette();
+    });
+    const links=[...document.querySelectorAll(".nav-item")], sections=links.map(a=>$(a.dataset.section)).filter(Boolean);
+    links.forEach(a=>a.addEventListener("click",()=>{$("sidebar").classList.remove("open");$("currentView").textContent=a.textContent.trim()}));
+    if("IntersectionObserver"in window){
+      const io=new IntersectionObserver(entries=>{
+        const v=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0]; if(!v)return;
+        links.forEach(a=>a.classList.toggle("is-active",a.dataset.section===v.target.id));
+        const active=links.find(a=>a.dataset.section===v.target.id); if(active)$("currentView").textContent=active.textContent.trim();
+      },{rootMargin:"-20% 0px -68% 0px",threshold:[0,.15,.4]});
+      sections.forEach(s=>io.observe(s));
     }
   }
 
-  async function enrichAuditStatuses(repos) {
-    await Promise.all(repos.filter(r => r.latest_audit).map(loadAuditStatus));
-  }
-
-  function renderHero(repos) {
-    const top = repos.filter(r => r.work_status === "CONTINUE").sort(scoreSort)[0];
-    $("snapshotText").textContent = "Snapshot · " + (data.snapshot_date || "—");
-    if (!top) {
-      $("heroFocus").innerHTML = '<div class="hero-focus-card"><p>暂无 CONTINUE 项目。</p></div>';
-      return;
-    }
-    $("heroFocus").innerHTML = `
-      <div class="hero-focus-card">
-        <div class="hero-focus-top">
-          <div>
-            <div class="hero-mini-label">CURRENT #1</div>
-            <div class="hero-score">${top.priority_score}</div>
-          </div>
-          <span class="badge ${badgeClass(top.priority_band)}">${esc(BAND_LABELS[top.priority_band])}</span>
-        </div>
-        <h3>${esc(top.name)}</h3>
-        <p>${esc(top.reason || "暂无备注")}</p>
-        <div class="hero-actions">
-          <a class="button primary" href="${repoUrl(top.name)}" target="_blank" rel="noreferrer">打开仓库 ↗</a>
-          <a class="button secondary" href="${repoUrl(top.name, "/issues")}" target="_blank" rel="noreferrer">Issues</a>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderMetrics(repos) {
-    const active = repos.filter(r => r.work_status === "CONTINUE");
-    const avg = active.length ? Math.round(active.reduce((sum,r) => sum + r.priority_score, 0) / active.length) : 0;
-    $("totalCount").textContent = repos.length;
-    $("nowCount").textContent = repos.filter(r => r.priority_band === "P0-NOW").length;
-    $("continueCount").textContent = active.length;
-    $("stopCount").textContent = repos.filter(r => r.work_status === "STOP").length;
-    $("avgScore").textContent = avg;
-  }
-
-  function renderAIReadiness() {
-    const el = $("aiReadinessStrip");
-    if (!el) return;
-    const coverage = overview?.coverage || {};
-    const inventory = overview?.inventory || {};
-    const value = key => Number.isInteger(coverage[key]) ? coverage[key] : "—";
-    const status = overview?.audit_status || "UNAVAILABLE";
-    const scanned = Number.isInteger(coverage.evidence_collected) ? coverage.evidence_collected : "—";
-    const expected = Number.isInteger(inventory.expected_total) ? inventory.expected_total : "—";
-    const baselineMarker = inventory.baseline_kind === "lower-bound" ? "≥" : "";
-    el.innerHTML = `
-      <div class="ai-readiness-copy">
-        <span class="section-kicker">AI READINESS</span>
-        <strong>Agent handoff coverage</strong>
-        <span>Coverage · ${esc(status)} · ${scanned}/${baselineMarker}${expected} observed/baseline</span>
-      </div>
-      <div class="ai-readiness-metrics">
-        <span><b>${value("ai_ready")}</b> AI-ready</span>
-        <span><b>${value("agents_present")}</b> AGENTS</span>
-        <span><b>${value("handoff_present")}</b> HANDOFF</span>
-        <span><b>${value("continuity_full")}</b> full continuity</span>
-      </div>
-    `;
-  }
-
-  function renderDistribution(repos) {
-    const max = Math.max(1, ...BOARD_ORDER.map(b => repos.filter(r => r.priority_band === b).length));
-    $("priorityDistribution").innerHTML = BOARD_ORDER.map(band => {
-      const count = repos.filter(r => r.priority_band === band).length;
-      const pct = Math.max(3, Math.round(count / max * 100));
-      return `
-        <div class="distribution-row">
-          <span class="distribution-label">${esc(BAND_LABELS[band])}</span>
-          <span class="distribution-track"><span class="distribution-bar" style="width:${pct}%"></span></span>
-          <span class="distribution-count">${count}</span>
-        </div>
-      `;
-    }).join("");
-  }
-
-  function renderRecent(repos) {
-    const recent = [...repos].sort(recentSort).slice(0, 7);
-    $("recentActivity").innerHTML = recent.map(r => `
-      <div class="recent-item">
-        <div class="recent-main">
-          <div class="recent-name">${esc(r.name)}</div>
-          <div class="recent-sub">${esc(BAND_LABELS[r.priority_band])} · ${r.work_status}</div>
-        </div>
-        <div class="recent-date">${esc(ageLabel(r.last_commit_date))}</div>
-      </div>
-    `).join("");
-  }
-
-  function renderFocus(repos) {
-    const focus = repos.filter(r => r.work_status === "CONTINUE").sort(scoreSort).slice(0, 8);
-    $("focusGrid").innerHTML = focus.map((r, i) => `
-      <a class="focus-card" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
-        <span class="focus-rank">FOCUS #${i + 1}</span>
-        <div class="focus-score">${r.priority_score}</div>
-        <div class="focus-name">${esc(r.name)}</div>
-        <p class="focus-reason">${esc(r.reason || "暂无备注")}</p>
-        <div class="badges">
-          <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
-          <span class="badge">commit · ${esc(ageLabel(r.last_commit_date))}</span>
-          ${auditChip(r)}
-          ${qualityChip(r)}
-          ${aiReadinessChip(r)}
-        </div>
-      </a>
-    `).join("");
-  }
-
-  function getAttention(repos) {
-    return repos
-      .filter(r => r.work_status === "CONTINUE")
-      .map(r => ({...r, _age: ageDays(r.last_commit_date) ?? 0}))
-      .filter(r => (r.priority_score >= 70 && r._age >= 30) || (r.priority_score >= 50 && r._age >= 90))
-      .sort((a,b) => b.priority_score - a.priority_score || b._age - a._age)
-      .slice(0, 8);
-  }
-
-  function renderAttention(repos) {
-    const items = getAttention(repos);
-    if (!items.length) {
-      $("attentionGrid").innerHTML = '<article class="attention-card"><strong>目前没有明显积压。</strong><p>高优先级项目的提交节奏和计划基本一致。</p></article>';
-      return;
-    }
-    $("attentionGrid").innerHTML = items.map(r => `
-      <article class="attention-card">
-        <div class="attention-head">
-          <span class="attention-title">${esc(r.name)}</span>
-          <span class="attention-score">${r.priority_score} pts</span>
-        </div>
-        <p>${esc(r.reason || "暂无备注")}</p>
-        <div class="attention-meta">
-          <span>${esc(BAND_LABELS[r.priority_band])}</span>
-          <span>·</span>
-          <span>最近提交 ${esc(ageLabel(r.last_commit_date))}</span>
-          <span>·</span>
-          <a href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">打开 ↗</a>
-        </div>
-      </article>
-    `).join("");
-  }
-
-  function renderAuditActions(repos) {
-    const audited = repos.filter(r => r._audit);
-    const stateCounts = audited.reduce((acc,r) => {
-      const state = r._audit?.state || "unknown";
-      acc[state] = (acc[state] || 0) + 1;
-      return acc;
-    }, {});
-    const open = audited.flatMap(r => (r._audit?.openFindings || []).map(f => ({repo:r, finding:f})));
-    const rank = {P0:0,P1:1,P2:2,P3:3};
-    open.sort((a,b) =>
-      (rank[a.finding.severity] ?? 9) - (rank[b.finding.severity] ?? 9) ||
-      b.repo.priority_score - a.repo.priority_score
-    );
-    $("auditActionMeta").textContent =
-      audited.length + " audited · " +
-      (stateCounts.current || 0) + " current · " +
-      (stateCounts["current-equivalent"] || 0) + " current* · " +
-      (stateCounts.stale || 0) + " stale";
-
-    const top = open.slice(0, 8);
-    $("auditActions").innerHTML = top.length ? top.map(({repo,finding}) => {
-      const remediation = finding.remediation_class || "unclassified";
-      return `
-        <article class="audit-action-card" data-severity="${esc(finding.severity || "P3")}">
-          <div class="audit-action-top">
-            <span class="audit-repo">${esc(repo.name)}</span>
-            <span class="audit-severity">${esc(finding.severity || "P3")}</span>
-          </div>
-          <strong>${esc(finding.title || "Open audit finding")}</strong>
-          <p>${esc(finding.recommendation || "No remediation note recorded.")}</p>
-          <div class="audit-action-bottom">
-            <span class="remediation">${esc(remediation)}</span>
-            <span class="audit-state">${esc(repo._audit?.state || "unknown")}</span>
-            <a href="${auditReportUrl(repo)}" target="_blank" rel="noreferrer">Evidence ↗</a>
-          </div>
-        </article>
-      `;
-    }).join("") : '<article class="audit-action-card is-clear"><strong>No open structured findings.</strong><p>Re-audit when recorded triggers fire.</p></article>';
-  }
-
-  function renderBoard(repos) {
-    $("priorityBoard").innerHTML = BOARD_ORDER.map(band => {
-      const items = repos.filter(r => r.priority_band === band).sort(scoreSort);
-      return `
-        <section class="board-column">
-          <div class="board-head">
-            <span class="board-title">${esc(BAND_LABELS[band])}</span>
-            <span class="board-count">${items.length}</span>
-          </div>
-          <div class="board-list">
-            ${items.map(r => `
-              <a class="board-card" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
-                <div class="board-card-top">
-                  <span class="board-card-name">${esc(r.name)}</span>
-                  <span class="board-card-score">${r.priority_score}</span>
-                </div>
-                <p>${esc(r.reason || "暂无备注")}</p>
-              </a>
-            `).join("") || '<p class="recent-sub">暂无项目</p>'}
-          </div>
-        </section>
-      `;
-    }).join("");
-  }
-
-  function getFilteredRepos() {
-    const repos = data.repositories || [];
-    const q = $("searchInput").value.trim().toLowerCase();
-    const status = $("statusFilter").value;
-    const priority = $("priorityFilter").value;
-    const sort = $("sortFilter").value;
-
-    const filtered = repos.filter(r => {
-      const haystack = (r.name + " " + (r.reason || "")).toLowerCase();
-      if (q && !haystack.includes(q)) return false;
-      if (status !== "all" && r.work_status !== status) return false;
-      if (priority !== "all" && r.priority_band !== priority) return false;
-      return true;
-    });
-
-    if (sort === "recent") return filtered.sort(recentSort);
-    if (sort === "name") return filtered.sort((a,b) => a.name.localeCompare(b.name));
-    return filtered.sort(scoreSort);
-  }
-
-  function renderRepoCards(repos) {
-    $("repoCards").innerHTML = repos.map(r => `
-      <article class="repo-card">
-        <div class="repo-card-top">
-          <div>
-            <div class="repo-score">${r.priority_score}</div>
-            <div class="badges">
-              <span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span>
-              <span class="badge ${r.work_status === "STOP" ? "stop" : "public"}">${esc(r.work_status)}</span>
-              ${auditChip(r)}
-              ${qualityChip(r)}
-              ${aiReadinessChip(r)}
-            </div>
-          </div>
-          <span class="badge public">public</span>
-        </div>
-        <div class="repo-name">${esc(r.name)}</div>
-        <p class="repo-reason">${esc(r.reason || "暂无备注")}</p>
-        <div class="repo-bottom">
-          <span class="repo-date">Last commit · ${esc(ageLabel(r.last_commit_date))}</span>
-          <div class="quick-links">
-            <a class="quick-link" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">Code ↗</a>
-            <a class="quick-link" href="${repoUrl(r.name, "/issues")}" target="_blank" rel="noreferrer">Issues</a>
-            <a class="quick-link" href="${repoUrl(r.name, "/actions")}" target="_blank" rel="noreferrer">Actions</a>
-            ${auditQuickLink(r)}
-          </div>
-        </div>
-      </article>
-    `).join("");
-  }
-
-  function renderRepoTable(repos) {
-    $("repoRows").innerHTML = repos.map(r => `
-      <tr>
-        <td class="table-score">${r.priority_score}</td>
-        <td>
-          <a class="table-repo" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">${esc(r.name)} ↗</a>
-          <div class="table-audit">${auditChip(r)} ${qualityChip(r)} ${aiReadinessChip(r)}</div>
-        </td>
-        <td><span class="badge ${badgeClass(r.priority_band)}">${esc(BAND_LABELS[r.priority_band])}</span></td>
-        <td><span class="${r.work_status === "STOP" ? "status-stop" : "status-continue"}">${esc(r.work_status)}</span></td>
-        <td class="table-note">${esc(r.reason || "—")}</td>
-        <td>${esc(r.last_commit_date || "—")}<div class="recent-sub">${esc(ageLabel(r.last_commit_date))}</div></td>
-        <td><a class="quick-link" href="${repoUrl(r.name, "/actions")}" target="_blank" rel="noreferrer">Actions ↗</a></td>
-      </tr>
-    `).join("");
-  }
-
-  function applyView() {
-    const cards = currentView === "cards";
-    $("repoCards").classList.toggle("hidden", !cards);
-    $("tableWrap").classList.toggle("hidden", cards);
-    $("cardViewButton").classList.toggle("active", cards);
-    $("tableViewButton").classList.toggle("active", !cards);
-  }
-
-  function renderRepositories() {
-    const repos = getFilteredRepos();
-    renderRepoCards(repos);
-    renderRepoTable(repos);
-    $("resultCount").textContent = "显示 " + repos.length + " / " + (data.repositories || []).length + " 个公开项目";
-    applyView();
-  }
-
-  function openCommandPalette() {
-    $("commandPalette").classList.remove("hidden");
-    $("commandInput").value = "";
-    renderCommandResults("");
-    requestAnimationFrame(() => $("commandInput").focus());
-  }
-
-  function closeCommandPalette() {
-    $("commandPalette").classList.add("hidden");
-  }
-
-  function renderCommandResults(query) {
-    const q = query.trim().toLowerCase();
-    const repos = (data?.repositories || [])
-      .filter(r => !q || (r.name + " " + (r.reason || "")).toLowerCase().includes(q))
-      .sort(scoreSort)
-      .slice(0, 12);
-
-    $("commandResults").innerHTML = repos.map(r => `
-      <a class="command-result" href="${repoUrl(r.name)}" target="_blank" rel="noreferrer">
-        <span class="command-result-score">${r.priority_score}</span>
-        <span>
-          <strong>${esc(r.name)}</strong>
-          <span>${esc(r.reason || "暂无备注")}</span>
-        </span>
-        <span class="command-result-band">${esc(BAND_LABELS[r.priority_band])}</span>
-      </a>
-    `).join("") || '<div class="recent-sub" style="padding:18px">没有匹配的项目。</div>';
-  }
-
-  function initNavigation() {
-    const links = [...document.querySelectorAll(".nav-item")];
-    const sections = links
-      .map(link => document.getElementById(link.dataset.section))
-      .filter(Boolean);
-
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(entries => {
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible) return;
-        links.forEach(l => l.classList.toggle("active", l.dataset.section === visible.target.id));
-      }, { rootMargin: "-18% 0px -68% 0px", threshold: [0,.1,.3] });
-      sections.forEach(s => observer.observe(s));
-    }
-
-    links.forEach(link => link.addEventListener("click", () => {
-      $("sidebar").classList.remove("open");
-    }));
-  }
-
-  function wireEvents() {
-    ["searchInput","statusFilter","priorityFilter","sortFilter"].forEach(id => {
-      $(id).addEventListener(id === "searchInput" ? "input" : "change", renderRepositories);
-    });
-
-    $("clearFilters").addEventListener("click", () => {
-      $("searchInput").value = "";
-      $("statusFilter").value = "all";
-      $("priorityFilter").value = "all";
-      $("sortFilter").value = "priority";
-      renderRepositories();
-    });
-
-    $("cardViewButton").addEventListener("click", () => {
-      currentView = "cards";
-      localStorage.setItem("repo-auditor-view", currentView);
-      applyView();
-    });
-    $("tableViewButton").addEventListener("click", () => {
-      currentView = "table";
-      localStorage.setItem("repo-auditor-view", currentView);
-      applyView();
-    });
-
-    $("themeToggle").addEventListener("click", () => {
-      const current = document.documentElement.dataset.theme || "dark";
-      setTheme(current === "dark" ? "light" : "dark");
-    });
-
-    $("sidebarToggle").addEventListener("click", () => $("sidebar").classList.toggle("open"));
-
-    $("commandButton").addEventListener("click", openCommandPalette);
-    $("commandInput").addEventListener("input", e => renderCommandResults(e.target.value));
-    $("commandPalette").addEventListener("click", e => {
-      if (e.target === $("commandPalette")) closeCommandPalette();
-    });
-
-    document.addEventListener("keydown", e => {
-      const tag = document.activeElement?.tagName?.toLowerCase();
-      const typing = tag === "input" || tag === "textarea" || tag === "select";
-      if (e.key === "/" && !typing && $("commandPalette").classList.contains("hidden")) {
-        e.preventDefault();
-        openCommandPalette();
-      }
-      if (e.key === "Escape") closeCommandPalette();
-    });
-  }
-
-  async function load() {
+  async function load(){
     initTheme();
-    try {
-      const [response, overviewValue] = await Promise.all([
-        fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" }),
-        fetch(OVERVIEW_URL + "?t=" + Date.now(), { cache: "no-store" })
-          .then(r => r.ok ? r.json() : null)
-          .catch(() => null)
+    try{
+      const [r,s]=await Promise.all([
+        fetch(DATA_URL+"?t="+Date.now(),{cache:"no-store"}),
+        fetch(SHOWCASE_URL+"?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
       ]);
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      data = await response.json();
-      overview = overviewValue;
-
-      const repos = data.repositories || [];
-      assertPublicOnly(repos);
-      enrichAIReadiness(repos);
-      await enrichAuditStatuses(repos);
-
-      renderHero(repos);
-      renderMetrics(repos);
-      renderAIReadiness();
-      renderDistribution(repos);
-      renderRecent(repos);
-      renderFocus(repos);
-      renderAttention(repos);
-      renderAuditActions(repos);
-      renderBoard(repos);
-      renderRepositories();
-      renderCommandResults("");
-
-      $("loading").classList.add("hidden");
-      $("app").classList.remove("hidden");
-
-      wireEvents();
-      initNavigation();
-    } catch (error) {
-      $("loading").classList.add("hidden");
-      $("error").classList.remove("hidden");
-      $("error").innerHTML = "工作台暂时无法读取公开总控数据。<br><small>" + esc(error.message) + "</small>";
+      if(!r.ok)throw new Error("registry HTTP "+r.status);
+      data=await r.json();
+      if((data.repositories||[]).some(x=>x.visibility!=="public"))throw new Error("Public registry contains non-public records.");
+      if(s?.ok)showcases=await s.json();
+      await Promise.all((data.repositories||[]).filter(x=>x.latest_audit).map(loadAudit));
+      renderMetrics();renderAttention();renderRepositories();renderAudits();renderPalette();wire();
+      $("loading").classList.add("hidden");$("app").classList.remove("hidden");
+    }catch(e){
+      $("loading").classList.add("hidden");$("error").classList.remove("hidden");
+      $("error").innerHTML="Unable to load the public control surface.<br><small>"+esc(e.message||e)+"</small>";
     }
   }
-
   load();
 })();
