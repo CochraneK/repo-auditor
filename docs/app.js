@@ -86,7 +86,7 @@
     const repos=data.repositories||[];
     const attention=attentionRepos();
     const fresh=repos.filter(r=>r._audit?.state==="current").length;
-    const count=(showcases.items||[]).length;
+    const count=(showcases.showcases||showcases.items||[]).length;
     $("repoCount").textContent=repos.length;
     $("attentionCount").textContent=attention.length;
     $("freshAuditCount").textContent=fresh;

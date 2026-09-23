@@ -25,10 +25,11 @@ Active — GO mode.
 - Browser/screenshot runtime visual review is not yet a deterministic assurance layer.
 - Account-wide private coverage can remain PARTIAL when external credentials lack visibility.
 
-## 2026-09-23 · Showcase publication prepared
+## 2026-09-24 · Public control center v2 live
 
-- Added `docs/showcase/` as a public-safe static mirror layer for reviewed artifacts from Private source repositories.
-- Added a showcase hub and publication manifest; sensitive/private evidence remains excluded.
-- Source repository visibility is unchanged.
-- `CochraneK/repo-auditor` is now **Public**; GitHub Free can publish its existing `docs/` site.
-- Remaining publication check: confirm GitHub Pages source is still `main /docs` and verify the public Showcase URL after CI is green.
+- Repository Control Center v2 is deployed from `main /docs` with a calmer ARIS4C-family information hierarchy.
+- Portfolio Audit passed after the v2 rollout: unit tests, identity/privacy checks, visual UX, showcase audit, registry validation, freshness checks, and JavaScript syntax validation are green.
+- GitHub Pages deployment succeeded.
+- Public control data remains fail-closed to Public repository records only; Private repository identifiers and findings remain excluded.
+- Showcase publication remains a reviewed static-mirror layer with 15 entries.
+- Password-gated Private Showcase remains a separate future step; current public showcase mirrors are not treated as authenticated private pages.

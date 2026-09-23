@@ -8,6 +8,14 @@
 
 [工作台](https://cochranek.github.io/repo-auditor/) · [Progress](PROGRESS_REPORT.md) · [Portfolio](PORTFOLIO.md) · [Audit Rubric](AUDIT_RUBRIC.md) · [Architecture](docs/architecture.md) · [AI Semantic Review](AI_SEMANTIC_REVIEW.md)
 
+## Current state · 2026-09-24
+
+- **Repository Control Center v2 is live** — the public Page now uses the calmer ARIS4C-family information hierarchy: 4 primary sections, 4 headline metrics, a small attention queue, a quiet repository list, compact audit evidence, and a separate showcase entry.
+- **Portfolio Audit: PASS** — unit tests, identity/privacy guard, visual UX audit, showcase audit, registry validation, freshness checks, and JavaScript syntax validation passed on the v2 rollout.
+- **GitHub Pages: deployed successfully** — the public control surface is live from `main /docs`.
+- **Public boundary remains fail-closed** — current public registry exposes only Public repositories; Private repository names, URLs, SHAs, notes, and audit findings stay out of the control surface.
+- **15 reviewed public-safe static showcases** are available through the Showcase layer. Password-gated Private Showcase is a separate next step and is not represented as complete here.
+
 ## 定位
 
 `repo-auditor` 是 CochraneK GitHub portfolio 的审计控制面。它不仅发现问题，还把安全、可逆的 finding 推进到修复、验证和再审。
