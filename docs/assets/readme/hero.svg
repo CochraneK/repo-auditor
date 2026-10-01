@@ -7,13 +7,13 @@
 <text x="66" y="136" class="title">Repository quality, kept visible.</text>
 <text x="66" y="178" class="sub">A calm, public-safe control center for audit, remediation, and AI handoff.</text>
 <rect x="66" y="248" width="330" height="122" rx="18" class="box"/>
-<text x="88" y="300" class="metric">7</text>
+<text x="88" y="300" class="metric">16</text>
 <text x="88" y="337" class="label">Public repositories</text>
 <rect x="431" y="248" width="330" height="122" rx="18" class="box"/>
 <text x="453" y="300" class="metric">15</text>
 <text x="453" y="337" class="label">Reviewed showcases</text>
 <rect x="796" y="248" width="330" height="122" rx="18" class="box"/>
-<text x="818" y="300" class="metric">3</text>
+<text x="818" y="300" class="metric">4</text>
 <text x="818" y="337" class="label">AI-ready</text>
 <rect x="1161" y="248" width="330" height="122" rx="18" class="box"/>
 <text x="1183" y="300" class="metric">PARTIAL</text>

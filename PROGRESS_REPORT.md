@@ -3,15 +3,15 @@
 > Generated from the public registry and privacy-safe account aggregate. Progress/priority is an operating signal, not a repository-quality score.
 
 - Registry snapshot: **2026-09-23**
-- Coverage snapshot: **2026-09-23T19:21:22.283794+00:00**
+- Coverage snapshot: **2026-10-01T07:13:13.969504+00:00**
 - Audit coverage: **PARTIAL**
 - Coverage baseline: **lower-bound**
 
 ## Audit coverage
 
-- Observed repositories: **7 / ≥37 baseline**
+- Observed repositories: **16 / ≥37 baseline**
 - Observed private repositories: **0 / ≥1 baseline**
-- Evidence packages collected: **7**
+- Evidence packages collected: **16**
 - Coverage gaps:
   - authenticated inventory is smaller than the trusted coverage baseline
   - private repository coverage is below the trusted coverage baseline
@@ -19,9 +19,9 @@
 
 ## AI-native continuity
 
-- AI-ready repositories: **3 / 7 evidenced**
-- Repositories with AGENTS instructions: **5**
-- Repositories with a handoff entry: **3**
+- AI-ready repositories: **4 / 16 evidenced**
+- Repositories with AGENTS instructions: **6**
+- Repositories with a handoff entry: **4**
 - Repositories with a full continuity package: **0**
 
 ## Public execution queue
@@ -49,7 +49,6 @@
 - **ai-uni** — AI_READY · 85/100 · missing validation, quick start
 - **repo-auditor** — AI_READY · 100/100
 - **persona-test** — NOT_READY · 20/100 · missing AGENTS, HANDOFF, STATUS, DECISIONS, architecture, validation, quick start
-- **changan** — NOT_READY · 50/100 · missing HANDOFF, STATUS, DECISIONS, architecture
 - **we-read-template** — PARTIAL · 60/100 · missing HANDOFF, STATUS, DECISIONS, quick start
 
 ## Next gates
@@ -58,6 +57,7 @@
 - Replace the lower-bound inventory baseline with an exact verified aggregate when a credential with complete owner visibility is available.
 - Expand durable agent onboarding: AGENTS, handoff, status/decisions, architecture and validation paths.
 - Reduce mutable GitHub Action references where a pinned immutable ref is appropriate.
+- Close remaining README/onboarding gaps.
 
 ## Interpretation
 
