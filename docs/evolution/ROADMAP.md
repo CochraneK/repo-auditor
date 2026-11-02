@@ -45,3 +45,14 @@ The control plane is now being dogfooded across active repositories:
 7. rescan portfolio.
 
 Current promoted skill areas include privacy boundaries, asset provenance, inference-claim drift, security, README quality, agent handoff, AI readiness and canonical identity.
+
+
+## 2026-11-02 reliability checkpoint
+
+- [ ] Restore private-scan authentication after the scheduled HTTP 401 and prove complete/partial coverage honestly.
+- [ ] Turn 401/403/incomplete inventory into explicit fail-closed `external-blocked` outputs with safe unblock instructions.
+- [ ] Enforce exact-head CI evidence and re-audit after remediation; never inherit stale green results.
+- [ ] Extend attack fixtures for packaging/config escapes, pinning/version drift and README/runtime mismatch.
+- [ ] Preserve orthogonality of priority, quality vector, coverage, AI readiness and publication/IP gate.
+
+See [2026-11-02 audit reliability roadmap](2026-11-02-audit-reliability.md).

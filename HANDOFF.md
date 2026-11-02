@@ -30,3 +30,7 @@ Run:
 - Private repository names, URLs, SHAs, evidence and findings must never enter public Pages.
 - L4 AI review must never upgrade incomplete L0/L1 coverage to PASS.
 - Owner-choice boundaries remain owner decisions.
+
+## 2026-11-02 archive checkpoint
+
+The 2026-11-01 scheduled workflow's `audit` job passed but `private-portfolio-scan` failed with GitHub API 401. This is an **external-blocked private coverage** incident, not L0–L5 full PASS; see [runbook](docs/runbooks/private-scan-401.md) and [hardening roadmap](docs/evolution/2026-11-02-audit-reliability.md). Immediate action: owner restores credential access, then rerun authenticated inventory, keep all detailed private evidence out of public Pages, and re-audit the exact target SHA. GO mode continues automatically only through reversible authorized fixes; owner approval is required for private-to-external AI disclosure, visibility/publication, and credentials.
